@@ -1,4 +1,4 @@
-package com.example.foodcare.View
+package com.example.foodcare.view
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
@@ -21,7 +21,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -39,13 +38,11 @@ val FoodCareOffWhite  = Color(0xFFFAFAFA)
 val FoodCareTextDark  = Color(0xFF1A1A2E)
 val FoodCareGray      = Color(0xFFEEEEEE)
 
-
 @Composable
 fun TelaInicial(
     onEntrarClick: () -> Unit = {},
     onCadastrarClick: () -> Unit = {}
 ) {
-
     var visible by remember { mutableStateOf(false) }
     val alpha by animateFloatAsState(
         targetValue = if (visible) 1f else 0f,
@@ -81,7 +78,6 @@ fun TelaInicial(
                 ),
             contentAlignment = Alignment.Center
         ) {
-
             Canvas(modifier = Modifier.fillMaxSize()) {
                 drawCircle(
                     color = Color.White.copy(alpha = 0.05f),
@@ -96,7 +92,6 @@ fun TelaInicial(
             }
 
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                // App title
                 Text(
                     text = "FoodCare",
                     color = FoodCareWhite,
@@ -105,8 +100,6 @@ fun TelaInicial(
                     letterSpacing = 1.sp,
                     modifier = Modifier.padding(bottom = 24.dp)
                 )
-
-                // Illustration drawn with Canvas
                 FoodCareIllustration(
                     modifier = Modifier
                         .size(200.dp)
@@ -124,10 +117,7 @@ fun TelaInicial(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-
             Box(modifier = Modifier.offset(y = slideY.dp)) {
-                androidx.compose.ui.graphics.colorspace.ColorSpaces
-
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
@@ -147,9 +137,7 @@ fun TelaInicial(
                         textAlign = TextAlign.Center,
                         letterSpacing = 0.3.sp
                     )
-
                     Spacer(modifier = Modifier.height(4.dp))
-
                     Text(
                         text = "Conectando quem tem com quem precisa",
                         fontSize = 13.sp,
@@ -160,22 +148,18 @@ fun TelaInicial(
                 }
             }
 
-
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .offset(y = slideY.dp),
                 verticalArrangement = Arrangement.spacedBy(14.dp)
             ) {
-
                 FoodCareButton(
                     text = "Entrar",
                     onClick = onEntrarClick,
                     backgroundColor = FoodCareRed,
                     textColor = FoodCareWhite
                 )
-
-
                 FoodCareButton(
                     text = "Cadastrar",
                     onClick = onCadastrarClick,
@@ -192,8 +176,9 @@ fun TelaInicial(
 fun FoodCareButton(
     text: String,
     onClick: () -> Unit,
-    backgroundColor: Color,
-    textColor: Color
+    backgroundColor: Color = FoodCareRed,
+    textColor: Color = FoodCareWhite,
+    outlined: Boolean = false
 ) {
     var pressed by remember { mutableStateOf(false) }
     val scale by animateFloatAsState(
@@ -202,33 +187,42 @@ fun FoodCareButton(
         label = "btnScale"
     )
 
-    Button(
-        onClick = onClick,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(52.dp)
-            .scale(scale)
-            .shadow(elevation = 4.dp, shape = RoundedCornerShape(12.dp)),
-        shape = RoundedCornerShape(12.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = backgroundColor,
-            contentColor = textColor
-        ),
-        elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp)
-    ) {
-        Text(
-            text = text,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.SemiBold,
-            letterSpacing = 0.5.sp
-        )
+    if (outlined) {
+        OutlinedButton(
+            onClick = onClick,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(52.dp)
+                .scale(scale),
+            shape = RoundedCornerShape(12.dp),
+            colors = ButtonDefaults.outlinedButtonColors(contentColor = FoodCareRed),
+            border = androidx.compose.foundation.BorderStroke(1.5.dp, FoodCareRed)
+        ) {
+            Text(text = text, fontSize = 16.sp, fontWeight = FontWeight.SemiBold, letterSpacing = 0.5.sp)
+        }
+    } else {
+        Button(
+            onClick = onClick,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(52.dp)
+                .scale(scale)
+                .shadow(elevation = 4.dp, shape = RoundedCornerShape(12.dp)),
+            shape = RoundedCornerShape(12.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = backgroundColor,
+                contentColor = textColor
+            ),
+            elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp)
+        ) {
+            Text(text = text, fontSize = 16.sp, fontWeight = FontWeight.SemiBold, letterSpacing = 0.5.sp)
+        }
     }
 }
 
-// ─── Canvas Illustration ──────────────────────────────────────────────────────
+
 @Composable
 fun FoodCareIllustration(modifier: Modifier = Modifier) {
-    // Pulse animation for heart
     val infiniteTransition = rememberInfiniteTransition(label = "pulse")
     val heartScale by infiniteTransition.animateFloat(
         initialValue = 1f,
@@ -244,19 +238,11 @@ fun FoodCareIllustration(modifier: Modifier = Modifier) {
         val w = size.width
         val h = size.height
         val strokeW = w * 0.035f
-        val paint = androidx.compose.ui.graphics.Paint().apply {
-            color = Color.White
-            strokeWidth = strokeW
-            strokeCap = StrokeCap.Round
-        }
 
-        // ── Hand (open palm) ────────────────────────────────────────────────
         val handPath = Path().apply {
-            // Palm base
             moveTo(w * 0.18f, h * 0.82f)
             cubicTo(w * 0.10f, h * 0.75f, w * 0.08f, h * 0.60f, w * 0.20f, h * 0.58f)
             cubicTo(w * 0.30f, h * 0.55f, w * 0.34f, h * 0.62f, w * 0.38f, h * 0.62f)
-            // Fingers spread
             lineTo(w * 0.62f, h * 0.62f)
             cubicTo(w * 0.72f, h * 0.62f, w * 0.76f, h * 0.68f, w * 0.74f, h * 0.76f)
             cubicTo(w * 0.70f, h * 0.85f, w * 0.55f, h * 0.88f, w * 0.42f, h * 0.88f)
@@ -264,7 +250,6 @@ fun FoodCareIllustration(modifier: Modifier = Modifier) {
         }
         drawPath(handPath, color = Color.White, style = Stroke(width = strokeW, cap = StrokeCap.Round))
 
-        // ── Bread loaf ───────────────────────────────────────────────────────
         val breadLeft   = w * 0.08f
         val breadTop    = h * 0.30f
         val breadRight  = w * 0.40f
@@ -276,16 +261,15 @@ fun FoodCareIllustration(modifier: Modifier = Modifier) {
             cornerRadius = androidx.compose.ui.geometry.CornerRadius(w * 0.06f),
             style = Stroke(width = strokeW, cap = StrokeCap.Round)
         )
-        // Slice lines on bread
-        drawLine(Color.White, Offset(breadLeft + (breadRight - breadLeft) * 0.35f, breadTop + 8f),
-            Offset(breadLeft + (breadRight - breadLeft) * 0.35f, breadBottom - 8f), strokeW * 0.7f)
+        drawLine(Color.White,
+            Offset(breadLeft + (breadRight - breadLeft) * 0.35f, breadTop + 8f),
+            Offset(breadLeft + (breadRight - breadLeft) * 0.35f, breadBottom - 8f),
+            strokeW * 0.7f)
 
-        // ── Milk carton ──────────────────────────────────────────────────────
         val cartonLeft   = w * 0.60f
         val cartonTop    = h * 0.20f
         val cartonRight  = w * 0.88f
         val cartonBottom = h * 0.60f
-        // Body
         drawRoundRect(
             color = Color.White,
             topLeft = Offset(cartonLeft, cartonTop + h * 0.10f),
@@ -293,7 +277,6 @@ fun FoodCareIllustration(modifier: Modifier = Modifier) {
             cornerRadius = androidx.compose.ui.geometry.CornerRadius(w * 0.04f),
             style = Stroke(width = strokeW, cap = StrokeCap.Round)
         )
-        // Roof triangle
         val roofPath = Path().apply {
             moveTo(cartonLeft, cartonTop + h * 0.10f)
             lineTo((cartonLeft + cartonRight) / 2f, cartonTop)
@@ -301,11 +284,9 @@ fun FoodCareIllustration(modifier: Modifier = Modifier) {
         }
         drawPath(roofPath, color = Color.White, style = Stroke(width = strokeW, cap = StrokeCap.Round))
 
-        // ── Heart (pulsing, drawn in center-ish) ─────────────────────────────
         val hx = w * 0.50f
         val hy = h * 0.48f
         val hr = w * 0.12f * heartScale
-
         translate(hx - hr, hy - hr) {
             val heartPath = Path().apply {
                 val hw = hr * 2f
