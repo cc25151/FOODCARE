@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import com.example.foodcare.navigation.FoodCareNavGraph
 import com.example.foodcare.ui.theme.FoodCareTheme
 
-class MainActivity : ComponentActivity() {
+class  MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
