@@ -1,0 +1,19 @@
+# SDK (cada máquina tem o seu)
+local.properties
+
+# Build (arquivos gerados)
+.gradle/
+build/
+*/build/
+
+# Android Studio
+.idea/
+*.iml
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Cache NDK
+.cxx/
+.externalNativeBuild/
