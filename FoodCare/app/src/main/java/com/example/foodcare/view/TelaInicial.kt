@@ -22,26 +22,21 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.clickable
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.translate
 import kotlinx.coroutines.delay
+import com.example.foodcare.ui.theme.*
 
 
-val FoodCareRed       = Color(0xFFCC1E1E)
-val FoodCareDarkRed   = Color(0xFFAA1515)
-val FoodCareLightRed  = Color(0xFFE53935)
-val FoodCareBlue      = Color(0xFF1565C0)
-val FoodCareWhite     = Color(0xFFFFFFFF)
-val FoodCareOffWhite  = Color(0xFFFAFAFA)
-val FoodCareTextDark  = Color(0xFF1A1A2E)
-val FoodCareGray      = Color(0xFFEEEEEE)
 
 @Composable
 fun TelaInicial(
     onEntrarClick: () -> Unit = {},
-    onCadastrarClick: () -> Unit = {}
+    onCadastrarClick: () -> Unit = {},
+    onQuemSomosClick: () -> Unit ={}
 ) {
     var visible by remember { mutableStateOf(false) }
     val alpha by animateFloatAsState(
@@ -124,19 +119,16 @@ fun TelaInicial(
                         .fillMaxWidth()
                         .padding(bottom = 36.dp)
                 ) {
-                    Text(
-                        text = buildAnnotatedString {
-                            withStyle(SpanStyle(color = FoodCareTextDark, fontWeight = FontWeight.Bold)) {
-                                append("Bem vindo ao ")
-                            }
-                            withStyle(SpanStyle(color = FoodCareBlue, fontWeight = FontWeight.ExtraBold)) {
-                                append("FOODCARE")
-                            }
-                        },
-                        fontSize = 20.sp,
-                        textAlign = TextAlign.Center,
-                        letterSpacing = 0.3.sp
-                    )
+                    Row {
+                        Text("Bem vindo ao ")
+
+                        Text(
+                            "FOODCARE",
+                            color = FoodCareBlue,
+                            fontWeight = FontWeight.ExtraBold,
+                            modifier = Modifier.clickable { onQuemSomosClick() }
+                        )
+                    }
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = "Conectando quem tem com quem precisa",

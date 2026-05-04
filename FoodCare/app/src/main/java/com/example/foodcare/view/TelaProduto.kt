@@ -210,7 +210,6 @@ fun MapaExpandivel(
     longitude: Double = -47.0626
 ) {
     val mapaUrl = buildOpenStreetMapUrl(latitude, longitude, if (expandido) 14 else 13)
-
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -259,6 +258,8 @@ fun MapaExpandivel(
                     settings.javaScriptEnabled = true
                     settings.loadWithOverviewMode = true
                     settings.useWideViewPort = true
+                    settings.domStorageEnabled = true
+
                     loadUrl(mapaUrl)
                 }
             },
@@ -273,8 +274,7 @@ fun MapaExpandivel(
 }
 
 private fun buildOpenStreetMapUrl(lat: Double, lon: Double, zoom: Int): String {
-    // Embed OpenStreetMap via iframe HTML
-    return "https://www.openstreetmap.org/export/embed.html?bbox=${lon - 0.02},${lat - 0.015},${lon + 0.02},${lat + 0.015}&layer=mapnik&marker=$lat,$lon"
+    return "https://www.openstreetmap.org/#map=$zoom/$lat/$lon"
 }
 
 // ─── Doador card ──────────────────────────────────────────────────────────────

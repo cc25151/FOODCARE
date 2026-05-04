@@ -11,4 +11,5 @@ object Routes {
     const val PRODUTO_REQ        = "produto_req/{produtoId}"
 
     fun produto(id: Int) = "produto/$id"
+    fun produto_req(id :Int) = "produto_req/$id"
 }
