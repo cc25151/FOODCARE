@@ -66,7 +66,21 @@ fun FoodCareNavGraph(
             val id = backStackEntry.arguments?.getInt("produtoId") ?: 0
             TelaProduto(
                 produtoId = id,
-                onVoltar  = { navController.popBackStack() }
+                onVoltar  = { navController.popBackStack() },
+                onQueroEsteProduto = {navController.navigate(Routes.PRODUTO_REQ)}
+            )
+        }
+
+        composable(
+            route = Routes.PRODUTO_REQ,
+            arguments = listOf(navArgument("produtoId") { type = NavType.IntType })
+        ) { backStackEntry ->
+
+            val id = backStackEntry.arguments?.getInt("produtoId") ?: 0
+
+            TelaProdutoRequisitado(
+                produtoId = id,
+                onVoltar = { navController.popBackStack() }
             )
         }
     }

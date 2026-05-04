@@ -8,5 +8,7 @@ object Routes {
     const val HOME_FEED          = "home_feed"
     const val PRODUTO            = "produto/{produtoId}"
 
+    const val PRODUTO_REQ        = "produto_req/{produtoId}"
+
     fun produto(id: Int) = "produto/$id"
 }

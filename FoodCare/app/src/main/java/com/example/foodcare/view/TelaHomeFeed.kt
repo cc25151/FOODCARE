@@ -1,6 +1,7 @@
 package com.example.foodcare.view
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -11,10 +12,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -25,99 +23,151 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.foodcare.model.FoodCareData
 import com.example.foodcare.model.Produto
 
+private data class CategoriaVisual(val nome: String, val emoji: String)
+private val categoriasVisuais = listOf(
+    CategoriaVisual("Marmitas", "🍱"),
+    CategoriaVisual("Alimentos não perecíveis", "🌾")
+)
+
+private val produtosHome = listOf(
+    Produto(1, "Cesta Básica",      "", "Categoria A", "Mercado", "1km", "Hoje", 0xFFFFF3E0),
+    Produto(2, "Marmita Média",     "", "Categoria B", "Rest.",   "1km", "Hoje", 0xFFFFEBEE),
+    Produto(3, "Marmita Pequena",   "", "Marmitas",    "Rest.",   "1km", "Hoje", 0xFFFFF3E0),
+    Produto(4, "Pacote de Arroz",   "", "Alimentos não perecíveis", "Mercado", "1km", "Hoje", 0xFFFFF8E1)
+)
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TelaHomeFeed(
-    onProdutoClick: (Int) -> Unit = {}
+    nomeUsuario: String = "Receptor",
+    onProdutoClick: (Int) -> Unit = {},
+    onPerfilClick: () -> Unit = {}
 ) {
     var busca by remember { mutableStateOf("") }
-    var categoriaSelecionada by remember { mutableStateOf<String?>(null) }
-
-    val produtosFiltrados = FoodCareData.produtos.filter { p ->
-        val matchBusca = busca.isBlank() || p.nome.contains(busca, ignoreCase = true)
-        val matchCat = categoriaSelecionada == null || p.categoria == categoriaSelecionada
-        matchBusca && matchCat
-    }
 
     Scaffold(
+        containerColor = FoodCareOffWhite,
         topBar = {
             TopAppBar(
                 title = {
-                    Text(
-                        text = "FoodCare",
-                        color = FoodCareWhite,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp
-                    )
-                },
-                actions = {
-                    IconButton(onClick = {}) {
-                        Icon(
-                            imageVector = Icons.Default.ShoppingCart,
-                            contentDescription = "Carrinho",
-                            tint = FoodCareWhite
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Box(
+                            modifier = Modifier
+                                .size(44.dp)
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(FoodCareWhite.copy(alpha = 0.2f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text("🛒", fontSize = 22.sp)
+                        }
+                        Spacer(Modifier.width(10.dp))
+                        Text(
+                            text = "FoodCare",
+                            color = FoodCareWhite,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 20.sp
                         )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = FoodCareRed
-                )
+                actions = {
+                    Box(
+                        modifier = Modifier
+                            .padding(end = 12.dp)
+                            .size(38.dp)
+                            .clip(CircleShape)
+                            .background(FoodCareWhite.copy(alpha = 0.25f))
+                            .clickable { onPerfilClick() },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Person,
+                            contentDescription = "Perfil",
+                            tint = FoodCareWhite,
+                            modifier = Modifier.size(22.dp)
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = FoodCareRed)
             )
         }
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(FoodCareOffWhite)
                 .padding(innerPadding)
+                .background(FoodCareOffWhite)
         ) {
-            // ── Search bar ────────────────────────────────────────────────────
-            Box(
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(FoodCareRed)
-                    .padding(horizontal = 16.dp, vertical = 12.dp)
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 OutlinedTextField(
                     value = busca,
                     onValueChange = { busca = it },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.weight(1f),
                     placeholder = {
-                        Text("Pesquisar por Doação", color = Color(0xFFBBBBBB), fontSize = 14.sp)
+                        Text(
+                            "Pesquisar por Alimentos",
+                            color = Color(0xFFBBBBBB),
+                            fontSize = 13.sp
+                        )
                     },
                     leadingIcon = {
-                        Icon(Icons.Default.Search, contentDescription = null, tint = Color(0xFF888888))
+                        Icon(
+                            Icons.Default.Search,
+                            contentDescription = null,
+                            tint = Color(0xFF999999),
+                            modifier = Modifier.size(18.dp)
+                        )
                     },
                     singleLine = true,
                     shape = RoundedCornerShape(24.dp),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = Color.Transparent,
+                        focusedBorderColor   = Color.Transparent,
                         unfocusedBorderColor = Color.Transparent,
-                        focusedContainerColor = FoodCareWhite,
+                        focusedContainerColor   = FoodCareWhite,
                         unfocusedContainerColor = FoodCareWhite,
                         cursorColor = FoodCareRed
                     )
                 )
+
+                Spacer(Modifier.width(8.dp))
+
+                Box(
+                    modifier = Modifier
+                        .size(44.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(FoodCareWhite)
+                        .clickable { },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Tune,
+                        contentDescription = "Filtros",
+                        tint = FoodCareTextDark,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
             }
 
-            // ── Section title ─────────────────────────────────────────────────
-            Spacer(modifier = Modifier.height(16.dp))
             Text(
                 text = "Alimentos Sugeridos",
-                fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
+                fontSize = 17.sp,
                 color = FoodCareTextDark,
-                modifier = Modifier.padding(horizontal = 16.dp)
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(Modifier.height(8.dp))
 
-            // ── Product grid ──────────────────────────────────────────────────
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
                 modifier = Modifier
@@ -125,36 +175,25 @@ fun TelaHomeFeed(
                     .weight(1f),
                 contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp)
+                verticalArrangement   = Arrangement.spacedBy(10.dp)
             ) {
-                items(produtosFiltrados) { produto ->
-                    ProdutoCard(produto = produto, onClick = { onProdutoClick(produto.id) })
+                items(produtosHome) { produto ->
+                    AlimentoCard(
+                        produto   = produto,
+                        onClick   = { onProdutoClick(produto.id) }
+                    )
                 }
             }
 
-            // ── Category row ──────────────────────────────────────────────────
             LazyRow(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(FoodCareWhite)
-                    .padding(horizontal = 12.dp, vertical = 10.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    .padding(horizontal = 12.dp, vertical = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                item {
-                    CategoriaChip(
-                        nome = "Todos",
-                        selecionado = categoriaSelecionada == null,
-                        onClick = { categoriaSelecionada = null }
-                    )
-                }
-                items(FoodCareData.categorias) { cat ->
-                    CategoriaChip(
-                        nome = cat.nome,
-                        selecionado = categoriaSelecionada == cat.nome,
-                        onClick = {
-                            categoriaSelecionada = if (categoriaSelecionada == cat.nome) null else cat.nome
-                        }
-                    )
+                items(categoriasVisuais) { cat ->
+                    CategoriaLabel(nome = cat.nome, emoji = cat.emoji)
                 }
             }
         }
@@ -162,88 +201,109 @@ fun TelaHomeFeed(
 }
 
 @Composable
-fun ProdutoCard(produto: Produto, onClick: () -> Unit) {
+private fun AlimentoCard(produto: Produto, onClick: () -> Unit) {
     var favoritado by remember { mutableStateOf(false) }
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onClick() }
-            .shadow(2.dp, RoundedCornerShape(16.dp)),
-        shape = RoundedCornerShape(16.dp),
+            .shadow(1.dp, RoundedCornerShape(16.dp)),
+        shape  = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = FoodCareWhite)
     ) {
         Column {
-            // Image placeholder with gradient
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(110.dp)
                     .background(
-                        brush = Brush.radialGradient(
-                            colors = listOf(
-                                Color(produto.imageColor).copy(alpha = 0.7f),
-                                Color(produto.imageColor)
-                            )
-                        )
-                    ),
-                contentAlignment = Alignment.Center
+                        color = Color(produto.imageColor),
+                        shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
+                    )
             ) {
-                Text(text = "🍽️", fontSize = 36.sp)
+                Text(
+                    text     = "🛒",
+                    fontSize = 36.sp,
+                    modifier = Modifier.align(Alignment.Center)
+                )
 
-                // Favorite icon
                 IconButton(
-                    onClick = { favoritado = !favoritado },
+                    onClick  = { favoritado = !favoritado },
                     modifier = Modifier
                         .align(Alignment.TopEnd)
                         .padding(4.dp)
-                        .size(30.dp)
-                        .background(Color.White.copy(alpha = 0.7f), CircleShape)
+                        .size(28.dp)
                 ) {
                     Icon(
-                        imageVector = if (favoritado) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                        imageVector = if (favoritado) Icons.Default.Favorite
+                        else            Icons.Default.FavoriteBorder,
                         contentDescription = "Favoritar",
-                        tint = FoodCareRed,
+                        tint     = FoodCareRed,
                         modifier = Modifier.size(16.dp)
                     )
                 }
             }
 
-            Column(modifier = Modifier.padding(10.dp)) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 10.dp, vertical = 8.dp)
+            ) {
                 Text(
-                    text = produto.nome,
+                    text     = produto.nome,
                     fontSize = 13.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = FoodCareTextDark,
+                    color    = FoodCareTextDark,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = produto.distancia,
-                    fontSize = 11.sp,
-                    color = Color(0xFF888888)
-                )
+
+                Spacer(Modifier.height(6.dp))
+
+                Row(
+                    modifier              = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clip(CircleShape)
+                            .background(FoodCareRed)
+                            .clickable { onClick() },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector        = Icons.Default.Add,
+                            contentDescription = "Adicionar",
+                            tint               = FoodCareWhite,
+                            modifier           = Modifier.size(14.dp)
+                        )
+                    }
+                }
             }
         }
     }
 }
 
 @Composable
-fun CategoriaChip(nome: String, selecionado: Boolean, onClick: () -> Unit) {
-    Surface(
-        modifier = Modifier
-            .clip(RoundedCornerShape(20.dp))
-            .clickable { onClick() },
-        shape = RoundedCornerShape(20.dp),
-        color = if (selecionado) FoodCareRed else FoodCareGray
-    ) {
+private fun CategoriaLabel(nome: String, emoji: String) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(text = emoji, fontSize = 22.sp)
+        Spacer(Modifier.height(2.dp))
         Text(
-            text = nome,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-            fontSize = 13.sp,
-            fontWeight = if (selecionado) FontWeight.SemiBold else FontWeight.Normal,
-            color = if (selecionado) FoodCareWhite else FoodCareTextDark
+            text     = nome,
+            fontSize = 10.sp,
+            color    = FoodCareTextDark,
+            fontWeight = FontWeight.Medium
         )
+    }
+}
+
+@Preview(showBackground = true, showSystemUi = true, name = "TelaHomeFeed")
+@Composable
+fun TelaHomeFeedPreview() {
+    MaterialTheme {
+        TelaHomeFeed()
     }
 }

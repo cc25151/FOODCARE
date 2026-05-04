@@ -1,0 +1,170 @@
+package com.example.foodcare.view
+
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.translate
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TelaBoasVindasDoador(
+    nomeDoador:                  String   = "X",
+    onPerfilClick:               () -> Unit = {},
+    onRegistrarNovaDoacao:       () -> Unit = {},
+    onVerificarDoacoesPendentes: () -> Unit = {}
+) {
+    Scaffold(
+        containerColor = FoodCareOffWhite,
+        topBar = {
+            TopAppBar(
+                title  = {},
+                actions = {
+                    Box(
+                        modifier = Modifier
+                            .padding(end = 12.dp)
+                            .size(38.dp)
+                            .clip(CircleShape)
+                            .background(FoodCareGray)
+                            .clickable { onPerfilClick() },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector        = Icons.Default.Person,
+                            contentDescription = "Perfil",
+                            tint               = FoodCareTextDark,
+                            modifier           = Modifier.size(22.dp)
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = FoodCareOffWhite
+                )
+            )
+        }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(horizontal = 24.dp)
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.Start
+        ) {
+            Spacer(Modifier.height(8.dp))
+
+            Text(
+                text       = "Bem vindo, Doador(a) $nomeDoador",
+                fontWeight = FontWeight.Bold,
+                fontSize   = 22.sp,
+                color      = FoodCareTextDark,
+                lineHeight = 30.sp
+            )
+
+            Spacer(Modifier.height(20.dp))
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .shadow(4.dp, RoundedCornerShape(20.dp))
+                    .clip(RoundedCornerShape(20.dp))
+                    .background(FoodCareRed),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
+                    horizontalAlignment   = Alignment.CenterHorizontally,
+                    verticalArrangement   = Arrangement.Center
+                ) {
+                    Text(
+                        text       = "FoodCare",
+                        color      = FoodCareWhite,
+                        fontWeight = FontWeight.Bold,
+                        fontSize   = 20.sp
+                    )
+
+                    Spacer(Modifier.height(8.dp))
+
+                    FoodCareIllustration(
+                        modifier = Modifier.size(120.dp)
+                    )
+                }
+            }
+
+            Spacer(Modifier.height(24.dp))
+
+            Button(
+                onClick  = onRegistrarNovaDoacao,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp),
+                shape  = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = FoodCareRed,
+                    contentColor   = FoodCareWhite
+                ),
+                elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp)
+            ) {
+                Text(
+                    text       = "Registrar nova doação",
+                    fontWeight = FontWeight.Bold,
+                    fontSize   = 15.sp
+                )
+            }
+
+            Spacer(Modifier.height(14.dp))
+
+            Button(
+                onClick  = onVerificarDoacoesPendentes,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp),
+                shape  = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = FoodCareRed,
+                    contentColor   = FoodCareWhite
+                ),
+                elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp)
+            ) {
+                Text(
+                    text       = "Verificar doações pendentes",
+                    fontWeight = FontWeight.Bold,
+                    fontSize   = 15.sp
+                )
+            }
+
+            Spacer(Modifier.height(32.dp))
+        }
+    }
+}
+
+@Preview(showBackground = true, showSystemUi = true, name = "TelaBoasVindasDoador")
+@Composable
+fun TelaBoasVindasDoadorPreview() {
+    MaterialTheme {
+        TelaBoasVindasDoador(nomeDoador = "X")
+    }
+}
