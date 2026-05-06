@@ -1,61 +1,82 @@
 create schema FoodCare
 
 create table FoodCare.Usuario(
-	idUsuario int primary key,
+	idUsuario int identity primary key,
 	nome varchar(50) not null,
-	email varchar(30) not null,
-	senha varchar(20) not null
+	email varchar(100) not null unique,
+	senha varchar(255) not null,
+	CEP char(8) null,
+	cidade varchar(30) null,
+	bairro varchar(60) null,
+	rua varchar(60) null,
+	numero varchar(10) null,
+	latitude decimal(9,6),
+	longitude decimal(9,6),
+	constraint ckCEP check(CEP like '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]')
+)
+
+create table FoodCare.Categoria(
+	idCategoria int identity primary key,
+	nome varchar(30) not null,
+	imagem varchar(300) not null
 )
 
 create table FoodCare.Doador(
-	idDoador int primary key,
-	idUsuario int not null,
-	pontuacao decimal not null,
-	CEP char(9) not null,
-	cidade varchar(30) not null,
-	bairro varchar(60) not null,
-	rua varchar(60) not null,
-	num varchar(60) not null,
-	constraint ckCEP check(CEP like '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]'),
+	idDoador int identity primary key,
+	idUsuario int not null unique,
+	pontuacao decimal(2,1) null,
 	constraint fkUsuario foreign key(idUsuario) references FoodCare.Usuario(idUsuario)
 )
 
 create table FoodCare.Receptor(
-	idReceptor int primary key,
-	idUsuario int not null,
+	idReceptor int identity primary key,
+	idUsuario int not null unique,
 	constraint fkUsuarioReceptor foreign key(idUsuario) references FoodCare.Usuario(idUsuario)
 )
 
 
-
 create table FoodCare.Alimento(
-	idAlimento int primary key,
+	idAlimento int identity primary key,
 	idCategoria int not null,
 	idDoador int not null,
 	nome varchar(50) not null,
-	info varchar(100) not null,
+	descricao varchar(100) not null,
 	qntd int not null,
 	validade date not null,
 	constraint fkDoador foreign key(idDoador) references FoodCare.Doador(idDoador),
 	constraint fkCategoria foreign key(idCategoria) references FoodCare.Categoria(idCategoria)
 )
 
-create table FoodCare.Categoria(
-idCategoria int primary key,
-nome varchar(30) not null,
-imagem varchar(300) not null,
+create table FoodCare.Doacao(
+	idDoacao int identity primary key,
+	dataDoacao date not null,
+	horarioInicial time not null,
+	horarioFinal time null,
+	avaliacao int null,
+	idDoador int not null,
+	idReceptor int not null,
+	idAlimento int not null,
+	constraint fkDoadorDoacao foreign key(idDoador) references FoodCare.Doador(idDoador),
+    check (avaliacao between 1 and 5),
+	constraint fkReceptor foreign key(idReceptor) references FoodCare.Receptor(idReceptor),
+	constraint fkAlimento foreign key(idAlimento) references FoodCare.Alimento(idAlimento)
 )
 
-create table FoodCare.Doacao(
-idDoacao int primary key,
-dataDoacao date not null,
-horarioInicial time not null,
-horarioFinal time null,
-idDoador int not null,
-idReceptor int not null,
-idAlimento int not null,
-constraint fkDoadorDoacao foreign key(idDoador) references FoodCare.Doador(idDoador),
-constraint fkReceptor foreign key(idReceptor) references FoodCare.Receptor(idReceptor),
-constraint fkAlimento foreign key(idAlimento) references FoodCare.Alimento(idAlimento)
+DROP TABLE FoodCare.Doacao;
+DROP TABLE FoodCare.Alimento;
+DROP TABLE FoodCare.Doador;
+DROP TABLE FoodCare.Receptor;
+DROP TABLE FoodCare.Categoria;
+DROP TABLE FoodCare.Usuario;
+
+/*UPDATE d
+SET pontuacao = (
+    SELECT AVG(avaliacao)
+    FROM FoodCare.Doacao
+    WHERE idDoador = d.idDoador
+    AND avaliacao IS NOT NULL
 )
+FROM FoodCare.Doador d
+WHERE d.idDoador = @idDoador;
+*/
 
