@@ -4,6 +4,8 @@ create table FoodCare.Usuario(
 	idUsuario int identity primary key,
 	nome varchar(50) not null,
 	email varchar(100) not null unique,
+	tipoPessoa char(2) not null,
+    documento varchar(14) not null unique,
 	senha varchar(255) not null,
 	CEP char(8) null,
 	cidade varchar(30) null,
@@ -12,6 +14,11 @@ create table FoodCare.Usuario(
 	numero varchar(10) null,
 	latitude decimal(9,6),
 	longitude decimal(9,6),
+	check (
+    (tipoPessoa = 'PF' and LEN(documento) = 11)
+    or
+    (tipoPessoa = 'PJ' and LEN(documento) = 14)
+	),
 	constraint ckCEP check(CEP like '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]')
 )
 
