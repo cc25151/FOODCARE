@@ -30,6 +30,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import com.example.foodcare.model.FoodCareData
+import com.example.foodcare.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("SetJavaScriptEnabled")

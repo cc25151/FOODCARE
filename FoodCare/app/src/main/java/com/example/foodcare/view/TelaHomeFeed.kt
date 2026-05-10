@@ -25,6 +25,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.room.util.copy
+import com.example.foodcare.model.FoodCareData.produtos
+import com.example.foodcare.model.FoodCareData.categoriasVisuais
 import com.example.foodcare.model.Produto
 
 // ─── Cores centralizadas ───────────────────────────────────────────────────
@@ -35,27 +37,9 @@ val FoodCareTextDark  = Color(0xFF1C1C1C)
 val FoodCareSubText   = Color(0xFF757575)
 val FoodCareDivider   = Color(0xFFEEEEEE)
 
-// ─── Dados locais ──────────────────────────────────────────────────────────
-private data class CategoriaVisual(val nome: String, val emoji: String)
 
-private val categoriasVisuais = listOf(
-    CategoriaVisual("Marmitas", "🍱"),
-    CategoriaVisual("Não perecíveis", "🌾"),
-    CategoriaVisual("Frutas", "🍎"),
-    CategoriaVisual("Laticínios", "🧀"),
-    CategoriaVisual("Bebidas", "🧃")
-)
 
-private val produtosHome = listOf(
-    Produto(1, "Cesta Básica",        "", "Alimentos", "Mercado", "1 km",  "Hoje",  0xFFFFF3E0),
-    Produto(2, "Marmita Média",       "", "Marmitas",  "Rest.",   "1 km",  "Hoje",  0xFFFFEBEE),
-    Produto(3, "Marmita Pequena",     "", "Marmitas",  "Rest.",   "1 km",  "Hoje",  0xFFFFF3E0),
-    Produto(4, "Pacote de Arroz",     "", "Grãos",     "Mercado", "1 km",  "Hoje",  0xFFFFF8E1),
-    Produto(5, "Caixas de Legumes",   "", "Vegetais",  "Horta",   "2 km",  "Amanhã",0xFFE8F5E9),
-    Produto(6, "Pães Artesanais",     "", "Padaria",   "Padaria", "500 m", "Hoje",  0xFFFCE4EC)
-)
 
-// Emoji representativo por categoria
 private fun emojiParaProduto(categoria: String): String = when {
     categoria.contains("Marmita", ignoreCase = true) -> "🍱"
     categoria.contains("Grão",    ignoreCase = true) -> "🌾"
@@ -76,7 +60,7 @@ fun TelaHomeFeed(
     var categoriaSelecionada by remember { mutableStateOf<String?>(null) }
 
     val produtosFiltrados = remember(busca, categoriaSelecionada) {
-        produtosHome.filter { p ->
+        produtos.filter { p ->
             (busca.isBlank() || p.nome.contains(busca, ignoreCase = true)) &&
                     (categoriaSelecionada == null ||
                             p.categoria.contains(categoriaSelecionada!!, ignoreCase = true))

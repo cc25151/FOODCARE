@@ -58,7 +58,7 @@ create table FoodCare.Doacao(
 	idDoacao int identity primary key,
 	dataDoacao date not null,
 	horarioInicial time not null,
-	horarioFinal time null,
+	horarioFinal time not null,
 	avaliacao int null,
 	idDoador int not null,
 	idReceptor int not null,
@@ -68,6 +68,8 @@ create table FoodCare.Doacao(
 	constraint fkReceptor foreign key(idReceptor) references FoodCare.Receptor(idReceptor),
 	constraint fkAlimento foreign key(idAlimento) references FoodCare.Alimento(idAlimento)
 )
+
+
 
 DROP TABLE FoodCare.Doacao;
 DROP TABLE FoodCare.Alimento;
