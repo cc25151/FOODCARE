@@ -19,11 +19,60 @@ public static class UsuarioEndPoints
                 : Results.NotFound()
         );
 
+        rotas.MapGet("/doadores/{id}", async (int id, AppDbContext bd) =>
+            await bd.Doador
+                .Include(d => d.usuarioDoador) // Faz o JOIN com a tabela Usuario
+                .FirstOrDefaultAsync(d => d.idDoador == id)
+                is Doador doador
+                ? Results.Ok(doador)
+                : Results.NotFound()
+        );
+
+        rotas.MapGet("/receptores/{id}", async (int id, AppDbContext bd) =>
+            await bd.Receptor
+                .Include(r => r.usuarioReceptor) 
+                .FirstOrDefaultAsync(r => r.idReceptor == id)
+                is Receptor receptor
+                ? Results.Ok(receptor) 
+                : Results.NotFound()
+        );
+
         rotas.MapPost("/", async(Usuario usuario, AppDbContext bd) =>
         {
             bd.Usuarios.Add(usuario);
             await bd.SaveChangesAsync();
             return Results.Created($"/usuarios/{usuario.idUsuario}", usuario);
+        });
+
+        rotas.MapPost("/doadores", async (Doador doador, AppDbContext bd) =>
+        {
+
+            if (doador.usuarioDoador is null) return Results.BadRequest("Dados do usuário são necessários.");
+            
+            bd.Usuarios.Add(doador.usuarioDoador);
+            await bd.SaveChangesAsync(); 
+
+            doador.idUsuario = doador.usuarioDoador.idUsuario;
+            
+            bd.Doador.Add(doador);
+            await bd.SaveChangesAsync();
+
+            return Results.Created($"/usuarios/doadores/{doador.idDoador}", doador);
+        });
+
+        rotas.MapPost("/receptores", async (Receptor receptor, AppDbContext bd) =>
+        {
+            if (receptor.usuarioReceptor is null) return Results.BadRequest("Dados do usuário são necessários.");
+
+            bd.Usuarios.Add(receptor.usuarioReceptor);
+            await bd.SaveChangesAsync();
+
+            receptor.idUsuario = receptor.usuarioReceptor.idUsuario;
+            
+            bd.Receptor.Add(receptor);
+            await bd.SaveChangesAsync();
+
+            return Results.Created($"/usuarios/receptores/{receptor.idReceptor}", receptor);
         });
 
         rotas.MapPut("/{id}", async (int id, Usuario usuarioAlterado, AppDbContext bd) =>
