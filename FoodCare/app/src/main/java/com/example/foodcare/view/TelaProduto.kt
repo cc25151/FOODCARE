@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.example.foodcare.model.FoodCareData
+import com.example.foodcare.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("SetJavaScriptEnabled")
@@ -52,7 +53,7 @@ fun TelaProduto(
                             .padding(start = 8.dp)
                             .clip(RoundedCornerShape(20.dp))
                             .clickable { onVoltar() },
-                        color = FoodCareWhite,
+                        color = Branco,
                         shape = RoundedCornerShape(20.dp)
                     ) {
                         Row(
@@ -62,22 +63,22 @@ fun TelaProduto(
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                                 contentDescription = "Voltar",
-                                tint = FoodCareRed,
+                                tint = Vermelho,
                                 modifier = Modifier.size(18.dp)
                             )
                             Spacer(modifier = Modifier.width(4.dp))
-                            Text(text = "Voltar", color = FoodCareRed, fontSize = 13.sp, fontWeight = FontWeight.Medium)
+                            Text(text = "Voltar", color = Vermelho, fontSize = 13.sp, fontWeight = FontWeight.Medium)
                         }
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = FoodCareRed)
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Vermelho)
             )
         },
         bottomBar = {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(FoodCareOffWhite)
+                    .background(BrancoAlt)
                     .padding(horizontal = 24.dp, vertical = 16.dp)
             ) {
                 FoodCareButton(
@@ -90,11 +91,11 @@ fun TelaProduto(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(FoodCareOffWhite)
+                .background(BrancoAlt)
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
         ) {
-            // ── Hero image ────────────────────────────────────────────────────
+
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -112,29 +113,27 @@ fun TelaProduto(
                 Text(text = "🛒", fontSize = 72.sp)
             }
 
-            // ── Content ───────────────────────────────────────────────────────
             Column(modifier = Modifier.padding(20.dp)) {
 
-                // Product name
                 Text(
                     text = produto.nome,
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
-                    color = FoodCareTextDark
+                    color = textoEscuro
                 )
 
                 Spacer(modifier = Modifier.height(4.dp))
 
-                // Validity badge
+
                 Surface(
                     shape = RoundedCornerShape(8.dp),
-                    color = FoodCareRed.copy(alpha = 0.1f)
+                    color = Vermelho.copy(alpha = 0.1f)
                 ) {
                     Text(
                         text = produto.validade,
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
                         fontSize = 12.sp,
-                        color = FoodCareRed,
+                        color = Vermelho,
                         fontWeight = FontWeight.Medium
                     )
                 }
@@ -143,12 +142,12 @@ fun TelaProduto(
                 SectionDivider()
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // ── Doadores próximos ─────────────────────────────────────────
+
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
                         imageVector = Icons.Default.LocationOn,
                         contentDescription = null,
-                        tint = FoodCareRed,
+                        tint = Vermelho,
                         modifier = Modifier.size(20.dp)
                     )
                     Spacer(modifier = Modifier.width(6.dp))
@@ -156,18 +155,17 @@ fun TelaProduto(
                         text = "Doadores próximos:",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
-                        color = FoodCareTextDark
+                        color = textoEscuro
                     )
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                // Donor info card
                 DoadorCard(nome = produto.doador, distancia = produto.distancia)
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // ── Mapa expansível ───────────────────────────────────────────
+
                 MapaExpandivel(
                     expandido = mapaExpandido,
                     onToggle = { mapaExpandido = !mapaExpandido }
@@ -177,12 +175,12 @@ fun TelaProduto(
                 SectionDivider()
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // ── Descrição ─────────────────────────────────────────────────
+
                 Text(
                     text = "Descrição do produto:",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
-                    color = FoodCareTextDark
+                    color = textoEscuro
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -194,22 +192,22 @@ fun TelaProduto(
                     lineHeight = 22.sp
                 )
 
-                Spacer(modifier = Modifier.height(80.dp)) // space for bottom bar
+                Spacer(modifier = Modifier.height(80.dp))
             }
         }
     }
 }
 
-// ─── Expandable map ───────────────────────────────────────────────────────────
+
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
 fun MapaExpandivel(
     expandido: Boolean,
     onToggle: () -> Unit,
-    latitude: Double = -22.9099,   // Campinas, SP
+    latitude: Double = -22.9099,
     longitude: Double = -47.0626
 ) {
-    val mapaUrl = buildOpenStreetMapUrl(latitude, longitude, if (expandido) 14 else 13)
+    val mapaUrl = MapaURL(latitude, longitude, if (expandido) 14 else 13)
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -217,12 +215,12 @@ fun MapaExpandivel(
             .background(Color(0xFFEEEEEE))
             .animateContentSize(animationSpec = tween(300))
     ) {
-        // Header / toggle button
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable { onToggle() }
-                .background(FoodCareRed)
+                .background(Vermelho)
                 .padding(horizontal = 14.dp, vertical = 10.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
@@ -231,13 +229,13 @@ fun MapaExpandivel(
                 Icon(
                     imageVector = Icons.Default.LocationOn,
                     contentDescription = null,
-                    tint = FoodCareWhite,
+                    tint = Branco,
                     modifier = Modifier.size(18.dp)
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
                     text = if (expandido) "Ocultar mapa" else "Ver no mapa",
-                    color = FoodCareWhite,
+                    color = Branco,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold
                 )
@@ -245,11 +243,10 @@ fun MapaExpandivel(
             Icon(
                 imageVector = if (expandido) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
                 contentDescription = null,
-                tint = FoodCareWhite
+                tint = Branco
             )
         }
 
-        // Map WebView
         val mapHeight = if (expandido) 340.dp else 160.dp
         AndroidView(
             factory = { context ->
@@ -273,16 +270,15 @@ fun MapaExpandivel(
     }
 }
 
-private fun buildOpenStreetMapUrl(lat: Double, lon: Double, zoom: Int): String {
+private fun MapaURL(lat: Double, lon: Double, zoom: Int): String {
     return "https://www.openstreetmap.org/#map=$zoom/$lat/$lon"
 }
 
-// ─── Doador card ──────────────────────────────────────────────────────────────
 @Composable
 fun DoadorCard(nome: String, distancia: String) {
     Card(
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = FoodCareWhite),
+        colors = CardDefaults.cardColors(containerColor = Branco),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -290,12 +286,12 @@ fun DoadorCard(nome: String, distancia: String) {
             modifier = Modifier.padding(14.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Avatar placeholder
+
             Box(
                 modifier = Modifier
                     .size(44.dp)
                     .clip(RoundedCornerShape(22.dp))
-                    .background(FoodCareRed.copy(alpha = 0.15f)),
+                    .background(Vermelho.copy(alpha = 0.15f)),
                 contentAlignment = Alignment.Center
             ) {
                 Text(text = "👤", fontSize = 22.sp)
@@ -304,22 +300,22 @@ fun DoadorCard(nome: String, distancia: String) {
             Spacer(modifier = Modifier.width(12.dp))
 
             Column {
-                Text(text = nome, fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = FoodCareTextDark)
+                Text(text = nome, fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = textoEscuro)
                 Text(text = distancia, fontSize = 13.sp, color = Color(0xFF888888))
             }
 
             Spacer(modifier = Modifier.weight(1f))
 
-            // Distance badge
+
             Surface(
                 shape = RoundedCornerShape(20.dp),
-                color = FoodCareRed
+                color = Vermelho
             ) {
                 Text(
                     text = distancia,
                     modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
                     fontSize = 12.sp,
-                    color = FoodCareWhite,
+                    color = Branco,
                     fontWeight = FontWeight.Medium
                 )
             }

@@ -1,5 +1,6 @@
 package com.example.foodcare.view
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -19,23 +20,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.room.util.copy
 import com.example.foodcare.model.FoodCareData.produtos
 import com.example.foodcare.model.FoodCareData.categoriasVisuais
 import com.example.foodcare.model.Produto
+import com.example.foodcare.R
+import com.example.foodcare.ui.theme.*
 
-// ─── Cores centralizadas ───────────────────────────────────────────────────
-val FoodCareRed       = Color(0xFFD32F2F)
-val FoodCareWhite     = Color(0xFFFFFFFF)
-val FoodCareOffWhite  = Color(0xFFF5F5F5)
-val FoodCareTextDark  = Color(0xFF1C1C1C)
-val FoodCareSubText   = Color(0xFF757575)
-val FoodCareDivider   = Color(0xFFEEEEEE)
 
 
 
@@ -48,7 +43,7 @@ private fun emojiParaProduto(categoria: String): String = when {
     else -> "🛒"
 }
 
-// ─── Tela principal ────────────────────────────────────────────────────────
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TelaHomeFeed(
@@ -68,16 +63,16 @@ fun TelaHomeFeed(
     }
 
     Scaffold(
-        containerColor = FoodCareOffWhite,
-        // ── Cabeçalho branco (estilo imagem 1) ──────────────────────────
+        containerColor = BrancoAlt,
+
         topBar = {
             Surface(
-                color = FoodCareWhite,
+                color = Branco,
                 shadowElevation = 3.dp,
                 tonalElevation  = 0.dp
             ) {
                 Column {
-                    // Linha superior: logo + perfil
+
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -86,17 +81,20 @@ fun TelaHomeFeed(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        // Logo
+
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            // Ícone da marca
+
                             Box(
                                 modifier = Modifier
-                                    .size(46.dp)
+                                    .size(80.dp)
                                     .clip(RoundedCornerShape(12.dp))
-                                    .background(FoodCareRed.copy(alpha = 0.08f)),
+                                    .background(Vermelho.copy(alpha = 0.08f)),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Text("🛍️", fontSize = 24.sp)
+                                Image(
+                                    painter = painterResource(id = R.drawable.imagemcesta),
+                                    contentDescription = "Imagem Cesta"
+                                )
                             }
                             Spacer(Modifier.width(10.dp))
                             Column {
@@ -104,36 +102,36 @@ fun TelaHomeFeed(
                                     text       = "FoodCare",
                                     fontWeight = FontWeight.ExtraBold,
                                     fontSize   = 20.sp,
-                                    color      = FoodCareTextDark,
+                                    color      = textoEscuro,
                                     letterSpacing = (-0.3).sp
                                 )
                                 Text(
                                     text     = "Olá, $nomeUsuario 👋",
                                     fontSize = 11.sp,
-                                    color    = FoodCareSubText
+                                    color    = Sub
                                 )
                             }
                         }
 
-                        // Ícone de perfil
+
                         Box(
                             modifier = Modifier
                                 .size(40.dp)
                                 .clip(CircleShape)
-                                .background(FoodCareOffWhite)
+                                .background(BrancoAlt)
                                 .clickable { onPerfilClick() },
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
                                 imageVector        = Icons.Default.Person,
                                 contentDescription = "Perfil",
-                                tint               = FoodCareTextDark,
+                                tint               = textoEscuro,
                                 modifier           = Modifier.size(22.dp)
                             )
                         }
                     }
 
-                    // ── Barra de pesquisa ──────────────────────────────
+
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -163,22 +161,22 @@ fun TelaHomeFeed(
                             singleLine = true,
                             shape      = RoundedCornerShape(24.dp),
                             colors     = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor      = FoodCareRed.copy(alpha = 0.4f),
-                                unfocusedBorderColor    = FoodCareDivider,
-                                focusedContainerColor   = FoodCareWhite,
-                                unfocusedContainerColor = FoodCareOffWhite,
-                                cursorColor             = FoodCareRed
+                                focusedBorderColor      = Vermelho.copy(alpha = 0.4f),
+                                unfocusedBorderColor    = Borda,
+                                focusedContainerColor   = Branco,
+                                unfocusedContainerColor = BrancoAlt,
+                                cursorColor             = Vermelho
                             )
                         )
 
                         Spacer(Modifier.width(8.dp))
 
-                        // Botão de filtro
+
                         Box(
                             modifier = Modifier
                                 .size(46.dp)
                                 .clip(RoundedCornerShape(12.dp))
-                                .background(FoodCareWhite)
+                                .background(Branco)
                                 .shadow(1.dp, RoundedCornerShape(12.dp))
                                 .clickable { },
                             contentAlignment = Alignment.Center
@@ -186,7 +184,7 @@ fun TelaHomeFeed(
                             Icon(
                                 imageVector        = Icons.Default.Tune,
                                 contentDescription = "Filtros",
-                                tint               = FoodCareTextDark,
+                                tint               = textoEscuro,
                                 modifier           = Modifier.size(20.dp)
                             )
                         }
@@ -199,18 +197,18 @@ fun TelaHomeFeed(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .background(FoodCareOffWhite)
+                .background(BrancoAlt)
         ) {
 
-            // ── Chips de categorias ────────────────────────────────────
+
             LazyRow(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(FoodCareWhite)
+                    .background(Branco)
                     .padding(horizontal = 12.dp, vertical = 10.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                // Chip "Todos"
+
                 item {
                     CategoriaChip(
                         nome       = "Todos",
@@ -234,7 +232,7 @@ fun TelaHomeFeed(
 
             Spacer(Modifier.height(4.dp))
 
-            // ── Título da seção ────────────────────────────────────────
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -246,17 +244,17 @@ fun TelaHomeFeed(
                     text       = "Alimentos Sugeridos",
                     fontWeight = FontWeight.Bold,
                     fontSize   = 17.sp,
-                    color      = FoodCareTextDark
+                    color      = textoEscuro
                 )
                 Text(
                     text     = "Ver todos",
                     fontSize = 12.sp,
-                    color    = FoodCareRed,
+                    color    = Vermelho,
                     fontWeight = FontWeight.Medium
                 )
             }
 
-            // ── Grid de produtos ───────────────────────────────────────
+
             if (produtosFiltrados.isEmpty()) {
                 Box(
                     modifier = Modifier
@@ -269,7 +267,7 @@ fun TelaHomeFeed(
                         Spacer(Modifier.height(8.dp))
                         Text(
                             "Nenhum alimento encontrado",
-                            color    = FoodCareSubText,
+                            color    = Sub,
                             fontSize = 14.sp
                         )
                     }
@@ -296,7 +294,7 @@ fun TelaHomeFeed(
     }
 }
 
-// ─── Card de alimento (estilo imagem 1) ───────────────────────────────────
+
 @Composable
 private fun AlimentoCard(produto: Produto, onClick: () -> Unit) {
     var favoritado by remember { mutableStateOf(false) }
@@ -307,10 +305,10 @@ private fun AlimentoCard(produto: Produto, onClick: () -> Unit) {
             .clickable { onClick() },
         shape  = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        colors = CardDefaults.cardColors(containerColor = FoodCareWhite)
+        colors = CardDefaults.cardColors(containerColor = Branco)
     ) {
         Column {
-            // ── Área de imagem / placeholder ──────────────────────────
+
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -320,34 +318,14 @@ private fun AlimentoCard(produto: Produto, onClick: () -> Unit) {
                         shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
                     )
             ) {
-                // Emoji central representativo
+
                 Text(
                     text     = emojiParaProduto(produto.categoria),
                     fontSize = 42.sp,
                     modifier = Modifier.align(Alignment.Center)
                 )
 
-                // Botão de favoritar (coração) — canto superior direito
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .padding(8.dp)
-                        .size(28.dp)
-                        .clip(CircleShape)
-                        .background(FoodCareWhite.copy(alpha = 0.8f))
-                        .clickable { favoritado = !favoritado },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = if (favoritado) Icons.Default.Favorite
-                        else            Icons.Default.FavoriteBorder,
-                        contentDescription = "Favoritar",
-                        tint     = FoodCareRed,
-                        modifier = Modifier.size(15.dp)
-                    )
-                }
 
-                // Badge de distância — canto inferior esquerdo
                 Box(
                     modifier = Modifier
                         .align(Alignment.BottomStart)
@@ -359,13 +337,13 @@ private fun AlimentoCard(produto: Produto, onClick: () -> Unit) {
                     Text(
                         text     = "📍 ${produto.distancia}",
                         fontSize = 9.sp,
-                        color    = FoodCareWhite,
+                        color    = Branco,
                         fontWeight = FontWeight.Medium
                     )
                 }
             }
 
-            // ── Informações ───────────────────────────────────────────
+
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -375,7 +353,7 @@ private fun AlimentoCard(produto: Produto, onClick: () -> Unit) {
                     text       = produto.nome,
                     fontSize   = 13.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color      = FoodCareTextDark,
+                    color      = textoEscuro,
                     maxLines   = 2,
                     overflow   = TextOverflow.Ellipsis
                 )
@@ -386,7 +364,7 @@ private fun AlimentoCard(produto: Produto, onClick: () -> Unit) {
 
                 Spacer(Modifier.height(8.dp))
 
-                // Linha inferior: disponibilidade + botão "+"
+
                 Row(
                     modifier              = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -395,21 +373,21 @@ private fun AlimentoCard(produto: Produto, onClick: () -> Unit) {
                     Text(
                         text     = "🕐 ${produto.validade}",
                         fontSize = 10.sp,
-                        color    = FoodCareSubText
+                        color    = Sub
                     )
 
                     Box(
                         modifier = Modifier
                             .size(26.dp)
                             .clip(CircleShape)
-                            .background(FoodCareRed)
+                            .background(Vermelho)
                             .clickable { onClick() },
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector        = Icons.Default.Add,
                             contentDescription = "Adicionar",
-                            tint               = FoodCareWhite,
+                            tint               = Branco,
                             modifier           = Modifier.size(14.dp)
                         )
                     }
@@ -419,7 +397,7 @@ private fun AlimentoCard(produto: Produto, onClick: () -> Unit) {
     }
 }
 
-// ─── Chip de categoria ─────────────────────────────────────────────────────
+
 @Composable
 private fun CategoriaChip(
     nome: String,
@@ -427,8 +405,8 @@ private fun CategoriaChip(
     selecionado: Boolean,
     onClick: () -> Unit
 ) {
-    val bg    = if (selecionado) FoodCareRed else FoodCareOffWhite
-    val texto = if (selecionado) FoodCareWhite else FoodCareTextDark
+    val bg    = if (selecionado) Vermelho else BrancoAlt
+    val texto = if (selecionado) Branco else textoEscuro
 
     Box(
         modifier = Modifier

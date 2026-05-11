@@ -22,7 +22,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
+import com.example.foodcare.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,12 +48,12 @@ fun TelaCadastroReceptor(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Voltar",
-                            tint = FoodCareRed
+                            tint = Vermelho
                         )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = FoodCareOffWhite
+                    containerColor = BrancoAlt
                 )
             )
         }
@@ -61,7 +61,7 @@ fun TelaCadastroReceptor(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(FoodCareOffWhite)
+                .background(BrancoAlt)
                 .padding(innerPadding)
                 .padding(horizontal = 28.dp)
                 .verticalScroll(rememberScrollState()),
@@ -74,7 +74,7 @@ fun TelaCadastroReceptor(
                 text = "Cadastrar - Receptor",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
-                color = FoodCareTextDark
+                color = textoEscuro
             )
 
             Spacer(modifier = Modifier.height(28.dp))
@@ -168,10 +168,10 @@ fun TelaCadastroReceptor(
                 TextButton(onClick = onJaTenhoConta) {
                     Text(
                         text = buildAnnotatedString {
-                            withStyle(SpanStyle(color = FoodCareTextDark)) {
+                            withStyle(SpanStyle(color = textoEscuro)) {
                                 append("Já tem uma conta? ")
                             }
-                            withStyle(SpanStyle(color = FoodCareRed, fontWeight = FontWeight.Bold)) {
+                            withStyle(SpanStyle(color = Vermelho, fontWeight = FontWeight.Bold)) {
                                 append("Entre agora")
                             }
                         },

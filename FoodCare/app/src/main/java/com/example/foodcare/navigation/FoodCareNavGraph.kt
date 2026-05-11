@@ -18,7 +18,6 @@ fun FoodCareNavGraph(
         startDestination = Routes.TELA_INICIAL
     ) {
 
-        // ── Tela Inicial ──────────────────────────────────────────────────────
         composable(Routes.TELA_INICIAL) {
             TelaInicial(
                 onEntrarClick    = { navController.navigate(Routes.LOGIN) },
@@ -27,12 +26,10 @@ fun FoodCareNavGraph(
             )
         }
 
-        // ── Quem Somos ────────────────────────────────────────────────────────
         composable(Routes.QUEM_SOMOS) {
             TelaQuemSomos(onVoltar = { navController.popBackStack() })
         }
 
-        // ── Login ─────────────────────────────────────────────────────────────
         composable(Routes.LOGIN) {
             TelaLogin(
                 onLoginClick  = {
@@ -50,7 +47,6 @@ fun FoodCareNavGraph(
             )
         }
 
-        // ── Cadastro Receptor ─────────────────────────────────────────────────
         composable(Routes.CADASTRO_RECEPTOR) {
             TelaCadastroReceptor(
                 onEntrar = {
@@ -63,21 +59,17 @@ fun FoodCareNavGraph(
             )
         }
 
-        // ── Main (hub com BottomNavigationBar) ────────────────────────────────
-        // Alterna entre TelaHomeFeed (receptor) e TelaHomeFeedDoador via BottomNav.
-        // TODO: passar nomeUsuario e nomeDoador do ViewModel / sessão
         composable(Routes.MAIN) {
-            MainScreen(
-                nomeUsuario                 = "",   // TODO: ViewModel
-                nomeDoador                  = "",   // TODO: ViewModel
-                doacoesPendentes            = emptyList(), // TODO: ViewModel
+            TelaHomeFeedPrincipal(
+                nomeUsuario                 = "",
+                nomeDoador                  = "",
+                doacoesPendentes            = emptyList(),
                 onProdutoClick              = { id -> navController.navigate(Routes.produto(id)) },
                 onPerfilClick               = { navController.navigate(Routes.PERFIL_PROPRIO) },
                 onRegistrarNovaDoacao       = { navController.navigate(Routes.CADASTRAR_ALIMENTO) }
             )
         }
 
-        // ── Produto (detalhe) ─────────────────────────────────────────────────
         composable(
             route     = Routes.PRODUTO,
             arguments = listOf(navArgument("produtoId") { type = NavType.IntType })
@@ -90,7 +82,6 @@ fun FoodCareNavGraph(
             )
         }
 
-        // ── Produto Requisitado ───────────────────────────────────────────────
         composable(
             route     = Routes.PRODUTO_REQ,
             arguments = listOf(navArgument("produtoId") { type = NavType.IntType })
@@ -106,7 +97,6 @@ fun FoodCareNavGraph(
             )
         }
 
-        // ── Perfil próprio ────────────────────────────────────────────────────
         composable(Routes.PERFIL_PROPRIO) {
             TelaPerfil(
                 onVoltar       = { navController.popBackStack() },
@@ -119,7 +109,6 @@ fun FoodCareNavGraph(
             )
         }
 
-        // ── Perfil público de doador ───────────────────────────────────────────
         composable(
             route     = Routes.PERFIL_DOADOR_PUBLICO,
             arguments = listOf(navArgument("doadorId") { type = NavType.IntType })
@@ -129,30 +118,22 @@ fun FoodCareNavGraph(
             )
         }
 
-        // ── Fluxo de nova doação ──────────────────────────────────────────────
 
-        // Passo 1: Dados do alimento
-        // TODO: injetar CadastrarDoacaoViewModel compartilhado entre os dois passos
-        //   val vm: CadastrarDoacaoViewModel = hiltViewModel()
         composable(Routes.CADASTRAR_ALIMENTO) {
             TelaCadastrarAlimento(
-                categorias = emptyList(), // TODO: vm.categorias.collectAsState()
+                categorias = emptyList(),
                 onVoltar   = { navController.popBackStack() },
                 onProximo  = { alimentoData ->
-                    // TODO: vm.salvarAlimentoTemp(alimentoData)
                     navController.navigate(Routes.CADASTRAR_DOACAO)
                 }
             )
         }
 
-        // Passo 2: Dados da doação
-        // TODO: injetar mesmo ViewModel do passo 1 e recuperar AlimentoFormData
         composable(Routes.CADASTRAR_DOACAO) {
             TelaCadastrarDoacao(
                 alimentoFormData = AlimentoFormData("", "", 0, "", 0), // TODO: vm.alimentoTemp
                 onVoltar         = { navController.popBackStack() },
                 onConfirmar      = { doacaoData ->
-                    // TODO: vm.cadastrarDoacao(doacaoData) → chama API → navega ao Main
                     navController.navigate(Routes.MAIN) {
                         popUpTo(Routes.MAIN) { inclusive = true }
                     }

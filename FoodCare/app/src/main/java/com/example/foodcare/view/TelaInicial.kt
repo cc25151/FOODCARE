@@ -12,22 +12,17 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.drawscope.translate
 import kotlinx.coroutines.delay
+import androidx.compose.foundation.Image
+import androidx.compose.ui.res.painterResource
+import com.example.foodcare.R
 import com.example.foodcare.ui.theme.*
 
 
@@ -38,27 +33,27 @@ fun TelaInicial(
     onCadastrarClick: () -> Unit = {},
     onQuemSomosClick: () -> Unit ={}
 ) {
-    var visible by remember { mutableStateOf(false) }
+    var visivel by remember { mutableStateOf(false) }
     val alpha by animateFloatAsState(
-        targetValue = if (visible) 1f else 0f,
+        targetValue = if (visivel) 1f else 0f,
         animationSpec = tween(durationMillis = 800, easing = EaseInOutCubic),
         label = "alpha"
     )
     val slideY by animateFloatAsState(
-        targetValue = if (visible) 0f else 60f,
+        targetValue = if (visivel) 0f else 60f,
         animationSpec = tween(durationMillis = 700, easing = EaseOutBack),
         label = "slideY"
     )
 
     LaunchedEffect(Unit) {
         delay(200)
-        visible = true
+        visivel = true
     }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(FoodCareOffWhite),
+            .background(BrancoAlt),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
@@ -68,7 +63,7 @@ fun TelaInicial(
                 .weight(0.52f)
                 .background(
                     brush = Brush.verticalGradient(
-                        colors = listOf(FoodCareLightRed, FoodCareDarkRed)
+                        colors = listOf(vermClaro, vermEscuro)
                     )
                 ),
             contentAlignment = Alignment.Center
@@ -89,13 +84,13 @@ fun TelaInicial(
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
                     text = "FoodCare",
-                    color = FoodCareWhite,
+                    color = Branco,
                     fontSize = 28.sp,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 1.sp,
                     modifier = Modifier.padding(bottom = 24.dp)
                 )
-                FoodCareIllustration(
+                LogoBranca(
                     modifier = Modifier
                         .size(200.dp)
                         .padding(8.dp)
@@ -149,14 +144,14 @@ fun TelaInicial(
                 FoodCareButton(
                     text = "Entrar",
                     onClick = onEntrarClick,
-                    backgroundColor = FoodCareRed,
-                    textColor = FoodCareWhite
+                    backgroundColor = Vermelho,
+                    textColor = Branco
                 )
                 FoodCareButton(
                     text = "Cadastrar",
                     onClick = onCadastrarClick,
-                    backgroundColor = FoodCareRed,
-                    textColor = FoodCareWhite
+                    backgroundColor = Vermelho,
+                    textColor = Branco
                 )
             }
         }
@@ -168,13 +163,13 @@ fun TelaInicial(
 fun FoodCareButton(
     text: String,
     onClick: () -> Unit,
-    backgroundColor: Color = FoodCareRed,
-    textColor: Color = FoodCareWhite,
+    backgroundColor: Color = Vermelho,
+    textColor: Color = Branco,
     outlined: Boolean = false
 ) {
-    var pressed by remember { mutableStateOf(false) }
-    val scale by animateFloatAsState(
-        targetValue = if (pressed) 0.97f else 1f,
+    var pressionado by remember { mutableStateOf(false) }
+    val escala by animateFloatAsState(
+        targetValue = if (pressionado) 0.97f else 1f,
         animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
         label = "btnScale"
     )
@@ -185,10 +180,10 @@ fun FoodCareButton(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(52.dp)
-                .scale(scale),
+                .scale(escala),
             shape = RoundedCornerShape(12.dp),
-            colors = ButtonDefaults.outlinedButtonColors(contentColor = FoodCareRed),
-            border = androidx.compose.foundation.BorderStroke(1.5.dp, FoodCareRed)
+            colors = ButtonDefaults.outlinedButtonColors(contentColor = Vermelho),
+            border = androidx.compose.foundation.BorderStroke(1.5.dp, Vermelho)
         ) {
             Text(text = text, fontSize = 16.sp, fontWeight = FontWeight.SemiBold, letterSpacing = 0.5.sp)
         }
@@ -198,7 +193,7 @@ fun FoodCareButton(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(52.dp)
-                .scale(scale)
+                .scale(escala)
                 .shadow(elevation = 4.dp, shape = RoundedCornerShape(12.dp)),
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(
@@ -214,82 +209,20 @@ fun FoodCareButton(
 
 
 @Composable
-fun FoodCareIllustration(modifier: Modifier = Modifier) {
-    val infiniteTransition = rememberInfiniteTransition(label = "pulse")
-    val heartScale by infiniteTransition.animateFloat(
-        initialValue = 1f,
-        targetValue = 1.12f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(700, easing = EaseInOutSine),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "heartScale"
+fun LogoBranca(modifier: Modifier = Modifier) {
+    Image(
+        painter = painterResource(id = R.drawable.logofoodcarebranca),
+        contentDescription = "Logo FoodCare",
+        modifier = modifier
     )
 
-    Canvas(modifier = modifier) {
-        val w = size.width
-        val h = size.height
-        val strokeW = w * 0.035f
+}
 
-        val handPath = Path().apply {
-            moveTo(w * 0.18f, h * 0.82f)
-            cubicTo(w * 0.10f, h * 0.75f, w * 0.08f, h * 0.60f, w * 0.20f, h * 0.58f)
-            cubicTo(w * 0.30f, h * 0.55f, w * 0.34f, h * 0.62f, w * 0.38f, h * 0.62f)
-            lineTo(w * 0.62f, h * 0.62f)
-            cubicTo(w * 0.72f, h * 0.62f, w * 0.76f, h * 0.68f, w * 0.74f, h * 0.76f)
-            cubicTo(w * 0.70f, h * 0.85f, w * 0.55f, h * 0.88f, w * 0.42f, h * 0.88f)
-            close()
-        }
-        drawPath(handPath, color = Color.White, style = Stroke(width = strokeW, cap = StrokeCap.Round))
-
-        val breadLeft   = w * 0.08f
-        val breadTop    = h * 0.30f
-        val breadRight  = w * 0.40f
-        val breadBottom = h * 0.58f
-        drawRoundRect(
-            color = Color.White,
-            topLeft = Offset(breadLeft, breadTop),
-            size = Size(breadRight - breadLeft, breadBottom - breadTop),
-            cornerRadius = androidx.compose.ui.geometry.CornerRadius(w * 0.06f),
-            style = Stroke(width = strokeW, cap = StrokeCap.Round)
-        )
-        drawLine(Color.White,
-            Offset(breadLeft + (breadRight - breadLeft) * 0.35f, breadTop + 8f),
-            Offset(breadLeft + (breadRight - breadLeft) * 0.35f, breadBottom - 8f),
-            strokeW * 0.7f)
-
-        val cartonLeft   = w * 0.60f
-        val cartonTop    = h * 0.20f
-        val cartonRight  = w * 0.88f
-        val cartonBottom = h * 0.60f
-        drawRoundRect(
-            color = Color.White,
-            topLeft = Offset(cartonLeft, cartonTop + h * 0.10f),
-            size = Size(cartonRight - cartonLeft, cartonBottom - cartonTop - h * 0.10f),
-            cornerRadius = androidx.compose.ui.geometry.CornerRadius(w * 0.04f),
-            style = Stroke(width = strokeW, cap = StrokeCap.Round)
-        )
-        val roofPath = Path().apply {
-            moveTo(cartonLeft, cartonTop + h * 0.10f)
-            lineTo((cartonLeft + cartonRight) / 2f, cartonTop)
-            lineTo(cartonRight, cartonTop + h * 0.10f)
-        }
-        drawPath(roofPath, color = Color.White, style = Stroke(width = strokeW, cap = StrokeCap.Round))
-
-        val hx = w * 0.50f
-        val hy = h * 0.48f
-        val hr = w * 0.12f * heartScale
-        translate(hx - hr, hy - hr) {
-            val heartPath = Path().apply {
-                val hw = hr * 2f
-                moveTo(hw / 2f, hw * 0.75f)
-                cubicTo(0f, hw * 0.45f, 0f, hw * 0.10f, hw / 4f, hw * 0.10f)
-                cubicTo(hw * 0.375f, hw * 0.10f, hw / 2f, hw * 0.30f, hw / 2f, hw * 0.30f)
-                cubicTo(hw / 2f, hw * 0.30f, hw * 0.625f, hw * 0.10f, hw * 0.75f, hw * 0.10f)
-                cubicTo(hw, hw * 0.10f, hw, hw * 0.45f, hw / 2f, hw * 0.75f)
-                close()
-            }
-            drawPath(heartPath, color = Color.White)
-        }
-    }
+@Composable
+fun LogoPreta(modifier: Modifier = Modifier){
+    Image(
+        painter = painterResource(id = R.drawable.logofoodcarepreta),
+        contentDescription = "Logo FoodCare",
+        modifier = modifier
+    )
 }

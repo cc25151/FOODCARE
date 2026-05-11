@@ -21,10 +21,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.foodcare.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -47,12 +47,12 @@ fun TelaLogin(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Voltar",
-                            tint = FoodCareRed
+                            tint = Vermelho
                         )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = FoodCareOffWhite
+                    containerColor = BrancoAlt
                 )
             )
         }
@@ -60,7 +60,7 @@ fun TelaLogin(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(FoodCareOffWhite)
+                .background(BrancoAlt)
                 .padding(innerPadding)
                 .padding(horizontal = 28.dp)
                 .verticalScroll(rememberScrollState()),
@@ -73,7 +73,7 @@ fun TelaLogin(
                 text = "Entrar",
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
-                color = FoodCareTextDark
+                color = textoEscuro
             )
 
             Spacer(modifier = Modifier.height(32.dp))
@@ -131,15 +131,15 @@ fun TelaLogin(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Google button
+
             OutlinedButton(
                 onClick = onGoogleLogin,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(52.dp),
                 shape = RoundedCornerShape(12.dp),
-                border = androidx.compose.foundation.BorderStroke(1.5.dp, FoodCareRed),
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = FoodCareRed)
+                border = androidx.compose.foundation.BorderStroke(1.5.dp, Vermelho),
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = Vermelho)
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -149,30 +149,29 @@ fun TelaLogin(
                         text = "Entrar com o Google",
                         fontSize = 15.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = FoodCareRed
+                        color = Vermelho
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    // Simple "G" letter as placeholder for Google icon
+
                     Text(
                         text = "G",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.ExtraBold,
-                        color = FoodCareRed
+                        color = Vermelho
                     )
                 }
             }
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Create account link
             Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                 TextButton(onClick = onCriarConta) {
                     Text(
                         text = buildAnnotatedString {
-                            withStyle(SpanStyle(color = FoodCareTextDark)) {
+                            withStyle(SpanStyle(color = textoEscuro)) {
                                 append("Não tem uma conta? ")
                             }
-                            withStyle(SpanStyle(color = FoodCareRed, fontWeight = FontWeight.Bold)) {
+                            withStyle(SpanStyle(color = Vermelho, fontWeight = FontWeight.Bold)) {
                                 append("Crie Uma")
                             }
                         },
@@ -190,7 +189,6 @@ fun TelaLogin(
     }
 }
 
-// ─── Shared composables ───────────────────────────────────────────────────────
 
 @Composable
 fun FieldLabel(text: String) {
@@ -198,7 +196,7 @@ fun FieldLabel(text: String) {
         text = text,
         fontSize = 14.sp,
         fontWeight = FontWeight.Medium,
-        color = FoodCareTextDark
+        color = textoEscuro
     )
 }
 
@@ -222,12 +220,12 @@ fun FoodCareTextField(
         visualTransformation = visualTransformation,
         trailingIcon = trailingIcon,
         colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = FoodCareRed,
+            focusedBorderColor = Vermelho,
             unfocusedBorderColor = Color(0xFFDDDDDD),
-            focusedLabelColor = FoodCareRed,
-            cursorColor = FoodCareRed,
-            focusedContainerColor = FoodCareWhite,
-            unfocusedContainerColor = FoodCareWhite
+            focusedLabelColor = Vermelho,
+            cursorColor = Vermelho,
+            focusedContainerColor = Branco,
+            unfocusedContainerColor = Branco
         )
     )
 }

@@ -21,36 +21,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.foodcare.ui.theme.*
 
-// ─── Paleta ───────────────────────────────────────────────────────────────────
-private val DVermelho    = Color(0xFFD32F2F)
-private val DVermelhoEsc = Color(0xFFAA1515)
-private val DVermelhoClr = Color(0xFFE53935)
-private val DBranco      = Color(0xFFFFFFFF)
-private val DFundo       = Color(0xFFF5F5F5)
-private val DTexto       = Color(0xFF1C1C1C)
-private val DSubTexto    = Color(0xFF757575)
-private val DDivisor     = Color(0xFFEEEEEE)
-private val DAmbar       = Color(0xFFFFA000)
 
-// ─────────────────────────────────────────────────────────────────────────────
-//  TelaPerfilDoadorPublico
-//
-//  Exibe SOMENTE informações de conhecimento público de um Doador.
-//  Campos sensíveis (email, documento, CEP, rua, número, coordenadas)
-//  NÃO aparecem nesta tela — omissão intencional de design.
-//
-//  Parâmetros que virão da API via endpoint público de doadores:
-//    GET /api/doadores/{idDoador}/publico
-//
-//  Campos da tabela Usuario (públicos): nome, tipoPessoa, cidade, bairro
-//  Campo da tabela Doador:             pontuacao
-// ─────────────────────────────────────────────────────────────────────────────
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TelaPerfilDoadorPublico(
     nome: String       = "",
-    tipoPessoa: String = "",   // "PF" ou "PJ"
+    tipoPessoa: String = "",
     cidade: String     = "",
     bairro: String     = "",
     pontuacao: Double? = null,
@@ -96,7 +74,6 @@ fun TelaPerfilDoadorPublico(
                 .verticalScroll(rememberScrollState())
         ) {
 
-            // ── Hero ──────────────────────────────────────────────────────────
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -108,7 +85,6 @@ fun TelaPerfilDoadorPublico(
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
-                    // Avatar com inicial
                     Box(
                         modifier = Modifier
                             .size(84.dp)
@@ -129,7 +105,6 @@ fun TelaPerfilDoadorPublico(
                     Text(nome, fontSize = 22.sp, fontWeight = FontWeight.Bold, color = DBranco)
                     Spacer(Modifier.height(8.dp))
 
-                    // Badge: Doador · tipo de pessoa
                     Surface(
                         shape = RoundedCornerShape(20.dp),
                         color = DBranco.copy(alpha = 0.2f)
@@ -152,7 +127,6 @@ fun TelaPerfilDoadorPublico(
 
                     Spacer(Modifier.height(14.dp))
 
-                    // Estrelas
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(3.dp)
@@ -177,7 +151,6 @@ fun TelaPerfilDoadorPublico(
                 }
             }
 
-            // ── Aviso de privacidade ──────────────────────────────────────────
             Surface(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -200,13 +173,11 @@ fun TelaPerfilDoadorPublico(
                 }
             }
 
-            // ── Cards de informação pública ───────────────────────────────────
             Column(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(14.dp)
             ) {
 
-                // Localização pública: apenas cidade e bairro
                 CardSecao("Localização", Icons.Default.LocationOn) {
                     LinhaDetalhe(Icons.Default.LocationCity, "Cidade",
                         if (cidade.isBlank()) "—" else cidade)
@@ -214,7 +185,6 @@ fun TelaPerfilDoadorPublico(
                         if (bairro.isBlank()) "—" else bairro)
                 }
 
-                // Avaliação detalhada
                 CardSecao("Avaliação da Comunidade", Icons.Default.Star) {
                     Row(
                         modifier = Modifier
@@ -248,7 +218,6 @@ fun TelaPerfilDoadorPublico(
                     }
                 }
 
-                // Tipo de cadastro
                 CardSecao("Tipo de Cadastro", Icons.Default.Badge) {
                     LinhaDetalhe(Icons.Default.AssignmentInd, "Categoria",
                         if (tipoPessoa == "PJ") "Pessoa Jurídica" else "Pessoa Física")

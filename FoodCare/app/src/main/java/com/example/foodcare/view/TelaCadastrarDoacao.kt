@@ -21,39 +21,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.foodcare.ui.theme.*
 
-// ─── Paleta ───────────────────────────────────────────────────────────────────
-private val CDVermelho  = Color(0xFFD32F2F)
-private val CDVermelhoE = Color(0xFFAA1515)
-private val CDVermelhoC = Color(0xFFE53935)
-private val CDBranco    = Color(0xFFFFFFFF)
-private val CDFundo     = Color(0xFFF5F5F5)
-private val CDTexto     = Color(0xFF1C1C1C)
-private val CDSub       = Color(0xFF757575)
-private val CDBorda     = Color(0xFFDDDDDD)
-private val CDVerde     = Color(0xFF2E7D32)
-private val CDVerdeBg   = Color(0xFFE8F5E9)
 
-// ─────────────────────────────────────────────────────────────────────────────
-//  TelaCadastrarDoacao  —  Passo 2 de 2 do fluxo de nova doação
-//
-//  Campos mapeados à tabela FoodCare.Doacao:
-//    dataDoacao      date       → data em que a doação ocorrerá
-//    horarioInicial  time       → início da janela de retirada
-//    horarioFinal    time       → fim da janela de retirada
-//
-//  Campos resolvidos automaticamente pelo backend:
-//    idDoador    → token de sessão
-//    idAlimento  → retornado pela API após salvar o Alimento no passo 1
-//    idReceptor  → null inicialmente (receptor seleciona depois)
-//    avaliacao   → null inicialmente
-//
-//  Parâmetros de entrada:
-//    alimentoFormData → dados do passo 1
-//    onVoltar         → volta para TelaCadastrarAlimento
-//    onConfirmar      → envia os dois formulários para a API e navega para
-//                       a tela de confirmação / HomeFeedDoador
-// ─────────────────────────────────────────────────────────────────────────────
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TelaCadastrarDoacao(
@@ -96,10 +67,8 @@ fun TelaCadastrarDoacao(
                 .verticalScroll(rememberScrollState())
         ) {
 
-            // ── Indicador de progresso ────────────────────────────────────────
             IndicadorPassos(passoAtual = 2, totalPassos = 2)
 
-            // ── Cabeçalho ─────────────────────────────────────────────────────
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -125,7 +94,7 @@ fun TelaCadastrarDoacao(
                 verticalArrangement = Arrangement.spacedBy(18.dp)
             ) {
 
-                // ── Resumo do alimento (passo 1) ──────────────────────────────
+
                 Card(
                     shape  = RoundedCornerShape(14.dp),
                     colors = CardDefaults.cardColors(containerColor = CDBranco),
@@ -175,7 +144,7 @@ fun TelaCadastrarDoacao(
 
                 HorizontalDivider(color = Color(0xFFEEEEEE))
 
-                // ── Data da doação — Doacao.dataDoacao (date) ─────────────────
+
                 CampoFormulario(
                     label       = "Data da doação *",
                     icone       = Icons.Default.Today,
@@ -189,7 +158,7 @@ fun TelaCadastrarDoacao(
                     )
                 }
 
-                // ── Horário inicial — Doacao.horarioInicial (time) ────────────
+
                 CampoFormulario(
                     label       = "Horário de início *",
                     icone       = Icons.Default.Schedule,
@@ -203,7 +172,7 @@ fun TelaCadastrarDoacao(
                     )
                 }
 
-                // ── Horário final — Doacao.horarioFinal (time) ────────────────
+
                 CampoFormulario(
                     label       = "Horário de encerramento *",
                     icone       = Icons.Default.HourglassBottom,
@@ -217,7 +186,7 @@ fun TelaCadastrarDoacao(
                     )
                 }
 
-                // Aviso: campos resolvidos pelo backend
+
                 Surface(
                     shape = RoundedCornerShape(10.dp),
                     color = Color(0xFFF3E5F5),
@@ -243,7 +212,7 @@ fun TelaCadastrarDoacao(
 
                 Spacer(Modifier.height(4.dp))
 
-                // ── Botão confirmar ───────────────────────────────────────────
+
                 Button(
                     onClick = {
                         if (camposValidos) confirmacaoVisivel = true
@@ -269,7 +238,7 @@ fun TelaCadastrarDoacao(
         }
     }
 
-    // ── Dialog de confirmação ─────────────────────────────────────────────────
+
     if (confirmacaoVisivel) {
         AlertDialog(
             onDismissRequest = { confirmacaoVisivel = false },
@@ -322,12 +291,7 @@ fun TelaCadastrarDoacao(
     }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-//  DoacaoFormData
-//  Dados coletados no passo 2.
-//  Combinado com AlimentoFormData pelo ViewModel antes de enviar à API:
-//    POST /api/doacoes  { alimento: AlimentoFormData, doacao: DoacaoFormData }
-// ─────────────────────────────────────────────────────────────────────────────
+
 data class DoacaoFormData(
     val dataDoacao: String,
     val horarioInicial: String,

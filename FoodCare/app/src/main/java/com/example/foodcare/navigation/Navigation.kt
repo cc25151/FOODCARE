@@ -6,7 +6,6 @@ object Routes {
     const val LOGIN             = "login"
     const val CADASTRO_RECEPTOR = "cadastro_receptor"
 
-    // Hub pós-login com BottomNavigationBar
     const val MAIN              = "main"
 
     const val PRODUTO           = "produto/{produtoId}"
@@ -14,11 +13,9 @@ object Routes {
     const val PERFIL_PROPRIO    = "perfil"
     const val PERFIL_DOADOR_PUBLICO = "perfil_doador_publico/{doadorId}"
 
-    // ── Fluxo de nova doação (doador) ─────────────────────────────────────────
-    // Passo 1: dados do alimento (nome, descrição, qtd, validade, categoria)
+
     const val CADASTRAR_ALIMENTO = "cadastrar_alimento"
-    // Passo 2: dados da doação (data, horário início, horário fim)
-    // Os dados do passo 1 são mantidos no ViewModel compartilhado entre os passos.
+
     const val CADASTRAR_DOACAO   = "cadastrar_doacao"
 
     fun produto(id: Int)             = "produto/$id"

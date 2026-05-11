@@ -9,55 +9,35 @@ import androidx.compose.material.icons.filled.VolunteerActivism
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.foodcare.ui.theme.*
 
-// ─── Paleta ───────────────────────────────────────────────────────────────────
-private val MSRed      = Color(0xFFD32F2F)
-private val MSWhite    = Color(0xFFFFFFFF)
-private val MSOffWhite = Color(0xFFF5F5F5)
-private val MSGray     = Color(0xFF9E9E9E)
 
-// ─── Abas da barra inferior ───────────────────────────────────────────────────
 private enum class NavTab(val label: String, val icon: ImageVector) {
     RECEPTOR("Receptor",  Icons.Default.Home),
     DOADOR  ("Doador",    Icons.Default.VolunteerActivism)
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-//  MainScreen
-//
-//  Scaffold raiz com BottomNavigationBar.
-//  Alterna entre TelaHomeFeed (receptor) e TelaHomeFeedDoador.
-//
-//  TODO (implementar posteriormente):
-//    · Mostrar/ocultar abas conforme tipoUsuario vindo da API
-//    · Passar nomeUsuario / nomeDoador / doacoesPendentes do ViewModel
-// ─────────────────────────────────────────────────────────────────────────────
 @Composable
-fun MainScreen(
-    // Dados vindos do ViewModel / API
+fun TelaHomeFeedPrincipal(
+
     nomeUsuario: String                  = "",
     nomeDoador: String                   = "",
     doacoesPendentes: List<DoacaoPendenteUi> = emptyList(),
-
-    // Callbacks de navegação — receptor
     onProdutoClick: (Int) -> Unit        = {},
     onPerfilClick: () -> Unit            = {},
-
-    // Callbacks de navegação — doador
     onRegistrarNovaDoacao: () -> Unit    = {}
 ) {
     var tabAtiva by remember { mutableStateOf(NavTab.RECEPTOR) }
 
     Scaffold(
-        containerColor = MSOffWhite,
+        containerColor = BrancoAlt,
         bottomBar = {
             NavigationBar(
-                containerColor = MSWhite,
+                containerColor = Branco,
                 tonalElevation = 0.dp
             ) {
                 NavTab.entries.forEach { tab ->
@@ -80,11 +60,11 @@ fun MainScreen(
                             )
                         },
                         colors = NavigationBarItemDefaults.colors(
-                            selectedIconColor   = MSRed,
-                            selectedTextColor   = MSRed,
-                            unselectedIconColor = MSGray,
-                            unselectedTextColor = MSGray,
-                            indicatorColor      = MSRed.copy(alpha = 0.10f)
+                            selectedIconColor   = Vermelho,
+                            selectedTextColor   = Vermelho,
+                            unselectedIconColor = Cinza,
+                            unselectedTextColor = Cinza,
+                            indicatorColor      = Vermelho.copy(alpha = 0.10f)
                         )
                     )
                 }

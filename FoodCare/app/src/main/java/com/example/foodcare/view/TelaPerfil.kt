@@ -22,62 +22,36 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.foodcare.ui.theme.*
 
-// ─── Paleta ───────────────────────────────────────────────────────────────────
-private val PVermelho    = Color(0xFFD32F2F)
-private val PVermelhoEsc = Color(0xFFAA1515)
-private val PVermelhoClr = Color(0xFFE53935)
-private val PBranco      = Color(0xFFFFFFFF)
-private val PFundo       = Color(0xFFF5F5F5)
-private val PTexto       = Color(0xFF1C1C1C)
-private val PSubTexto    = Color(0xFF757575)
-private val PDivisor     = Color(0xFFEEEEEE)
-private val PVerde       = Color(0xFF2E7D32)
-private val PVerdeFundo  = Color(0xFFE8F5E9)
-private val PAzul        = Color(0xFF1565C0)
-private val PAzulFundo   = Color(0xFFE3F2FD)
 
-// ─────────────────────────────────────────────────────────────────────────────
-//  TelaPerfil
-//
-//  Todos os parâmetros de dados são recebidos prontos do ViewModel/API.
-//  Os valores padrão vazios garantem compilação; substitua pelo estado real.
-//
-//  Campos da tabela Usuario:
-//    nome, email, documento (mascarado pelo backend), tipoPessoa ("PF"/"PJ"),
-//    cidade, bairro, rua, numero, cep
-//  Campo da tabela Doador:
-//    pontuacao (Double? — null quando o usuário for Receptor)
-//  Campo derivado:
-//    tipoUsuario ("DOADOR" | "RECEPTOR")
-// ─────────────────────────────────────────────────────────────────────────────
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TelaPerfil(
     nome: String        = "",
     email: String       = "",
-    documento: String   = "",   // CPF ou CNPJ mascarado
-    tipoPessoa: String  = "",   // "PF" ou "PJ"
-    tipoUsuario: String = "",   // "DOADOR" ou "RECEPTOR"
+    documento: String   = "",
+    tipoPessoa: String  = "",
+    tipoUsuario: String = "",
     cidade: String      = "",
     bairro: String      = "",
     rua: String         = "",
     numero: String      = "",
     cep: String         = "",
-    pontuacao: Double?  = null, // Apenas Doadores possuem
+    pontuacao: Double?  = null,
 
     onVoltar: () -> Unit       = {},
     onEditarPerfil: () -> Unit = {},
     onLogout: () -> Unit       = {}
 ) {
-    val isDoador      = tipoUsuario == "DOADOR"
-    val tipoLabel     = if (isDoador) "Doador" else "Receptor"
-    val tipoEmoji     = if (isDoador) "🤝" else "🙏"
-    val tipoColor     = if (isDoador) PVerde else PAzul
-    val tipoBg        = if (isDoador) PVerdeFundo else PAzulFundo
-    val tipoIcone     = if (isDoador) Icons.Default.VolunteerActivism
+    val ehDoador      = tipoUsuario == "DOADOR"
+    val tipoLabel     = if (ehDoador) "Doador" else "Receptor"
+    val tipoEmoji     = if (ehDoador) "🤝" else "🙏"
+    val tipoColor     = if (ehDoador) PVerde else PAzul
+    val tipoBg        = if (ehDoador) PVerdeFundo else PAzulFundo
+    val tipoIcone     = if (ehDoador) Icons.Default.VolunteerActivism
     else          Icons.Default.CardGiftcard
-    val tipoMensagem  = if (isDoador) "Obrigado por contribuir com a comunidade! 💚"
+    val tipoMensagem  = if (ehDoador) "Obrigado por contribuir com a comunidade! 💚"
     else          "Conectado com doadores próximos a você 💙"
     val docLabel      = if (tipoPessoa == "PJ") "CNPJ" else "CPF"
 
@@ -111,7 +85,6 @@ fun TelaPerfil(
                 .verticalScroll(rememberScrollState())
         ) {
 
-            // ── Hero ──────────────────────────────────────────────────────────
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -123,7 +96,7 @@ fun TelaPerfil(
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
-                    // Avatar com inicial
+
                     Box(
                         modifier = Modifier
                             .size(88.dp)
@@ -144,7 +117,6 @@ fun TelaPerfil(
                     Text(nome, fontSize = 22.sp, fontWeight = FontWeight.Bold, color = PBranco)
                     Spacer(Modifier.height(8.dp))
 
-                    // Badge tipo usuário
                     Surface(
                         shape = RoundedCornerShape(20.dp),
                         color = PBranco.copy(alpha = 0.2f)
@@ -165,21 +137,21 @@ fun TelaPerfil(
                         }
                     }
 
-                    // Estrelas — visíveis somente para doadores
-                    if (isDoador) {
+
+                    if (ehDoador) {
                         Spacer(Modifier.height(12.dp))
                         EstrelasInline(pontuacao = pontuacao, corTexto = PBranco)
                     }
                 }
             }
 
-            // ── Cards ─────────────────────────────────────────────────────────
+
             Column(
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 20.dp),
                 verticalArrangement = Arrangement.spacedBy(14.dp)
             ) {
 
-                // Banner de tipo de usuário
+
                 Surface(
                     shape = RoundedCornerShape(12.dp),
                     color = tipoBg,
@@ -203,14 +175,13 @@ fun TelaPerfil(
                     }
                 }
 
-                // Dados pessoais
+
                 CardSecao("Dados Pessoais", Icons.Default.Person) {
                     LinhaDetalhe(Icons.Default.Badge,         "Nome",     nome)
                     LinhaDetalhe(Icons.Default.Email,         "E-mail",   email)
                     LinhaDetalhe(Icons.Default.AssignmentInd, docLabel,   documento)
                 }
 
-                // Endereço
                 CardSecao("Endereço", Icons.Default.LocationOn) {
                     LinhaDetalhe(Icons.Default.Home,
                         "Logradouro", "$rua, $numero".trimEnd(',', ' '))
@@ -219,8 +190,8 @@ fun TelaPerfil(
                     LinhaDetalhe(Icons.Default.MarkunreadMailbox,"CEP",     cep)
                 }
 
-                // Desempenho — somente doadores
-                if (isDoador) {
+
+                if (ehDoador) {
                     CardSecao("Meu Desempenho", Icons.Default.Star) {
                         CardNota(pontuacao)
                     }
@@ -262,7 +233,7 @@ fun TelaPerfil(
     }
 }
 
-// ─── Composables auxiliares compartilhados ────────────────────────────────────
+
 
 @Composable
 internal fun CardSecao(

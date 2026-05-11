@@ -24,35 +24,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.foodcare.ui.theme.*
 
-// ─── Paleta ───────────────────────────────────────────────────────────────────
-private val CAVermelho   = Color(0xFFD32F2F)
-private val CAVermelhoE  = Color(0xFFAA1515)
-private val CAVermelhoC  = Color(0xFFE53935)
-private val CABranco     = Color(0xFFFFFFFF)
-private val CAFundo      = Color(0xFFF5F5F5)
-private val CATexto      = Color(0xFF1C1C1C)
-private val CASub        = Color(0xFF757575)
-private val CABorda      = Color(0xFFDDDDDD)
 
-// ─────────────────────────────────────────────────────────────────────────────
-//  TelaCadastrarAlimento  —  Passo 1 de 2 do fluxo de nova doação
-//
-//  Campos mapeados à tabela FoodCare.Alimento:
-//    nome        varchar(50)
-//    descricao   varchar(100)
-//    qntd        int
-//    validade    date
-//    idCategoria int  → selecionado via dropdown; lista vinda da API
-//
-//  O idDoador é resolvido pelo backend a partir do token de sessão.
-//
-//  Parâmetros de entrada:
-//    categorias  → lista de CategoriaUi populada pelo ViewModel
-//                  (GET /api/categorias)
-//    onVoltar    → popBackStack
-//    onProximo   → avança para TelaCadastrarDoacao passando os campos preenchidos
-// ─────────────────────────────────────────────────────────────────────────────
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TelaCadastrarAlimento(
@@ -60,7 +34,7 @@ fun TelaCadastrarAlimento(
     onVoltar: () -> Unit                  = {},
     onProximo: (AlimentoFormData) -> Unit = {}
 ) {
-    // ── Estados dos campos ────────────────────────────────────────────────────
+
     var nome        by remember { mutableStateOf("") }
     var descricao   by remember { mutableStateOf("") }
     var quantidade  by remember { mutableStateOf("") }
@@ -100,10 +74,10 @@ fun TelaCadastrarAlimento(
                 .verticalScroll(rememberScrollState())
         ) {
 
-            // ── Indicador de progresso ────────────────────────────────────────
+
             IndicadorPassos(passoAtual = 1, totalPassos = 2)
 
-            // ── Cabeçalho da seção ────────────────────────────────────────────
+
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -124,13 +98,12 @@ fun TelaCadastrarAlimento(
                 }
             }
 
-            // ── Formulário ────────────────────────────────────────────────────
+
             Column(
                 modifier = Modifier.padding(horizontal = 20.dp, vertical = 20.dp),
                 verticalArrangement = Arrangement.spacedBy(18.dp)
             ) {
 
-                // Nome do alimento — Alimento.nome varchar(50)
                 CampoFormulario(
                     label       = "Nome do alimento *",
                     icone       = Icons.Default.Fastfood,
@@ -144,7 +117,7 @@ fun TelaCadastrarAlimento(
                     )
                 }
 
-                // Descrição — Alimento.descricao varchar(100)
+
                 CampoFormulario(
                     label       = "Descrição *",
                     icone       = Icons.Default.Description,
@@ -159,7 +132,7 @@ fun TelaCadastrarAlimento(
                     )
                 }
 
-                // Quantidade — Alimento.qntd int
+
                 CampoFormulario(
                     label       = "Quantidade *",
                     icone       = Icons.Default.Inventory2,
@@ -173,7 +146,7 @@ fun TelaCadastrarAlimento(
                     )
                 }
 
-                // Validade — Alimento.validade date
+
                 CampoFormulario(
                     label       = "Data de validade *",
                     icone       = Icons.Default.EventBusy,
@@ -187,7 +160,7 @@ fun TelaCadastrarAlimento(
                     )
                 }
 
-                // Categoria — Alimento.idCategoria (FK → Categoria)
+
                 CampoFormulario(
                     label       = "Categoria *",
                     icone       = Icons.Default.Category,
@@ -225,7 +198,7 @@ fun TelaCadastrarAlimento(
                             expanded         = categoriaExpandida,
                             onDismissRequest = { categoriaExpandida = false }
                         ) {
-                            // Items virão da lista de categorias da API
+
                             if (categorias.isEmpty()) {
                                 DropdownMenuItem(
                                     text = {
@@ -251,7 +224,7 @@ fun TelaCadastrarAlimento(
 
                 Spacer(Modifier.height(8.dp))
 
-                // Botão avançar
+
                 Button(
                     onClick = {
                         if (camposValidos) {
@@ -289,22 +262,15 @@ fun TelaCadastrarAlimento(
     }
 }
 
-// ─── Modelos de UI (sem lógica de negócio) ────────────────────────────────────
 
-/**
- * Representa uma categoria vinda de GET /api/categorias.
- * Mapeia FoodCare.Categoria(idCategoria, nome).
- * O campo [imagem] não é exibido diretamente — usado internamente para carregar assets.
- */
+
+
 data class CategoriaUi(
     val id: Int,
     val nome: String
 )
 
-/**
- * Dados coletados no formulário do passo 1.
- * Passados para o passo 2 e depois enviados à API em conjunto com os dados da Doação.
- */
+
 data class AlimentoFormData(
     val nome: String,
     val descricao: String,
@@ -313,7 +279,6 @@ data class AlimentoFormData(
     val idCategoria: Int
 )
 
-// ─── Composables auxiliares ───────────────────────────────────────────────────
 
 @Composable
 fun IndicadorPassos(passoAtual: Int, totalPassos: Int) {

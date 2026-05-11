@@ -4,11 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -28,7 +25,7 @@ fun TelaQuemSomos(
                 title = {},
 
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = FoodCareRed
+                    containerColor = Vermelho
                 )
             )
         }
@@ -36,17 +33,16 @@ fun TelaQuemSomos(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(FoodCareOffWhite)
+                .background(BrancoAlt)
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
         ) {
-            // Header
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(
                         brush = Brush.verticalGradient(
-                            colors = listOf(FoodCareLightRed, FoodCareDarkRed)
+                            colors = listOf(vermClaro, vermEscuro)
                         )
                     )
                     .padding(horizontal = 24.dp, vertical = 32.dp)
@@ -54,21 +50,20 @@ fun TelaQuemSomos(
                 Column {
                     Text(
                         text = "FoodCare",
-                        color = FoodCareWhite,
+                        color = Branco,
                         fontSize = 14.sp,
                         letterSpacing = 2.sp
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = "Quem somos nós?",
-                        color = FoodCareWhite,
+                        color = Branco,
                         fontSize = 28.sp,
                         fontWeight = FontWeight.Bold
                     )
                 }
             }
 
-            // Content
             Column(
                 modifier = Modifier.padding(24.dp),
                 verticalArrangement = Arrangement.spacedBy(24.dp)
@@ -102,7 +97,7 @@ private fun SectionCard(title: String, body: String) {
             text = title,
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
-            color = FoodCareTextDark
+            color = textoEscuro
         )
         Text(
             text = body,
