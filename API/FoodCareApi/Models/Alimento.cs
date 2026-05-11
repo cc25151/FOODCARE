@@ -9,7 +9,7 @@ public class Alimento{
         public string nome  { get; set; } = string.Empty;
         public string descricao { get; set; } = string.Empty;
         public string qntd { get; set; } = string.Empty;
-        public DateOnly validade {get; set;} = string.Empty;
+        public DateOnly validade {get; set;} = default;
         public string documento {get; set;} = string.Empty;
         
      

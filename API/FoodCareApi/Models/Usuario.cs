@@ -9,10 +9,11 @@ namespace FoodCareApi.Models;
         public string tipoPessoa {get; set;} = string.Empty;
         public string documento {get; set;} = string.Empty;
         public string? cep  { get; set; }
+        public string? cidade { get; set; }
         public string? idade { get; set; }
-        public string? Bairro { get; set; }
-        public string? Rua    { get; set; }
-        public string? Numero { get; set; }
+        public string? bairro { get; set; }
+        public string? rua    { get; set; }
+        public string? numero { get; set; }
 
         // Campos que a API externa vai preencher
         public decimal? Latitude  { get; set; }
