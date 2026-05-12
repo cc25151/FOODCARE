@@ -100,7 +100,7 @@ fun FoodCareNavGraph(
         composable(Routes.PERFIL_PROPRIO) {
             TelaPerfil(
                 onVoltar       = { navController.popBackStack() },
-                onEditarPerfil = { /* TODO: tela de edição de perfil */ },
+                onEditarPerfil = {  },
                 onLogout       = {
                     navController.navigate(Routes.TELA_INICIAL) {
                         popUpTo(0) { inclusive = true }
@@ -131,7 +131,7 @@ fun FoodCareNavGraph(
 
         composable(Routes.CADASTRAR_DOACAO) {
             TelaCadastrarDoacao(
-                alimentoFormData = AlimentoFormData("", "", 0, "", 0), // TODO: vm.alimentoTemp
+                alimentoFormData = AlimentoFormData("", "", 0, "", 0),
                 onVoltar         = { navController.popBackStack() },
                 onConfirmar      = { doacaoData ->
                     navController.navigate(Routes.MAIN) {
