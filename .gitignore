@@ -17,3 +17,8 @@ Thumbs.db
 # Cache NDK
 .cxx/
 .externalNativeBuild/
+
+[Bb]in/
+[Oo]bj/
+
+*.lscache
