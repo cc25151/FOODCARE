@@ -29,6 +29,9 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.example.foodcare.model.FoodCareData
 import com.example.foodcare.ui.theme.*
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("SetJavaScriptEnabled")
@@ -166,10 +169,7 @@ fun TelaProduto(
                 Spacer(modifier = Modifier.height(16.dp))
 
 
-                MapaExpandivel(
-                    expandido = mapaExpandido,
-                    onToggle = { mapaExpandido = !mapaExpandido }
-                )
+                MapaSimples()
 
                 Spacer(modifier = Modifier.height(20.dp))
                 SectionDivider()
@@ -266,6 +266,28 @@ fun MapaExpandivel(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(mapHeight)
+        )
+    }
+}
+
+@Composable
+fun MapaSimples() {
+
+    val posicao = LatLng(-22.9099, -47.0626) // Campinas
+
+    val cameraPositionState = rememberCameraPositionState {
+        position = CameraPosition.fromLatLngZoom(posicao, 15f)
+    }
+
+    GoogleMap(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(300.dp),
+        cameraPositionState = cameraPositionState
+    ) {
+        Marker(
+            state = MarkerState(position = posicao),
+            title = "Minha localização"
         )
     }
 }
