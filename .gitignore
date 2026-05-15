@@ -1,19 +1,18 @@
-# SDK (cada máquina tem o seu)
-local.properties
+# Pastas de Compilação
+[Bb]in/
+[Oo]bj/
 
-# Build (arquivos gerados)
-.gradle/
-build/
-*/build/
+# Configurações do VS Code e Visual Studio
+.vscode/
+.vs/
+*.user
+*.userosscache
+*.sln.docstates
 
-# Android Studio
-.idea/
-*.iml
+# Arquivos de Segredo e Banco de Dados Local
+appsettings.Development.json
+*.db
+*.db-journal
 
-# Sistema
-.DS_Store
-Thumbs.db
-
-# Cache NDK
-.cxx/
-.externalNativeBuild/
+# Pastas de pacotes
+packages/

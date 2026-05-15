@@ -22,6 +22,7 @@ public static class UsuarioEndpoints
                 : Results.NotFound("Usuário não encontrado."));
 
         // 3. POST - Cadastro Inicial (Sem Endereço)
+
         // O usuário cria a conta sem as informações de endereço, apenas com: Nome, Senha, E-mail e CPF/CNPJ
         grupo.MapPost("/cadastro", async (Usuario usuario, AppDbContext db) =>
         {
@@ -31,7 +32,8 @@ public static class UsuarioEndpoints
 
             if (await db.Usuarios.AnyAsync(u => u.documento == usuario.documento))
                 return Results.BadRequest("Este CPF/CNPJ já está cadastrado.");
-
+            
+            usuario.senha = BCrypt.Net.BCrypt.HashPassword(usuario.senha); //Parte fundamental da criptografia da senha, usando de bycript
             db.Usuarios.Add(usuario);
             await db.SaveChangesAsync();
 
