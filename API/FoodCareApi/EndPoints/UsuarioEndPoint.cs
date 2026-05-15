@@ -17,8 +17,8 @@ public static class UsuarioEndpoints
 
         // 2. GET por ID - Consulta o usuário com aquele Id
         grupo.MapGet("/{id}", async (int id, AppDbContext db) =>
-            await db.Usuarios.FindAsync(id) is Usuario
-                ? Results.Ok(Usuario) 
+            await db.Usuarios.FindAsync(id) is Usuario usuario
+                ? Results.Ok(usuario) 
                 : Results.NotFound("Usuário não encontrado."));
 
         // 3. POST - Cadastro Inicial (Sem Endereço)
@@ -26,19 +26,19 @@ public static class UsuarioEndpoints
         grupo.MapPost("/cadastro", async (Usuario usuario, AppDbContext db) =>
         {
             //Verifica se o usuário já é cadastrado
-            if (await db.Usuarios.AnyAsync(u => u.Email == usuario.Email))
+            if (await db.Usuarios.AnyAsync(u => u.email == usuario.email))
                 return Results.BadRequest("Este e-mail já está em uso.");
 
-            if (await db.Usuarios.AnyAsync(u => u.Documento == usuario.Documento))
+            if (await db.Usuarios.AnyAsync(u => u.documento == usuario.documento))
                 return Results.BadRequest("Este CPF/CNPJ já está cadastrado.");
 
             db.Usuarios.Add(usuario);
             await db.SaveChangesAsync();
 
-            return Results.Created($"/usuarios/{usuario.IdUsuario}", new 
+            return Results.Created($"/usuarios/{usuario.idUsuario}", new 
             { 
-                usuario.IdUsuario, 
-                usuario.Nome,
+                usuario.idUsuario, 
+                usuario.nome,
                 mensagem = "Cadastro realizado! Complete seu perfil para doar." 
             });
         });
@@ -52,11 +52,11 @@ public static class UsuarioEndpoints
             if (usuario is null) return Results.NotFound("Usuário não encontrado.");
 
             // Atualização dos campos de endereço que vieram nulos
-            usuario.CEP = dadosPerfil.CEP;
-            usuario.Cidade = dadosPerfil.Cidade;
-            usuario.Bairro = dadosPerfil.Bairro;
-            usuario.Rua = dadosPerfil.Rua;
-            usuario.Numero = dadosPerfil.Numero;
+            usuario.cep = dadosPerfil.cep;
+            usuario.cidade = dadosPerfil.cidade;
+            usuario.bairro = dadosPerfil.bairro;
+            usuario.rua = dadosPerfil.rua;
+            usuario.numero = dadosPerfil.numero;
             
             // Coordenadas obtidas via Bing Maps (API externa que ao partir do endereço completo, extrai latitude e longitude, usadas futuramente para a construção de coordenadas)
             usuario.Latitude = dadosPerfil.Latitude;

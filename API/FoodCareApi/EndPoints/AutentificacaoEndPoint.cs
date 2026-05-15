@@ -18,7 +18,7 @@ public static class AutenticacaoEndpoints
         {
             //Proucura um usuário por email e senha
             var usuario = await db.Usuarios
-                .FirstOrDefaultAsync(u => u.Email == usuarioLogin.Email && u.Senha == usuarioLogin.Senha);
+                .FirstOrDefaultAsync(u => u.email == usuarioLogin.email && u.senha == usuarioLogin.senha);
 
             //Se não encontrar, retorna Não Autorizado (código http 401)
             if (usuario is null) 
@@ -36,10 +36,10 @@ public static class AutenticacaoEndpoints
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-                    new Claim(ClaimTypes.Name, usuario.Nome),
-                    new Claim(ClaimTypes.Email, usuario.Email),
-                    new Claim("id", usuario.IdUsuario.ToString()),
-                    new Claim("tipo", usuario.TipoPessoa) // Útil para saber se é PF ou PJ no Front-end
+                    new Claim(ClaimTypes.Name, usuario.nome),
+                    new Claim(ClaimTypes.Email, usuario.email),
+                    new Claim("id", usuario.idUsuario.ToString()),
+                    new Claim("tipo", usuario.tipoPessoa) // Útil para saber se é PF ou PJ no Front-end
                 }),
                 Expires = DateTime.UtcNow.AddHours(3), // Token vale por 3 horas
                 SigningCredentials = new SigningCredentials(
@@ -53,7 +53,7 @@ public static class AutenticacaoEndpoints
 
             return Results.Ok(new 
             { 
-                usuario = usuario.Nome, 
+                usuario = usuario.nome, 
                 token = tokenString 
             });
         });
