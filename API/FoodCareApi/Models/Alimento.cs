@@ -10,7 +10,6 @@ public class Alimento{
         public string descricao { get; set; } = string.Empty;
         public int qntd { get; set; } = 0;
         public DateOnly validade {get; set;} = default;
-        public string documento {get; set;} = string.Empty;
         
      
     }
