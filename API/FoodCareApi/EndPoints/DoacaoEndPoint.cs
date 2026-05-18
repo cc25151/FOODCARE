@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 public static class DoacaoEndPoint
 {
-    public static void mapDoacaoEndPoints(this WebApplication app)
+    public static void MapDoacaoEndPoints(this WebApplication app)
     {
         var rotas = app.MapGroup("/doacoes");
 

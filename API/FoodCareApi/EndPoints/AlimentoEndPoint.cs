@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 public static class AlimentoEndPoint
 {
-    public static void mapAlimentoEndPoints(this WebApplication app)
+    public static void MapAlimentoEndPoints(this WebApplication app)
     {
         var rotas = app.MapGroup("/alimentos");
 
