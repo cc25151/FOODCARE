@@ -18,10 +18,10 @@ public static class AutenticacaoEndpoints
         {
             //Proucura um usuário por email e senha
             var usuario = await db.Usuarios
-                .FirstOrDefaultAsync(u => u.email == usuarioLogin.email && u.senha == usuarioLogin.senha);
+                .FirstOrDefaultAsync(u => u.email == usuarioLogin.email);
 
-            //Se não encontrar, retorna Não Autorizado (código http 401)
-            if (usuario is null) 
+            //Verifica se o usuário existe e se a senha digitada bate com o hash do banco
+            if (usuario is null || !BCrypt.Net.BCrypt.Verify(usuarioLogin.senha, usuario.senha)) 
                 return Results.Unauthorized();
 
             //Se encontrar, prepara a geração do Token JWT
@@ -31,26 +31,28 @@ public static class AutenticacaoEndpoints
             var chaveSecreta = "chaveSecreta";
             var chaveBytes = Encoding.ASCII.GetBytes(chaveSecreta); // Pega o número de bytes da chave secreta
 
-            // 4. Define as informações que vão dentro do Token Reinvidicações
+            // Define as informações que vão dentro do Token Reinvidicações
             var DescricaoToken = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new[]
+                Subject = new ClaimsIdentity(new[] // Claims são informações que são passadas através da reinvidicações
                 {
-                    new Claim(ClaimTypes.Name, usuario.nome),
-                    new Claim(ClaimTypes.Email, usuario.email),
-                    new Claim("id", usuario.idUsuario.ToString()),
-                    new Claim("tipo", usuario.tipoPessoa) // Útil para saber se é PF ou PJ no Front-end
+                    new Claim(ClaimTypes.Name, usuario.nome), //Nome do usuário dentro do token
+                    new Claim(ClaimTypes.Email, usuario.email), //E-mail do usuário dentro do token
+                    new Claim("id", usuario.idUsuario.ToString()), //Claim personalizada para id do usuário
+                    new Claim("tipo", usuario.tipoPessoa) // Útil para saber se é PF ou PJ no Front-end, Claim personalizada
                 }),
-                Expires = DateTime.UtcNow.AddHours(3), // Token vale por 3 horas
-                SigningCredentials = new SigningCredentials(
-                    new SymmetricSecurityKey(chaveBytes), 
-                    SecurityAlgorithms.HmacSha256Signature)
+                Expires = DateTime.UtcNow.AddHours(1), // Token vale por 1 hora
+                //Tranca e assina o token para garantir que ninguém adultere os dados.
+                SigningCredentials = new SigningCredentials( 
+                    new SymmetricSecurityKey(chaveBytes),   // Usa a sua chave secreta convertida em bytes para gerar a assinatura digital
+                    SecurityAlgorithms.HmacSha256Signature) // HmacSha256 é um algoritmo matemático de criptografia
             };
 
-            // 5. Cria o Token e envia para o usuário
-            var token = tokenHandler.CreateToken(DescricaoToken);
+            // Cria o Token e envia para o usuário
+            var token = tokenHandler.CreateToken(DescricaoToken); //cria o objeto interno do Token.
+            // Transforma o objeto do Token em uma string real formatada
             var tokenString = tokenHandler.WriteToken(token);
-
+            // Envia o nome do usuário e a string do token para usar nas próximas requisições.
             return Results.Ok(new 
             { 
                 usuario = usuario.nome, 

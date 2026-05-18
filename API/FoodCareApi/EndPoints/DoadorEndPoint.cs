@@ -1,21 +1,46 @@
 using Microsoft.EntityFrameworkCore;
 using FoodCareApi.Data;
 using FoodCareApi.Models;
-using Microsoft.AspNetCore.Authorization;
 
 namespace FoodCareApi.Endpoints;
 
-public static class DoadorEndPoints
+public static class DoadorEndpoints
 {
     public static void MapDoadorEndpoints(this WebApplication app)
     {
-    var grupo = app.MapGroup("/doador"); //Grupo de rotas de doador
+        var grupo = app.MapGroup("/doadores");
 
-    //GET por nome, específico para doador. (Usado ao pesquisar um restaurante
-        grupo.MapGet("/{nome}", async (string nome, AppDbContext db) =>
-            await db.Usuarios.FindAsync(nome) is Usuario usuarioDoador
-                ? Results.Ok(usuarioDoador) 
-                : Results.NotFound("Restaurante não encontrado."));
+        grupo.MapPost("/", async (Doador novoDoador, AppDbContext db) =>
+        {
+            var usuarioExiste = await db.Usuarios.AnyAsync(u => u.idUsuario == novoDoador.idUsuario);
+            if (!usuarioExiste)
+            {
+                return Results.BadRequest("O usuário informado não existe.");
+            }
 
+            var jaEhDoador = await db.Doadores.AnyAsync(d => d.idUsuario == novoDoador.idUsuario);
+            if (jaEhDoador)
+            {
+                return Results.BadRequest("Este usuário já está cadastrado como doador.");
+            }
 
-}}
+            var jaEhReceptor = await db.Receptores.AnyAsync(r => r.idUsuario == novoDoador.idUsuario);
+            if (jaEhReceptor)
+            {
+                return Results.BadRequest("Um receptor não pode ser cadastrado como doador.");
+            }
+
+            novoDoador.usuarioDoador = null!;
+            novoDoador.pontuacao = 0;
+
+            db.Doadores.Add(novoDoador);
+            await db.SaveChangesAsync();
+
+            return Results.Created($"/doadores/{novoDoador.idDoador}", new
+            {
+                idDoador = novoDoador.idDoador,
+                idUsuario = novoDoador.idUsuario,
+            });
+        });
+    }
+}

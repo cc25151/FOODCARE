@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore; //Importa as funcionalidades do FrameWork
-using FoodCareApi.Models;           //IMPORTANTE: Ajustei para o seu namespace FoodCare
+using FoodCareApi.Models;           
 
 namespace FoodCareApi.Data; 
 
