@@ -31,8 +31,10 @@ app.UseHttpsRedirection();
 
 app.MapUsuarioEndpoints(); // Registra as rotas de Usuários 
 app.MapAutenticacaoEndpoints(); // Registra as rotas de Login/Autenticação
-app.MapDoadorEndpoints(); // Registra as rotas doador
-app.
+app.MapDoadorEndpoints(); // Registra as rotas de doador
+app.MapDoacaoEndPoints(); // Registra as rotas de doações
+app.MapAlimentoEndPoints(); // Registra as rotas de alimentos
+//app.MapReceptorEndpoints // Registra as rotas de receptor
 
 // Deixa a API ativa e escutando o aplicativo Android
 app.Run();
