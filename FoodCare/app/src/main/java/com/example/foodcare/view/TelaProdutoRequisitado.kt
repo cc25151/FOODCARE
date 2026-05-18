@@ -161,10 +161,7 @@ fun TelaProdutoRequisitado(
 
                 SectionLabel("Localização:")
 
-                MapaExpandivel(
-                    expandido = mapaExpandido,
-                    onToggle = { mapaExpandido = !mapaExpandido }
-                )
+                MapaSimples()
 
                 Spacer(modifier = Modifier.height(8.dp))
 

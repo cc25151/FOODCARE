@@ -199,76 +199,6 @@ fun TelaProduto(
 }
 
 
-@SuppressLint("SetJavaScriptEnabled")
-@Composable
-fun MapaExpandivel(
-    expandido: Boolean,
-    onToggle: () -> Unit,
-    latitude: Double = -22.9099,
-    longitude: Double = -47.0626
-) {
-    val mapaUrl = MapaURL(latitude, longitude, if (expandido) 14 else 13)
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
-            .background(Color(0xFFEEEEEE))
-            .animateContentSize(animationSpec = tween(300))
-    ) {
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { onToggle() }
-                .background(Vermelho)
-                .padding(horizontal = 14.dp, vertical = 10.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    imageVector = Icons.Default.LocationOn,
-                    contentDescription = null,
-                    tint = Branco,
-                    modifier = Modifier.size(18.dp)
-                )
-                Spacer(modifier = Modifier.width(6.dp))
-                Text(
-                    text = if (expandido) "Ocultar mapa" else "Ver no mapa",
-                    color = Branco,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.SemiBold
-                )
-            }
-            Icon(
-                imageVector = if (expandido) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
-                contentDescription = null,
-                tint = Branco
-            )
-        }
-
-        val mapHeight = if (expandido) 340.dp else 160.dp
-        AndroidView(
-            factory = { context ->
-                WebView(context).apply {
-                    webViewClient = WebViewClient()
-                    settings.javaScriptEnabled = true
-                    settings.loadWithOverviewMode = true
-                    settings.useWideViewPort = true
-                    settings.domStorageEnabled = true
-
-                    loadUrl(mapaUrl)
-                }
-            },
-            update = { webView ->
-                webView.loadUrl(mapaUrl)
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(mapHeight)
-        )
-    }
-}
 
 @Composable
 fun MapaSimples() {
@@ -283,7 +213,14 @@ fun MapaSimples() {
         modifier = Modifier
             .fillMaxWidth()
             .height(300.dp),
-        cameraPositionState = cameraPositionState
+        cameraPositionState = cameraPositionState,
+        uiSettings = MapUiSettings(
+            zoomControlsEnabled = true,
+        zoomGesturesEnabled = true,
+        scrollGesturesEnabled = true,
+        rotationGesturesEnabled = true,
+        tiltGesturesEnabled = true
+        )
     ) {
         Marker(
             state = MarkerState(position = posicao),
@@ -292,9 +229,6 @@ fun MapaSimples() {
     }
 }
 
-private fun MapaURL(lat: Double, lon: Double, zoom: Int): String {
-    return "https://www.openstreetmap.org/#map=$zoom/$lat/$lon"
-}
 
 @Composable
 fun DoadorCard(nome: String, distancia: String) {
