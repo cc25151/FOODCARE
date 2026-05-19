@@ -17,7 +17,7 @@ public static class AutenticacaoEndpoints
         app.MapPost("/login", async (Usuario usuarioLogin, AppDbContext db, IConfiguration config) =>
         {
             //Proucura um usuário por email e senha
-            var usuario = await db.Usuarios
+            var usuario = await db.Usuario
                 .FirstOrDefaultAsync(u => u.email == usuarioLogin.email);
 
             //Verifica se o usuário existe e se a senha digitada bate com o hash do banco
@@ -28,7 +28,7 @@ public static class AutenticacaoEndpoints
             var tokenHandler = new JwtSecurityTokenHandler();
             
             // Pega a chave secreta 
-            var chaveSecreta = "chaveSecreta";
+            var chaveSecreta = config["Jwt:ChaveSecreta"]!;
             var chaveBytes = Encoding.ASCII.GetBytes(chaveSecreta); // Pega o número de bytes da chave secreta
 
             // Define as informações que vão dentro do Token Reinvidicações

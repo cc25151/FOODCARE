@@ -13,13 +13,13 @@ public static class ReceptorEndpoints
 
         grupo.MapPost("/", async (Receptor novoReceptor, AppDbContext db) =>
         {
-            var usuarioExiste = await db.Usuarios.AnyAsync(u => u.idUsuario == novoReceptor.idUsuario);
+            var usuarioExiste = await db.Usuario.AnyAsync(u => u.idUsuario == novoReceptor.idUsuario);
             if (!usuarioExiste)
             {
                 return Results.BadRequest("O usuário informado não existe.");
             }
 
-            var jaEhReceptor = await db.Receptores.AnyAsync(r => r.idUsuario == novoReceptor.idUsuario);
+            var jaEhReceptor = await db.Receptor.AnyAsync(r => r.idUsuario == novoReceptor.idUsuario);
             if (jaEhReceptor)
             {
                 return Results.BadRequest("Este usuário já está cadastrado como receptor.");
@@ -28,7 +28,7 @@ public static class ReceptorEndpoints
             novoReceptor.usuarioReceptor = null!;
 
 
-            db.Receptores.Add(novoReceptor);
+            db.Receptor.Add(novoReceptor);
             await db.SaveChangesAsync();
 
 

@@ -2,7 +2,7 @@ namespace FoodCareApi.Models;
 
 
     public class Usuario{
-        public int idUsuario{get; set;}
+        public int idUsuario{get;}
         public string nome  { get; set; } = string.Empty;
         public string email { get; set; } = string.Empty;
         public string senha { get; set; } = string.Empty;
@@ -10,14 +10,13 @@ namespace FoodCareApi.Models;
         public string documento {get; set;} = string.Empty;
         public string? cep  { get; set; }
         public string? cidade { get; set; }
-        public string? idade { get; set; }
         public string? bairro { get; set; }
         public string? rua    { get; set; }
         public string? numero { get; set; }
 
         // Campos que a API externa vai preencher
-        public decimal? Latitude  { get; set; }
-        public decimal? Longitude { get; set; }
+        public decimal? latitude  { get; set; } 
+        public decimal? longitude { get; set; }
           
 
     }

@@ -7,11 +7,12 @@ public class AppDbContext : DbContext
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
-    public DbSet<Usuario> Usuarios { get; set; }
-    public DbSet<Doador> Doador { get; set;} 
-    public DbSet<Receptor> Receptor { get; set;} 
-    public DbSet<Alimento> Alimento { get; set;} 
-    public DbSet<Doacao> Doacao { get; set;} 
+    public DbSet<Usuario>  Usuario  { get; set; }
+    public DbSet<Doador>   Doador    { get; set;} 
+    public DbSet<Receptor> Receptor  { get; set;} 
+    public DbSet<Categoria> Categoria { get; set;}
+    public DbSet<Alimento> Alimento  { get; set;} 
+    public DbSet<Doacao>   Doacao    { get; set;} 
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -22,114 +23,110 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Usuario>(entity =>
         {
             // Chave Primária
-            entity.HasKey(u => u.IdUsuario); 
+            entity.HasKey(u => u.idUsuario); 
 
             // Campos básicos e obrigatórios
-            entity.Property(u => u.Nome).IsRequired().HasColumnType("varchar(50)");
-            entity.Property(u => u.Email).IsRequired().HasColumnType("varchar(100)");
-            entity.HasIndex(u => u.Email).IsUnique();     //Email é único na tabela
+            entity.Property(u => u.nome).IsRequired().HasColumnType("varchar(50)");
+            entity.Property(u => u.email).IsRequired().HasColumnType("varchar(100)");
+            entity.HasIndex(u => u.email).IsUnique();     //Email é único na tabela
             
-            entity.Property(u => u.Senha).IsRequired().HasColumnType("varchar(255)");
-            entity.Property(u => u.TipoPessoa).IsRequired().HasColumnType("char(2)"); 
-            entity.Property(u => u.Documento).IsRequired().HasColumnType("varchar(14)");
-            entity.HasIndex(u => u.Documento).IsUnique(); //CPF ou CNPJ é único na tabela
+            entity.Property(u => u.senha).IsRequired().HasColumnType("varchar(255)");
+            entity.Property(u => u.tipoPessoa).IsRequired().HasColumnType("char(2)"); 
+            entity.Property(u => u.documento).IsRequired().HasColumnType("varchar(14)");
+            entity.HasIndex(u => u.documento).IsUnique(); //CPF ou CNPJ é único na tabela
 
             //Os endereços não utilizam .IsRequired() pois podem ser preenchidos depois
-            entity.Property(u => u.CEP).HasColumnType("char(8)");
-            entity.Property(u => u.Cidade).HasColumnType("varchar(30)");
-            entity.Property(u => u.Bairro).HasColumnType("varchar(60)");
-            entity.Property(u => u.Rua).HasColumnType("varchar(60)");
-            entity.Property(u => u.Numero).HasColumnType("varchar(10)");
+            entity.Property(u => u.cep).HasColumnType("char(8)");
+            entity.Property(u => u.cidade).HasColumnType("varchar(30)");
+            entity.Property(u => u.bairro).HasColumnType("varchar(60)");
+            entity.Property(u => u.rua).HasColumnType("varchar(60)");
+            entity.Property(u => u.numero).HasColumnType("varchar(10)");
 
             // Latitude e Longitude usadas para calcular a coordenada através da API externa
-            entity.Property(u => u.Latitude).HasColumnType("decimal(9,6)");
-            entity.Property(u => u.Longitude).HasColumnType("decimal(9,6)");
+            entity.Property(u => u.latitude).HasColumnType("decimal(9,6)");
+            entity.Property(u => u.longitude).HasColumnType("decimal(9,6)");
         }); 
         //-----------------------TABELA DOADOR-----------------------//
-        modelBuilder.Entity(<Doador>(entity =>
+        modelBuilder.Entity<Doador>(entity =>
         {
             //Chave Primária
             entity.HasKey(d => d.idDoador);
 
             // Configuração da Chave Estrangeira (Relacionamento 1:1)
-            entity.Property(d => d.IdUsuario).IsRequired();
+            entity.Property(d => d.idUsuario).IsRequired();
             
             
             // Define que o Doador tem apenas um usuário
             // O .HasForeignKey<Doador> indica que o ID do usuário fica na tabela Doador
-            entity.HasOne(d => d.Usuario)
+            entity.HasOne(d => d.usuarioDoador)
                   .WithOne()
-                  .HasForeignKey<Doador>(d => d.IdUsuario);
-        }
-        ))
+                  .HasForeignKey<Doador>(d => d.idUsuario);
+        });
         //-----------------------TABELA RECEPTOR-----------------------//
         modelBuilder.Entity<Receptor>(entity =>
         {   
             //Chave Primária
-            entity.HasKey(r => r.IdReceptor);
+            entity.HasKey(r => r.idReceptor);
 
             // Define que o Receptor tem apenas um usuário
-            entity.HasOne(r => r.Usuario)
+            entity.HasOne(r => r.usuarioReceptor)
                   .WithOne()
-                  .HasForeignKey<Receptor>(r => r.IdUsuario);
+                  .HasForeignKey<Receptor>(r => r.idUsuario);
         });
         //-----------------------TABELA CATEGORIA-----------------------//
-        modelBuilder.Entity<Receptor>(entity =>
+        modelBuilder.Entity<Categoria>(entity =>
         {
             //Chave Primária
-            entity.HasKey(c => c.IdCategoria);
+            entity.HasKey(c => c.idCategoria);
 
-            entity.Property(c => c.Nome).IsRequired().HasColumnType("varchar(30)");
-            entity.Property(c => c.Imagem).IsRequired().HasColumnType("varchar(300)");
-          });
+            entity.Property(c => c.nome).IsRequired().HasColumnType("varchar(30)");
+            entity.Property(c => c.imagem).IsRequired().HasColumnType("varchar(300)");
+        });
         //-----------------------TABELA ALIMENTO-----------------------//
         modelBuilder.Entity<Alimento>(entity =>
         {   
             //Chave primária
-            entity.HasKey(a => a.IdAlimento);
+            entity.HasKey(a => a.idAlimento);
 
-            entity.Property(a => a.Nome).IsRequired().HasColumnType("varchar(50)");
-            entity.Property(a => a.Descricao).IsRequired().HasColumnType("varchar(100)");
-            entity.Property(a => a.Validade).IsRequired().HasColumnType("date");
+            entity.Property(a => a.nome).IsRequired().HasColumnType("varchar(50)");
+            entity.Property(a => a.descricao).IsRequired().HasColumnType("varchar(100)");
+            entity.Property(a => a.validade).IsRequired().HasColumnType("date");
 
             // Um Alimento pertence a uma Categoria
-            entity.HasOne(a => a.Categoria)
+            entity.HasOne(a => a.categoria)
                   .WithMany()
-                  .HasForeignKey(a => a.IdCategoria);
+                  .HasForeignKey(a => a.idCategoria);
 
             // Um Alimento é postado por um Doador
-            entity.HasOne(a => a.Doador)
+            entity.HasOne(a => a.doador)
                   .WithMany()
-                  .HasForeignKey(a => a.IdDoador);
+                  .HasForeignKey(a => a.idDoador);
         });
         //-----------------------TABELA DOACAO-----------------------//
         modelBuilder.Entity<Doacao>(entity =>
         {
             //Chave Primária
-            entity.HasKey(do => do.IdDoacao);
+            entity.HasKey(doa => doa.IdDoacao);
 
-            entity.Property(do => do.DataDoacao).IsRequired().HasColumnType("date");
-            entity.Property(do => do.HorarioInicial).IsRequired().HasColumnType("time");
-            entity.Property(do => do.HorarioFinal).HasColumnType("time");
+            entity.Property(doa => doa.DataDoacao).IsRequired().HasColumnType("date");
+            entity.Property(doa => doa.HorarioInicial).IsRequired().HasColumnType("time");
+            entity.Property(doa => doa.HorarioFinal).HasColumnType("time");
             
             
-            entity.Property(do => do.Avaliacao).HasColumnType("int");
+            entity.Property(doa => doa.Avaliacao).HasColumnType("int");
 
             //Relacionamentos
-            entity.HasOne(do => do.Doador)
+            entity.HasOne(doa => doa.Doador)
                   .WithMany()
-                  .HasForeignKey(do => do.IdDoador)
-                  
+                  .HasForeignKey(doa => doa.IdDoador);
 
             entity.HasOne(d => d.Receptor)
                   .WithMany()
-                  .HasForeignKey(d => d.IdReceptor)
-                  
+                  .HasForeignKey(d => d.IdReceptor);
 
             entity.HasOne(d => d.Alimento)
-                  .WithMany()
-                  .HasForeignKey(d => d.IdAlimento)
-                  
+                  .WithOne()
+                  .HasForeignKey<Doacao>(d => d.IdAlimento);
         });
     }
 }

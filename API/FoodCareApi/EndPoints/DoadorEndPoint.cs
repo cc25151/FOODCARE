@@ -12,13 +12,13 @@ public static class DoadorEndpoints
 
         grupo.MapPost("/", async (Doador novoDoador, AppDbContext db) =>
         {
-            var usuarioExiste = await db.Usuarios.AnyAsync(u => u.idUsuario == novoDoador.idUsuario);
+            var usuarioExiste = await db.Usuario.AnyAsync(u => u.idUsuario == novoDoador.idUsuario);
             if (!usuarioExiste)
             {
                 return Results.BadRequest("O usuário informado não existe.");
             }
 
-            var jaEhDoador = await db.Doadores.AnyAsync(d => d.idUsuario == novoDoador.idUsuario);
+            var jaEhDoador = await db.Doador.AnyAsync(d => d.idUsuario == novoDoador.idUsuario);
             if (jaEhDoador)
             {
                 return Results.BadRequest("Este usuário já está cadastrado como doador.");
@@ -27,7 +27,7 @@ public static class DoadorEndpoints
             novoDoador.usuarioDoador = null!;
             novoDoador.pontuacao = 0;
 
-            db.Doadores.Add(novoDoador);
+            db.Doador.Add(novoDoador);
             await db.SaveChangesAsync();
 
             return Results.Created($"/doadores/{novoDoador.idDoador}", new

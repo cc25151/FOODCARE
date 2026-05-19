@@ -12,25 +12,25 @@ public static class DoacaoEndPoint
         // get geral
         rotas.MapGet("/", async (AppDbContext bd) =>
             await bd.Doacao
-                .Include(d => d.doador)
+                .Include(d => d.Doador)
                     .ThenInclude(u => u.usuarioDoador)
-                .Include(d => d.alimento)
+                .Include(d => d.Alimento)
                 .ToListAsync()
         );
 
         // get das doacoes finalizadas
         rotas.MapGet("/realizadas", async (AppDbContext bd) =>
             await bd.Doacao
-                .Where(d => d.avaliacao > 0)
-                .Include(d => d.alimento)
+                .Where(d => d.Avaliacao > 0)
+                .Include(d => d.Alimento)
                 .ToListAsync()
         );
 
         // get das doacoes pendentes
         rotas.MapGet("/pendentes", async (AppDbContext bd) =>
             await bd.Doacao
-                .Where(d => d.avaliacao == 0)
-                .Include(d => d.alimento)
+                .Where(d => d.Avaliacao == 0)
+                .Include(d => d.Alimento)
                 .ToListAsync()
         );
 
@@ -38,8 +38,8 @@ public static class DoacaoEndPoint
         rotas.MapGet("/doador/{idDoador:int}", async (int idDoador, AppDbContext bd) =>
         {
             var doacoes = await bd.Doacao
-                .Where(d => d.idDoador == idDoador)
-                .Include(d => d.alimento)
+                .Where(d => d.IdDoador == idDoador)
+                .Include(d => d.Alimento)
                 .ToListAsync();
 
             return doacoes.Any() ? Results.Ok(doacoes) : Results.NotFound();
@@ -49,8 +49,8 @@ public static class DoacaoEndPoint
         rotas.MapGet("/avaliacao/{nota:int}", async (int nota, AppDbContext bd) =>
         {
             var doacoes = await bd.Doacao
-                .Where(d => d.avaliacao == nota)
-                .Include(d => d.doador)
+                .Where(d => d.Avaliacao == nota)
+                .Include(d => d.Doador)
                 .ToListAsync();
 
             return Results.Ok(doacoes);
@@ -60,8 +60,8 @@ public static class DoacaoEndPoint
         rotas.MapGet("/data/{data:DateTime}", async (DateTime data, AppDbContext bd) =>
         {
             var doacoes = await bd.Doacao
-                .Where(d => d.dataDoacao.Date == data.Date)
-                .Include(d => d.alimento)
+                .Where(d => d.DataDoacao.ToDateTime(TimeOnly.MinValue).Date == data.Date)
+                .Include(d => d.Alimento)
                 .ToListAsync();
 
             return Results.Ok(doacoes);
@@ -71,8 +71,8 @@ public static class DoacaoEndPoint
         rotas.MapGet("/periodo", async (DateTime inicio, DateTime fim, AppDbContext bd) =>
         {
             var doacoes = await bd.Doacao
-                .Where(d => d.dataDoacao >= inicio && d.dataDoacao <= fim)
-                .Include(d => d.alimento)
+                .Where(d => d.DataDoacao >= DateOnly.FromDateTime(inicio) && d.DataDoacao <= DateOnly.FromDateTime(fim))
+                .Include(d => d.Alimento)
                 .ToListAsync();
 
             return Results.Ok(doacoes);
@@ -80,25 +80,25 @@ public static class DoacaoEndPoint
 
         rotas.MapPost("/", async (Doacao novaDoacao, AppDbContext bd) =>
         {
-            var doador = await bd.Doador.AnyAsync(d => d.idDoador == novaDoacao.idDoador);
+            var doador = await bd.Doador.AnyAsync(d => d.idDoador == novaDoacao.IdDoador);
             if (!doador) return Results.NotFound();
 
             var alimento = await bd.Alimento.FirstOrDefaultAsync(a => 
-                a.idAlimento == novaDoacao.idAlimento && a.idDoador == novaDoacao.idDoador);
+                a.idAlimento == novaDoacao.IdAlimento && a.idDoador == novaDoacao.IdDoador);
 
             if (alimento == null) return Results.BadRequest();
 
-            novaDoacao.avaliacao = 0;
+            novaDoacao.Avaliacao = 0;
             
-            if (novaDoacao.dataDoacao == default)
-                novaDoacao.dataDoacao = DateTime.Now;
+            if (novaDoacao.DataDoacao == default)
+                novaDoacao.DataDoacao = DateOnly.FromDateTime(DateTime.Now);
 
             bd.Doacao.Add(novaDoacao);
             await bd.SaveChangesAsync();
 
-            return Results.Created($"/doacoes/{novaDoacao.idDoacao}", new
+            return Results.Created($"/doacoes/{novaDoacao.IdDoacao}", new
             {
-                id = novaDoacao.idDoacao,
+                id = novaDoacao.IdDoacao,
                 alimento = alimento.nome,
                 status = "Pendente"
             });
@@ -111,7 +111,7 @@ public static class DoacaoEndPoint
             if (doacao is null) return Results.NotFound();
             if (nota <= 0 || nota > 5) return Results.BadRequest();
 
-            doacao.avaliacao = nota; 
+            doacao.Avaliacao = nota; 
             await bd.SaveChangesAsync();
 
             return Results.Ok();

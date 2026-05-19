@@ -10,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Configura a conexão com o seu Banco de Dados (SQL Server)
+// Configura a conexão com o Banco de Dados (SQL Server)
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -34,7 +34,7 @@ app.MapAutenticacaoEndpoints(); // Registra as rotas de Login/Autenticação
 app.MapDoadorEndpoints(); // Registra as rotas de doador
 app.MapDoacaoEndPoints(); // Registra as rotas de doações
 app.MapAlimentoEndPoints(); // Registra as rotas de alimentos
-//app.MapReceptorEndpoints // Registra as rotas de receptor
+app.MapReceptorEndpoints();// Registra as rotas de receptor
 
 // Deixa a API ativa e escutando o aplicativo Android
 app.Run();
