@@ -25,13 +25,6 @@ public static class ReceptorEndpoints
                 return Results.BadRequest("Este usuário já está cadastrado como receptor.");
             }
 
-            var jaEhDoador = await db.Doadores.AnyAsync(d => d.idUsuario == novoReceptor.idUsuario);
-            if (jaEhDoador)
-            {
-                return Results.BadRequest("Um doador não pode ser cadastrado como receptor.");
-            }
-
-
             novoReceptor.usuarioReceptor = null!;
 
 

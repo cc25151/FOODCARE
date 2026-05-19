@@ -24,12 +24,6 @@ public static class DoadorEndpoints
                 return Results.BadRequest("Este usuário já está cadastrado como doador.");
             }
 
-            var jaEhReceptor = await db.Receptores.AnyAsync(r => r.idUsuario == novoDoador.idUsuario);
-            if (jaEhReceptor)
-            {
-                return Results.BadRequest("Um receptor não pode ser cadastrado como doador.");
-            }
-
             novoDoador.usuarioDoador = null!;
             novoDoador.pontuacao = 0;
 
