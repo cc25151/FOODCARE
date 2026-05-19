@@ -51,6 +51,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.room.ktx)
+    implementation(libs.firebase.appdistribution.gradle)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -62,4 +63,7 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.7.7")
     implementation("com.google.android.gms:play-services-maps:18.2.0")
     implementation("com.google.maps.android:maps-compose:2.11.4")
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
 }
