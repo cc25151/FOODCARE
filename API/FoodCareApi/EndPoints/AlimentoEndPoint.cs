@@ -3,6 +3,7 @@ using FoodCareApi.Endpoints;
 using FoodCareApi.Models;
 using Microsoft.EntityFrameworkCore;
 
+//Remover a lógica de usuarioDoador pois não estamos utilizando o objeto de doador mais
 public static class AlimentoEndPoint
 {
     public static void MapAlimentoEndPoints(this WebApplication app)
