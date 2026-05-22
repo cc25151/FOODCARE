@@ -1,10 +1,14 @@
 package com.example.foodcare.data.api
-
+import com.example.foodcare.model.*
+import retrofit2.http.Body
+import retrofit2.http.POST
 import retrofit2.http.GET
 
 interface ApiService {
 
-    @GET("api/receitas")
-    suspend fun listarReceitas(): List<>
+    @POST("login")
+    suspend fun login(
+        @Body loginRequest: LoginRequest
+    ): LoginResposta
 
 }

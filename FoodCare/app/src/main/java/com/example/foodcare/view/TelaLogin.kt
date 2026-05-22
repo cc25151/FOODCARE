@@ -24,7 +24,9 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.foodcare.ui.theme.*
+import com.example.foodcare.viewmodel.LoginViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -32,11 +34,11 @@ fun TelaLogin(
     onLoginClick: () -> Unit = {},
     onGoogleLogin: () -> Unit = {},
     onCriarConta: () -> Unit = {},
-    onVoltar: () -> Unit = {}
+    onVoltar: () -> Unit = {},
+    viewModel: LoginViewModel =
+            viewModel()
 ) {
-    var email by remember { mutableStateOf("") }
-    var senha by remember { mutableStateOf("") }
-    var senhaVisivel by remember { mutableStateOf(false) }
+
 
     Scaffold(
         topBar = {
@@ -82,8 +84,8 @@ fun TelaLogin(
             FieldLabel("Digite seu email:")
             Spacer(modifier = Modifier.height(6.dp))
             FoodCareTextField(
-                value = email,
-                onValueChange = { email = it },
+                value = viewModel.email,
+                onValueChange = { viewModel.email = it },
                 placeholder = "seu@email.com",
                 keyboardType = KeyboardType.Email
             )
@@ -94,15 +96,15 @@ fun TelaLogin(
             FieldLabel("Digite sua senha:")
             Spacer(modifier = Modifier.height(6.dp))
             FoodCareTextField(
-                value = senha,
-                onValueChange = { senha = it },
+                value = viewModel.senha,
+                onValueChange = { viewModel.senha = it },
                 placeholder = "••••••••",
                 keyboardType = KeyboardType.Password,
-                visualTransformation = if (senhaVisivel) VisualTransformation.None else PasswordVisualTransformation(),
+                visualTransformation = if (viewModel.senhaVisivel) VisualTransformation.None else PasswordVisualTransformation(),
                 trailingIcon = {
-                    IconButton(onClick = { senhaVisivel = !senhaVisivel }) {
+                    IconButton(onClick = { viewModel.senhaVisivel = !viewModel.senhaVisivel }) {
                         Icon(
-                            imageVector = if (senhaVisivel) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                            imageVector = if (viewModel.senhaVisivel) Icons.Default.Visibility else Icons.Default.VisibilityOff,
                             contentDescription = null,
                             tint = Color(0xFF888888)
                         )
