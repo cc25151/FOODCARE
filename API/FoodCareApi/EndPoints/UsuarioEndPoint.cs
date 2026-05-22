@@ -39,7 +39,7 @@ public static class UsuarioEndpoints
             
             // Parte fundamental da criptografia da senha, usando BCrypt
             usuario.senha = BCrypt.Net.BCrypt.HashPassword(usuario.senha); 
-            
+        
             db.Usuario.Add(usuario);
             await db.SaveChangesAsync();
 
