@@ -59,7 +59,7 @@ public class AppDbContext : DbContext
             // Define que o Doador tem apenas um usuário
             // O .HasForeignKey<Doador> indica que o ID do usuário fica na tabela Doador
 
-            entity.HasOne(d => d.usuarioDoador) //Mudar a lógica para que não utlize usuarioDoador
+            entity.HasOne<Usuario>() // Cada doador deve ter um usuário associado
                   .WithOne()
                   .HasForeignKey<Doador>(d => d.idUsuario);
         });

@@ -3,7 +3,6 @@ using FoodCareApi.Endpoints;
 using FoodCareApi.Models;
 using Microsoft.EntityFrameworkCore;
 
-//Remover a lógica de usuarioDoador pois não estamos utilizando o objeto de doador mais
 public static class AlimentoEndPoint
 {
     public static void MapAlimentoEndPoints(this WebApplication app)
@@ -25,12 +24,20 @@ public static class AlimentoEndPoint
 
         rotas.MapGet("/doador/{nomeDoador}", async (string nomeDoador, AppDbContext bd) =>
         {
-            var alimentos = await bd.Alimento
-                .Include(a => a.doador)
-                    .ThenInclude(d => d.usuarioDoador)
+            var usuario = await bd.Usuario.FirstOrDefaultAsync(u => u.nome.ToLower() == nomeDoador.ToLower());
+            
+            if (usuario == null) 
+                return Results.NotFound($"Nenhum alimento encontrado para o doador: {nomeDoador}");
 
-                .Where(a => a.doador.usuarioDoador.nome.ToLower() == nomeDoador.ToLower())
+            var doador = await bd.Doador.FirstOrDefaultAsync(d => d.idUsuario == usuario.idUsuario);
+            
+            if (doador == null) 
+                return Results.NotFound($"Nenhum alimento encontrado para o doador: {nomeDoador}");
+
+            var alimentos = await bd.Alimento
+                .Where(a => a.idDoador == doador.idDoador)
                 .ToListAsync();
+                
 
             return alimentos.Any() 
                 ? Results.Ok(alimentos) 
@@ -40,9 +47,11 @@ public static class AlimentoEndPoint
         // talvez fazer filtro por distancia
 
         rotas.MapPost("/doador/{nomeDoador}", async (Alimento novoAlimento, string nomeDoador, AppDbContext bd) => {
-            var doador = await bd.Doador
-                .Include(d => d.usuarioDoador)
-                .FirstOrDefaultAsync(d => d.usuarioDoador.nome.ToLower() == nomeDoador.ToLower());
+            var usuario = await bd.Usuario.FirstOrDefaultAsync(u => u.nome.ToLower() == nomeDoador.ToLower());
+             var doador = await bd.Doador.FirstOrDefaultAsync(d => d.idUsuario == usuario.idUsuario);
+
+            if (usuario == null) 
+                return Results.NotFound($"Doador '{nomeDoador}' não encontrado.");
 
             if (doador == null)         
                 return Results.NotFound($"Doador '{nomeDoador}' não encontrado.");

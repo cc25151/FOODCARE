@@ -2,7 +2,6 @@ using FoodCareApi.Data;
 using FoodCareApi.Endpoints;
 using FoodCareApi.Models;
 using Microsoft.EntityFrameworkCore;
-//Remover a lógica de usuário doador, pois não estamos utilizando ele mais
 public static class DoacaoEndPoint
 {
     public static void MapDoacaoEndPoints(this WebApplication app)
@@ -13,7 +12,6 @@ public static class DoacaoEndPoint
         rotas.MapGet("/", async (AppDbContext bd) =>
             await bd.Doacao
                 .Include(d => d.Doador)
-                    .ThenInclude(u => u.usuarioDoador)
                 .Include(d => d.Alimento)
                 .ToListAsync()
         );

@@ -38,3 +38,12 @@ packages/
 # Sistema operacional
 .DS_Store
 Thumbs.db
+
+# Cache
+*.cache
+.cache/
+cache/
+
+# Assembly Info (arquivos gerados automaticamente)
+GeneratedAssemblyInfo.cs
+*.AssemblyAttributes.cs
