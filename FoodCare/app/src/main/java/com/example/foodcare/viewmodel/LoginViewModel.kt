@@ -3,37 +3,59 @@ package com.example.foodcare.viewmodel
 import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.foodcare.data.api.SessaoUsuario
 import com.example.foodcare.data.repository.LoginRepository
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 
 class LoginViewModel() : ViewModel()
 {
     var email by mutableStateOf("")
     var senha by mutableStateOf("")
     var senhaVisivel by mutableStateOf(false)
+    var loginSucesso by mutableStateOf(false)
+        private set
+
+    var mensagemErro by mutableStateOf("")
+        private set
+
+
 
     private val repository =
         LoginRepository()
 
-    fun FazerLogin(): Boolean{
+    fun FazerLogin(){
         viewModelScope.launch{
+            if (email == "" || senha == "") mensagemErro = "Preencha todos os campos."
 
-            try{
+            else{
+                try {
 
-                val resposta =
-                    repository.login(
-                        email,
-                        senha
-                    )
+                    val resposta =
+                        repository.login(
+                            email,
+                            senha
+                        )
+                    //se login foi efetuado, executa abaixo
 
+                    SessaoUsuario.idUsuario = resposta.idUsuario
+                    SessaoUsuario.token = resposta.token
 
-                //token recebido:
-                println(resposta.token)
+                    loginSucesso = true
 
-            }
-            catch(e:Exception){
+                } catch (e: HttpException) {
 
+                    if (e.code() == 401) {
 
+                        mensagemErro = "Email ou senha incorretos."
+
+                    }
+
+                } catch (e: Exception) {
+
+                    mensagemErro = "Erro de conexão"
+
+                }
             }
         }
     }

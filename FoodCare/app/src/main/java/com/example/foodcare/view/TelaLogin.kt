@@ -35,8 +35,7 @@ fun TelaLogin(
     onGoogleLogin: () -> Unit = {},
     onCriarConta: () -> Unit = {},
     onVoltar: () -> Unit = {},
-    viewModel: LoginViewModel =
-            viewModel()
+    viewModel: LoginViewModel = viewModel()
 ) {
 
 
@@ -114,7 +113,22 @@ fun TelaLogin(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            FoodCareButton(text = "Login", onClick = onLoginClick)
+            Column{
+                Text(text = viewModel.mensagemErro,
+                    color = Color.Red,
+                    fontSize = 16.sp)
+            }
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            FoodCareButton(text = "Login", onClick = {viewModel.FazerLogin()})
+
+            LaunchedEffect(viewModel.loginSucesso){
+
+                if(viewModel.loginSucesso){
+                    onLoginClick()
+                }
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
 
