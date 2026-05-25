@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+        using Microsoft.EntityFrameworkCore;
 using FoodCareApi.Data;
 using FoodCareApi.Models;
 
@@ -47,8 +47,7 @@ public static class UsuarioEndpoints
             return Results.Created($"/usuarios/{usuario.idUsuario}", new 
             { 
                 usuario.idUsuario, 
-                usuario.nome,
-                mensagem = "Cadastro realizado! Complete seu perfil para doar." 
+                mensagem = "Cadastro realizado! Complete seu perfil para doar ou receber." 
             });
         });
 
@@ -77,7 +76,7 @@ public static class UsuarioEndpoints
                 return Results.Ok(new { mensagem = "Perfil e localização atualizados com sucesso!" });
             }); 
 
-        // 5. DELETE - Excluir conta
+        //DELETE - Excluir conta
         grupo.MapDelete("/{id}", async (int id, AppDbContext db) =>
         {
             var usuario = await db.Usuario.FindAsync(id);

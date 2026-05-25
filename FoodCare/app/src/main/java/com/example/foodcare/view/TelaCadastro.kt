@@ -3,6 +3,7 @@ package com.example.foodcare.view
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -23,20 +24,17 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.foodcare.ui.theme.*
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.foodcare.viewmodel.CadastroViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TelaCadastroReceptor(
     onEntrar: () -> Unit = {},
     onJaTenhoConta: () -> Unit = {},
-    onVoltar: () -> Unit = {}
+    onVoltar: () -> Unit = {},
+    viewModel: CadastroViewModel = viewModel()
 ) {
-    var nome by remember { mutableStateOf("") }
-    var cpfCnpj by remember { mutableStateOf("") }
-    var cep by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var telefone by remember { mutableStateOf("") }
-    var senha by remember { mutableStateOf("") }
     var senhaVisivel by remember { mutableStateOf(false) }
 
     Scaffold(
@@ -71,10 +69,10 @@ fun TelaCadastroReceptor(
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = "Cadastrar - Receptor",
-                fontSize = 24.sp,
+                text = "Cadastrar",
+                fontSize = 30.sp,
                 fontWeight = FontWeight.Bold,
-                color = textoEscuro
+                color = textoEscuro,
             )
 
             Spacer(modifier = Modifier.height(28.dp))
@@ -83,10 +81,35 @@ fun TelaCadastroReceptor(
             FieldLabel("Digite seu nome:")
             Spacer(modifier = Modifier.height(6.dp))
             FoodCareTextField(
-                value = nome,
-                onValueChange = { nome = it },
+                value = viewModel.nome,
+                onValueChange = { viewModel.nome = it },
                 placeholder = "Nome completo"
             )
+
+            Spacer(modifier = Modifier.height(18.dp))
+
+            //CPF / CNPJ
+            FieldLabel("Você é:")
+            Spacer(modifier = Modifier.height(6.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                RadioButton(
+                    selected = (viewModel.tipoPessoa == "PF"),
+                    onClick = { viewModel.tipoPessoa = "PF" },
+                    colors = RadioButtonDefaults.colors(selectedColor = Vermelho)
+                )
+                Text(text = "Pessoa Física", color = textoEscuro, fontSize = 16.sp)
+
+                RadioButton(
+                    selected = (viewModel.tipoPessoa == "PJ"),
+                    onClick = { viewModel.tipoPessoa = "PJ" },
+                    colors = RadioButtonDefaults.colors(selectedColor = Vermelho)
+                )
+                Text(text = "Instituição / Empresa", color = textoEscuro, fontSize = 16.sp)
+            }
 
             Spacer(modifier = Modifier.height(18.dp))
 
@@ -94,21 +117,9 @@ fun TelaCadastroReceptor(
             FieldLabel("Digite seu CPF/CNPJ:")
             Spacer(modifier = Modifier.height(6.dp))
             FoodCareTextField(
-                value = cpfCnpj,
-                onValueChange = { cpfCnpj = it },
+                value = viewModel.documento,
+                onValueChange = { viewModel.documento = it },
                 placeholder = "000.000.000-00",
-                keyboardType = KeyboardType.Number
-            )
-
-            Spacer(modifier = Modifier.height(18.dp))
-
-            // CEP
-            FieldLabel("Digite seu CEP")
-            Spacer(modifier = Modifier.height(6.dp))
-            FoodCareTextField(
-                value = cep,
-                onValueChange = { cep = it },
-                placeholder = "00000-000",
                 keyboardType = KeyboardType.Number
             )
 
@@ -118,22 +129,10 @@ fun TelaCadastroReceptor(
             FieldLabel("Digite seu email:")
             Spacer(modifier = Modifier.height(6.dp))
             FoodCareTextField(
-                value = email,
-                onValueChange = { email = it },
+                value = viewModel.email,
+                onValueChange = { viewModel.email = it },
                 placeholder = "seu@email.com",
                 keyboardType = KeyboardType.Email
-            )
-
-            Spacer(modifier = Modifier.height(18.dp))
-
-            // Telefone
-            FieldLabel("Digite seu telefone")
-            Spacer(modifier = Modifier.height(6.dp))
-            FoodCareTextField(
-                value = telefone,
-                onValueChange = { telefone = it },
-                placeholder = "(00) 00000-0000",
-                keyboardType = KeyboardType.Phone
             )
 
             Spacer(modifier = Modifier.height(18.dp))
@@ -142,8 +141,8 @@ fun TelaCadastroReceptor(
             FieldLabel("Digite sua senha:")
             Spacer(modifier = Modifier.height(6.dp))
             FoodCareTextField(
-                value = senha,
-                onValueChange = { senha = it },
+                value = viewModel.senha,
+                onValueChange = { viewModel.senha = it },
                 placeholder = "••••••••",
                 keyboardType = KeyboardType.Password,
                 visualTransformation = if (senhaVisivel) VisualTransformation.None else PasswordVisualTransformation(),
@@ -160,7 +159,18 @@ fun TelaCadastroReceptor(
 
             Spacer(modifier = Modifier.height(32.dp))
 
+            if (viewModel.mensagemErro.isNotEmpty()) {
+                Text(
+                    text = viewModel.mensagemErro,
+                    color = Color.Red,
+                    fontSize = 16.sp,
+                    modifier = Modifier.padding(bottom = 12.dp)
+                )
+            }
+
             FoodCareButton(text = "Entrar", onClick = onEntrar)
+
+            //Acrescentar LaunchedEffect
 
             Spacer(modifier = Modifier.height(16.dp))
 
