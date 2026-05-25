@@ -130,53 +130,6 @@ fun TelaLogin(
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                HorizontalDivider(modifier = Modifier.weight(1f), color = Color(0xFFDDDDDD))
-                Text(
-                    text = "  Ou  ",
-                    fontSize = 13.sp,
-                    color = Color(0xFF888888)
-                )
-                HorizontalDivider(modifier = Modifier.weight(1f), color = Color(0xFFDDDDDD))
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-
-            OutlinedButton(
-                onClick = onGoogleLogin,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(52.dp),
-                shape = RoundedCornerShape(12.dp),
-                border = androidx.compose.foundation.BorderStroke(1.5.dp, Vermelho),
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = Vermelho)
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        text = "Entrar com o Google",
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = Vermelho
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-
-                    Text(
-                        text = "G",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.ExtraBold,
-                        color = Vermelho
-                    )
-                }
-            }
 
             Spacer(modifier = Modifier.height(24.dp))
 

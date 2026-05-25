@@ -35,7 +35,7 @@ fun TelaCadastroReceptor(
     onVoltar: () -> Unit = {},
     viewModel: CadastroViewModel = viewModel()
 ) {
-    var senhaVisivel by remember { mutableStateOf(false) }
+
 
     Scaffold(
         topBar = {
@@ -108,7 +108,7 @@ fun TelaCadastroReceptor(
                     onClick = { viewModel.tipoPessoa = "PJ" },
                     colors = RadioButtonDefaults.colors(selectedColor = Vermelho)
                 )
-                Text(text = "Instituição / Empresa", color = textoEscuro, fontSize = 16.sp)
+                Text(text = "Instituição ou Empresa", color = textoEscuro, fontSize = 16.sp)
             }
 
             Spacer(modifier = Modifier.height(18.dp))
@@ -145,11 +145,11 @@ fun TelaCadastroReceptor(
                 onValueChange = { viewModel.senha = it },
                 placeholder = "••••••••",
                 keyboardType = KeyboardType.Password,
-                visualTransformation = if (senhaVisivel) VisualTransformation.None else PasswordVisualTransformation(),
+                visualTransformation = if (viewModel.senhaVisivel) VisualTransformation.None else PasswordVisualTransformation(),
                 trailingIcon = {
-                    IconButton(onClick = { senhaVisivel = !senhaVisivel }) {
+                    IconButton(onClick = { viewModel.senhaVisivel = !viewModel.senhaVisivel }) {
                         Icon(
-                            imageVector = if (senhaVisivel) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                            imageVector = if (viewModel.senhaVisivel) Icons.Default.Visibility else Icons.Default.VisibilityOff,
                             contentDescription = null,
                             tint = Color(0xFF888888)
                         )
@@ -168,9 +168,13 @@ fun TelaCadastroReceptor(
                 )
             }
 
-            FoodCareButton(text = "Entrar", onClick = onEntrar)
+            FoodCareButton(text = "Entrar", onClick = { viewModel.FazerCadastro() })
 
-            //Acrescentar LaunchedEffect
+            LaunchedEffect(viewModel.cadastroSucesso) {
+                if (viewModel.cadastroSucesso) {
+                    onEntrar()
+                }
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
 

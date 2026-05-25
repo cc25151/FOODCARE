@@ -2,6 +2,7 @@ package com.example.foodcare.viewmodel
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,12 +14,17 @@ class CadastroViewModel : ViewModel() {
     var nome by mutableStateOf("")
     var  email by mutableStateOf("")
     var senha by mutableStateOf("")
+
+    var senhaVisivel by  mutableStateOf(false)
     var documento by mutableStateOf("")
 
     var tipoPessoa by mutableStateOf("")
     var mensagemErro by mutableStateOf("")
 
     private val cadastroRepository = CadastroRepository()
+
+    var cadastroSucesso by mutableStateOf(false)
+        private set
 
     fun FazerCadastro() {
         if (nome.isBlank() || email.isBlank() || senha.isBlank() || tipoPessoa.isBlank() || documento.isBlank()) {
@@ -31,6 +37,7 @@ class CadastroViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 val resposta = cadastroRepository.cadastro(nome, email, senha, tipoPessoa, documento)
+                cadastroSucesso = true
             } catch (e: Exception) {
                 mensagemErro = "Erro ao realizar cadastro: ${e}"
             }
