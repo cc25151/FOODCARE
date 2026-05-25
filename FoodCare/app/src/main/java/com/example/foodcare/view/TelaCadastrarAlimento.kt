@@ -25,6 +25,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.foodcare.ui.theme.*
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.foodcare.viewmodel.CadastroAlimentoViewModel
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -32,21 +36,26 @@ import com.example.foodcare.ui.theme.*
 fun TelaCadastrarAlimento(
     categorias: List<CategoriaUi>         = emptyList(),
     onVoltar: () -> Unit                  = {},
-    onProximo: (AlimentoFormData) -> Unit = {}
+    onProximo: (AlimentoFormData) -> Unit = {},
+    viewModel: CadastroAlimentoViewModel = viewModel()
 ) {
+    val context = LocalContext.current
+    var mostrarCalendario by remember { mutableStateOf(false) }
+    val datePickerState = rememberDatePickerState()
 
-    var nome        by remember { mutableStateOf("") }
-    var descricao   by remember { mutableStateOf("") }
-    var quantidade  by remember { mutableStateOf("") }
-    var validade    by remember { mutableStateOf("") }
+    var categoriaExpandida by remember { mutableStateOf(false) }
 
-    var categoriaExpandida   by remember { mutableStateOf(false) }
-    var categoriaSelecionada by remember { mutableStateOf<CategoriaUi?>(null) }
+    val camposValidos = viewModel.nome.isNotBlank() &&
+            viewModel.quantidade.isNotBlank() &&
+            viewModel.validade.isNotBlank() &&
+            viewModel.categoriaSelecionada != null
 
-    val camposValidos = nome.isNotBlank()
-            && descricao.isNotBlank()
-            && quantidade.isNotBlank()
-            && validade.isNotBlank()
+    LaunchedEffect(viewModel.cadastroSucesso) {
+        if (viewModel.cadastroSucesso) {
+            Toast.makeText(context, "Alimento cadastrado!", Toast.LENGTH_SHORT).show()
+            viewModel.resetarFormulario()
+        }
+    }
 
 
     Scaffold(
@@ -110,10 +119,10 @@ fun TelaCadastrarAlimento(
                     placeholder = "Ex.: Cesta básica, Marmita, Pão..."
                 ) {
                     CampoTexto(
-                        value         = nome,
-                        onValueChange = { if (it.length <= 50) nome = it },
+                        value         = viewModel.nome,
+                        onValueChange = { if (it.length <= 50) viewModel.nome = it },
                         placeholder   = "Ex.: Cesta básica",
-                        contador      = "${nome.length}/50"
+                        contador      = "${viewModel.nome.length}/50"
                     )
                 }
 
@@ -124,11 +133,11 @@ fun TelaCadastrarAlimento(
                     placeholder = "Descreva o alimento brevemente"
                 ) {
                     CampoTexto(
-                        value         = descricao,
-                        onValueChange = { if (it.length <= 100) descricao = it },
+                        value         = viewModel.descricao,
+                        onValueChange = { if (it.length <= 100) viewModel.descricao = it },
                         placeholder   = "Ex.: Arroz, feijão, macarrão e óleo",
                         maxLines      = 3,
-                        contador      = "${descricao.length}/100"
+                        contador      = "${viewModel.descricao.length}/100"
                     )
                 }
 
@@ -139,8 +148,8 @@ fun TelaCadastrarAlimento(
                     placeholder = "Número de unidades/porções"
                 ) {
                     CampoTexto(
-                        value         = quantidade,
-                        onValueChange = { if (it.all { c -> c.isDigit() }) quantidade = it },
+                        value         = viewModel.quantidade,
+                        onValueChange = { if (it.all { c -> c.isDigit() }) viewModel.quantidade = it },
                         placeholder   = "Ex.: 5",
                         keyboardType  = KeyboardType.Number
                     )
@@ -148,16 +157,22 @@ fun TelaCadastrarAlimento(
 
 
                 CampoFormulario(
-                    label       = "Data de validade *",
-                    icone       = Icons.Default.EventBusy,
-                    placeholder = "DD/MM/AAAA"
+                    label = "Data de validade *",
+                    icone = Icons.Default.EventBusy,
+                    placeholder = "Selecione a data"
                 ) {
-                    CampoTexto(
-                        value         = validade,
-                        onValueChange = { validade = it },
-                        placeholder   = "DD/MM/AAAA",
-                        keyboardType  = KeyboardType.Number
-                    )
+                    Box(modifier = Modifier.fillMaxWidth()) {
+                        CampoTexto(
+                            value         = viewModel.validade,
+                            onValueChange = { },
+                            placeholder   = "Clique para selecionar",
+                            readOnly      = true
+                        )
+                        Box(modifier = Modifier
+                            .matchParentSize()
+                            .clickable { mostrarCalendario = true }
+                        )
+                    }
                 }
 
 
@@ -171,7 +186,7 @@ fun TelaCadastrarAlimento(
                         onExpandedChange = { categoriaExpandida = it }
                     ) {
                         OutlinedTextField(
-                            value         = categoriaSelecionada?.nome ?: "",
+                            value         = viewModel.categoriaSelecionada?.nome ?: "",
                             onValueChange = {},
                             readOnly      = true,
                             placeholder   = {
@@ -212,7 +227,7 @@ fun TelaCadastrarAlimento(
                                     DropdownMenuItem(
                                         text = { Text(cat.nome, fontSize = 14.sp) },
                                         onClick = {
-                                            categoriaSelecionada = cat
+                                            viewModel.categoriaSelecionada = cat // ATUALIZA O VM
                                             categoriaExpandida = false
                                         }
                                     )
@@ -224,17 +239,25 @@ fun TelaCadastrarAlimento(
 
                 Spacer(Modifier.height(8.dp))
 
+                if (viewModel.mensagemErro.isNotBlank()) {
+                    Text(
+                        text = viewModel.mensagemErro,
+                        color = Color.Red,
+                        fontSize = 12.sp,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                }
 
                 Button(
                     onClick = {
                         if (camposValidos) {
                             onProximo(
                                 AlimentoFormData(
-                                    nome       = nome,
-                                    descricao  = descricao,
-                                    quantidade = quantidade.toIntOrNull() ?: 0,
-                                    validade   = validade,
-                                    idCategoria = categoriaSelecionada?.id ?: 0
+                                    nome       = viewModel.nome,
+                                    descricao  = viewmodel.descricao,
+                                    quantidade = viewModel.quantidade.toIntOrNull() ?: 0,
+                                    validade   = viewModel.validade,
+                                    idCategoria = viewModel.categoriaSelecionada?.id ?: 0 // Agora validado pelo camposValidos
                                 )
                             )
                         }
@@ -258,10 +281,31 @@ fun TelaCadastrarAlimento(
 
                 Spacer(Modifier.height(16.dp))
             }
+
+            if (mostrarCalendario) {
+                DatePickerDialog(
+                    onDismissRequest = { mostrarCalendario = false },
+                    confirmButton = {
+                        TextButton(onClick = {
+                            datePickerState.selectedDateMillis?.let { milis ->
+                                viewModel.validade = formatarData(milis)
+                            }
+                            mostrarCalendario = false
+                        }) { Text("OK") }
+                    }
+                ) {
+                    DatePicker(state = datePickerState)
+                }
         }
     }
 }
 
+fun formatarData(millis: Long): String {
+    val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+    calendar.timeInMillis = millis
+    val format = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+    return format.format(calendar.time)
+}
 
 
 
