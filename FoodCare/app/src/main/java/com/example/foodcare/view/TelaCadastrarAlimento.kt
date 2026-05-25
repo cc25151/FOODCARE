@@ -20,6 +20,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -29,7 +30,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.foodcare.viewmodel.CadastroAlimentoViewModel
 import java.text.SimpleDateFormat
 import java.util.*
-
+import com.example.foodcare.model.FoodCareData
+import android.widget.Toast
+import com.example.foodcare.model.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -254,10 +257,10 @@ fun TelaCadastrarAlimento(
                             onProximo(
                                 AlimentoFormData(
                                     nome       = viewModel.nome,
-                                    descricao  = viewmodel.descricao,
+                                    descricao  = viewModel.descricao,
                                     quantidade = viewModel.quantidade.toIntOrNull() ?: 0,
                                     validade   = viewModel.validade,
-                                    idCategoria = viewModel.categoriaSelecionada?.id ?: 0 // Agora validado pelo camposValidos
+                                    idCategoria = viewModel.categoriaSelecionada.id ?: 0 // Agora validado pelo camposValidos
                                 )
                             )
                         }
@@ -288,7 +291,7 @@ fun TelaCadastrarAlimento(
                     confirmButton = {
                         TextButton(onClick = {
                             datePickerState.selectedDateMillis?.let { milis ->
-                                viewModel.validade = formatarData(milis)
+                                viewModel.validade = FormatarData(milis)
                             }
                             mostrarCalendario = false
                         }) { Text("OK") }
@@ -300,7 +303,8 @@ fun TelaCadastrarAlimento(
     }
 }
 
-fun formatarData(millis: Long): String {
+@Composable
+fun FormatarData(millis: Long): String {
     val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
     calendar.timeInMillis = millis
     val format = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
@@ -309,19 +313,7 @@ fun formatarData(millis: Long): String {
 
 
 
-data class CategoriaUi(
-    val id: Int,
-    val nome: String
-)
 
-
-data class AlimentoFormData(
-    val nome: String,
-    val descricao: String,
-    val quantidade: Int,
-    val validade: String,
-    val idCategoria: Int
-)
 
 
 @Composable
@@ -380,22 +372,22 @@ fun CampoTexto(
 ) {
     Column {
         OutlinedTextField(
-            value         = value,
+            value = value,
             onValueChange = onValueChange,
-            modifier      = Modifier.fillMaxWidth(),
-            placeholder   = {
+            modifier = Modifier.fillMaxWidth(),
+            placeholder = {
                 Text(placeholder, color = Color(0xFFBBBBBB), fontSize = 14.sp)
             },
-            singleLine    = maxLines == 1,
-            maxLines      = maxLines,
-            shape         = RoundedCornerShape(10.dp),
+            singleLine = maxLines == 1,
+            maxLines = maxLines,
+            shape = RoundedCornerShape(10.dp),
             keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
-            colors        = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor      = CAVermelho,
-                unfocusedBorderColor    = CABorda,
-                focusedContainerColor   = CABranco,
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = CAVermelho,
+                unfocusedBorderColor = CABorda,
+                focusedContainerColor = CABranco,
                 unfocusedContainerColor = CABranco,
-                cursorColor             = CAVermelho
+                cursorColor = CAVermelho
             )
         )
         if (contador != null) {
@@ -408,5 +400,7 @@ fun CampoTexto(
                 color = CASub
             )
         }
+        }
     }
 }
+

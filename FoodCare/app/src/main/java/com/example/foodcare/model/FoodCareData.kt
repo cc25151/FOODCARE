@@ -13,6 +13,20 @@ data class Produto(
     val imageColor: Long   // using color as placeholder for image
 )
 
+data class CategoriaUi(
+    val id: Int,
+    val nome: String
+)
+
+
+data class AlimentoFormData(
+    val nome: String,
+    val descricao: String,
+    val quantidade: Int,
+    val validade: String,
+    val idCategoria: Int
+)
+
 data class CategoriaVisual(val nome: String, val emoji: String)
 
 data class Categoria(val nome: String)
