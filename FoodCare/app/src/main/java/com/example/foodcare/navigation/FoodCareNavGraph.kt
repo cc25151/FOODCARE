@@ -22,9 +22,15 @@ fun FoodCareNavGraph(
         composable(Routes.TELA_INICIAL) {
             TelaInicial(
                 onEntrarClick    = { navController.navigate(Routes.LOGIN) },
-                onCadastrarClick = { navController.navigate(Routes.CADASTRO_RECEPTOR) },
+                onCadastrarClick = { navController.navigate(Routes.FINALIDADE) },
                 onQuemSomosClick = { navController.navigate(Routes.QUEM_SOMOS) }
             )
+        }
+        composable(Routes.FINALIDADE){
+            TelaFinalidade(
+                onAvançar = {navController.navigate(Routes.finalidade(tipo))},
+            )
+
         }
 
         composable(Routes.QUEM_SOMOS) {
@@ -43,12 +49,12 @@ fun FoodCareNavGraph(
                         popUpTo(Routes.TELA_INICIAL) { inclusive = false }
                     }
                 },
-                onCriarConta  = { navController.navigate(Routes.CADASTRO_RECEPTOR) },
+                onCriarConta  = { navController.navigate(Routes.CADASTRO) },
                 onVoltar      = { navController.popBackStack() }
             )
         }
 
-        composable(Routes.CADASTRO_RECEPTOR) {
+        composable(Routes.CADASTRO) {
             TelaCadastroReceptor(
                 onEntrar = {
                     navController.navigate(Routes.MAIN) {
