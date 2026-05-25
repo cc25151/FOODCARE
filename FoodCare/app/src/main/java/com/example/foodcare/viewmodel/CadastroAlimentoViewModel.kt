@@ -4,9 +4,10 @@ import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.foodcare.data.api.SessaoUsuario
-import com.example.foodcare.data.repository.LoginRepository
+import com.example.foodcare.data.repository.AlimentoRepository
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
+import com.example.foodcare.model.*
 
 class CadastroAlimentoViewModel : ViewModel() {
     // UI
@@ -25,7 +26,7 @@ class CadastroAlimentoViewModel : ViewModel() {
     var cadastroSucesso by mutableStateOf(false)
         private set
 
-    var categoriaSelecionada by mutableStateOf<CategoriaUi?>(null)
+    var categoriaSelecionada by mutableStateOf<CategoriaUi?>(List<CategoriaUi>)
 
     private val repository = AlimentoRepository()
 
