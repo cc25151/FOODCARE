@@ -40,6 +40,7 @@ class LoginViewModel() : ViewModel()
 
                     SessaoUsuario.idUsuario = resposta.idUsuario
                     SessaoUsuario.token = resposta.token
+                    SessaoUsuario.nomeUsuario = resposta.nome
 
                     loginSucesso = true
 

@@ -27,7 +27,7 @@ class CadastroAlimentoViewModel : ViewModel() {
 
     var categoriaSelecionada by mutableStateOf<CategoriaUi?>(null)
 
-    // private val repository = AlimentoRepository()
+    private val repository = AlimentoRepository()
 
     fun cadastrar(idCategoria: Int) {
         if (nome.isBlank() || quantidade.isBlank() || validade.isBlank() || idCategoria == 0) {
@@ -40,30 +40,27 @@ class CadastroAlimentoViewModel : ViewModel() {
                 carregando = true
                 mensagemErro = ""
 
-                // Converte tipo
-                val qtdInt = quantidade.toIntOrNull() ?: 0
+                val nomeDoDoador = SessaoUsuario.nomeUsuario ?: ""
 
-                /*
-                val resposta = repository.cadastrarAlimento(
-                    token = SessaoUsuario.token ?: "",
+                val resposta = repository.cadastrar(
+                    nomeDoador = nomeDoDoador,
                     nome = nome,
                     descricao = descricao,
-                    quantidade = qtdInt,
+                    quantidade = quantidade.toIntOrNull() ?: 0,
                     validade = validade,
                     idCategoria = idCategoria
                 )
-                */
 
                 cadastroSucesso = true
 
             } catch (e: HttpException) {
                 mensagemErro = when (e.code()) {
-                    400 -> "Dados inválidos. Verifique as informações."
-                    401 -> "Sessão expirada. Faça login novamente."
+                    409 -> "Você já cadastrou um alimento com este nome."
+                    404 -> "Doador não encontrado no sistema."
                     else -> "Erro no servidor: ${e.code()}"
                 }
             } catch (e: Exception) {
-                mensagemErro = "Erro de conexão: Verifique sua internet."
+                mensagemErro = "Erro de conexão."
             } finally {
                 carregando = false
             }
