@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.foodcare.view.*
+import com.example.foodcare.model.*
 
 @Composable
 fun FoodCareNavGraph(

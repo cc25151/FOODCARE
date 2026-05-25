@@ -99,14 +99,20 @@ fun TelaCadastrarAlimento(
                     .padding(horizontal = 20.dp, vertical = 20.dp)
             ) {
                 Column {
-                    Text("Passo 1 de 2", color = CABranco.copy(alpha = 0.75f),
-                        fontSize = 12.sp)
-                    Text("Dados do Alimento",
-                        color = CABranco, fontWeight = FontWeight.Bold, fontSize = 22.sp)
+                    Text(
+                        "Passo 1 de 2", color = CABranco.copy(alpha = 0.75f),
+                        fontSize = 12.sp
+                    )
+                    Text(
+                        "Dados do Alimento",
+                        color = CABranco, fontWeight = FontWeight.Bold, fontSize = 22.sp
+                    )
                     Spacer(Modifier.height(2.dp))
-                    Text("Preencha as informações sobre o alimento que será doado.",
+                    Text(
+                        "Preencha as informações sobre o alimento que será doado.",
                         color = CABranco.copy(alpha = 0.85f), fontSize = 13.sp,
-                        lineHeight = 18.sp)
+                        lineHeight = 18.sp
+                    )
                 }
             }
 
@@ -117,44 +123,47 @@ fun TelaCadastrarAlimento(
             ) {
 
                 CampoFormulario(
-                    label       = "Nome do alimento *",
-                    icone       = Icons.Default.Fastfood,
+                    label = "Nome do alimento *",
+                    icone = Icons.Default.Fastfood,
                     placeholder = "Ex.: Cesta básica, Marmita, Pão..."
                 ) {
                     CampoTexto(
-                        value         = viewModel.nome,
+                        value = viewModel.nome,
                         onValueChange = { if (it.length <= 50) viewModel.nome = it },
-                        placeholder   = "Ex.: Cesta básica",
-                        contador      = "${viewModel.nome.length}/50"
+                        placeholder = "Ex.: Cesta básica",
+                        contador = "${viewModel.nome.length}/50",
+                        readOnly = false
                     )
                 }
 
 
                 CampoFormulario(
-                    label       = "Descrição *",
-                    icone       = Icons.Default.Description,
+                    label = "Descrição *",
+                    icone = Icons.Default.Description,
                     placeholder = "Descreva o alimento brevemente"
                 ) {
                     CampoTexto(
-                        value         = viewModel.descricao,
+                        value = viewModel.descricao,
                         onValueChange = { if (it.length <= 100) viewModel.descricao = it },
-                        placeholder   = "Ex.: Arroz, feijão, macarrão e óleo",
-                        maxLines      = 3,
-                        contador      = "${viewModel.descricao.length}/100"
+                        placeholder = "Ex.: Arroz, feijão, macarrão e óleo",
+                        maxLines = 3,
+                        contador = "${viewModel.descricao.length}/100"
                     )
                 }
 
 
                 CampoFormulario(
-                    label       = "Quantidade *",
-                    icone       = Icons.Default.Inventory2,
+                    label = "Quantidade *",
+                    icone = Icons.Default.Inventory2,
                     placeholder = "Número de unidades/porções"
                 ) {
                     CampoTexto(
-                        value         = viewModel.quantidade,
-                        onValueChange = { if (it.all { c -> c.isDigit() }) viewModel.quantidade = it },
-                        placeholder   = "Ex.: 5",
-                        keyboardType  = KeyboardType.Number
+                        value = viewModel.quantidade,
+                        onValueChange = {
+                            if (it.all { c -> c.isDigit() }) viewModel.quantidade = it
+                        },
+                        placeholder = "Ex.: 5",
+                        keyboardType = KeyboardType.Number
                     )
                 }
 
@@ -166,62 +175,68 @@ fun TelaCadastrarAlimento(
                 ) {
                     Box(modifier = Modifier.fillMaxWidth()) {
                         CampoTexto(
-                            value         = viewModel.validade,
+                            value = viewModel.validade,
                             onValueChange = { },
-                            placeholder   = "Clique para selecionar",
-                            readOnly      = true
+                            placeholder = "Clique para selecionar",
+                            readOnly = true
                         )
-                        Box(modifier = Modifier
-                            .matchParentSize()
-                            .clickable { mostrarCalendario = true }
+                        Box(
+                            modifier = Modifier
+                                .matchParentSize()
+                                .clickable { mostrarCalendario = true }
                         )
                     }
                 }
 
 
                 CampoFormulario(
-                    label       = "Categoria *",
-                    icone       = Icons.Default.Category,
+                    label = "Categoria *",
+                    icone = Icons.Default.Category,
                     placeholder = "Selecione a categoria"
                 ) {
                     ExposedDropdownMenuBox(
-                        expanded         = categoriaExpandida,
+                        expanded = categoriaExpandida,
                         onExpandedChange = { categoriaExpandida = it }
                     ) {
                         OutlinedTextField(
-                            value         = viewModel.categoriaSelecionada?.nome ?: "",
+                            value = viewModel.categoriaSelecionada?.nome ?: "",
                             onValueChange = {},
-                            readOnly      = true,
-                            placeholder   = {
-                                Text("Selecione...",
-                                    color = Color(0xFFBBBBBB), fontSize = 14.sp)
+                            readOnly = true,
+                            placeholder = {
+                                Text(
+                                    "Selecione...",
+                                    color = Color(0xFFBBBBBB), fontSize = 14.sp
+                                )
                             },
-                            trailingIcon  = {
+                            trailingIcon = {
                                 ExposedDropdownMenuDefaults.TrailingIcon(
-                                    expanded = categoriaExpandida)
+                                    expanded = categoriaExpandida
+                                )
                             },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .menuAnchor(),
-                            shape  = RoundedCornerShape(10.dp),
+                            shape = RoundedCornerShape(10.dp),
                             colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor      = CAVermelho,
-                                unfocusedBorderColor    = CABorda,
-                                focusedContainerColor   = CABranco,
+                                focusedBorderColor = CAVermelho,
+                                unfocusedBorderColor = CABorda,
+                                focusedContainerColor = CABranco,
                                 unfocusedContainerColor = CABranco,
-                                cursorColor             = CAVermelho
+                                cursorColor = CAVermelho
                             )
                         )
                         ExposedDropdownMenu(
-                            expanded         = categoriaExpandida,
+                            expanded = categoriaExpandida,
                             onDismissRequest = { categoriaExpandida = false }
                         ) {
 
                             if (categorias.isEmpty()) {
                                 DropdownMenuItem(
                                     text = {
-                                        Text("Carregando categorias...",
-                                            color = CASub, fontSize = 13.sp)
+                                        Text(
+                                            "Carregando categorias...",
+                                            color = CASub, fontSize = 13.sp
+                                        )
                                     },
                                     onClick = {}
                                 )
@@ -256,30 +271,33 @@ fun TelaCadastrarAlimento(
                         if (camposValidos) {
                             onProximo(
                                 AlimentoFormData(
-                                    nome       = viewModel.nome,
-                                    descricao  = viewModel.descricao,
+                                    nome = viewModel.nome,
+                                    descricao = viewModel.descricao,
                                     quantidade = viewModel.quantidade.toIntOrNull() ?: 0,
-                                    validade   = viewModel.validade,
-                                    idCategoria = viewModel.categoriaSelecionada.id ?: 0 // Agora validado pelo camposValidos
+                                    validade = viewModel.validade,
+                                    idCategoria = viewModel.categoriaSelecionada?.id ?: 0
+
                                 )
                             )
                         }
                     },
-                    enabled  = camposValidos,
+                    enabled = camposValidos,
                     modifier = Modifier.fillMaxWidth().height(52.dp),
-                    shape    = RoundedCornerShape(14.dp),
-                    colors   = ButtonDefaults.buttonColors(
-                        containerColor         = CAVermelho,
-                        contentColor           = CABranco,
+                    shape = RoundedCornerShape(14.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = CAVermelho,
+                        contentColor = CABranco,
                         disabledContainerColor = CAVermelho.copy(alpha = 0.35f),
-                        disabledContentColor   = CABranco.copy(alpha = 0.5f)
+                        disabledContentColor = CABranco.copy(alpha = 0.5f)
                     ),
                     elevation = ButtonDefaults.buttonElevation(defaultElevation = 3.dp)
                 ) {
                     Text("Próximo", fontWeight = FontWeight.Bold, fontSize = 15.sp)
                     Spacer(Modifier.width(8.dp))
-                    Icon(Icons.AutoMirrored.Filled.ArrowForward, null,
-                        modifier = Modifier.size(18.dp))
+                    Icon(
+                        Icons.AutoMirrored.Filled.ArrowForward, null,
+                        modifier = Modifier.size(18.dp)
+                    )
                 }
 
                 Spacer(Modifier.height(16.dp))
@@ -294,26 +312,26 @@ fun TelaCadastrarAlimento(
                                 viewModel.validade = FormatarData(milis)
                             }
                             mostrarCalendario = false
-                        }) { Text("OK") }
+                        }) {
+                            Text("OK")
+                        }
                     }
                 ) {
                     DatePicker(state = datePickerState)
                 }
+            }
+
         }
     }
 }
 
-@Composable
+
 fun FormatarData(millis: Long): String {
     val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
     calendar.timeInMillis = millis
     val format = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
     return format.format(calendar.time)
 }
-
-
-
-
 
 
 @Composable
@@ -368,12 +386,14 @@ fun CampoTexto(
     placeholder: String,
     keyboardType: KeyboardType = KeyboardType.Text,
     maxLines: Int = 1,
-    contador: String? = null
+    contador: String? = null,
+    readOnly: Boolean = false
 ) {
     Column {
         OutlinedTextField(
             value = value,
             onValueChange = onValueChange,
+            readOnly = readOnly,
             modifier = Modifier.fillMaxWidth(),
             placeholder = {
                 Text(placeholder, color = Color(0xFFBBBBBB), fontSize = 14.sp)
@@ -390,6 +410,7 @@ fun CampoTexto(
                 cursorColor = CAVermelho
             )
         )
+
         if (contador != null) {
             Text(
                 contador,
@@ -400,7 +421,5 @@ fun CampoTexto(
                 color = CASub
             )
         }
-        }
     }
 }
-

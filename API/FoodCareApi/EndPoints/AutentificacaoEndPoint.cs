@@ -60,6 +60,7 @@
                 return Results.Ok(new 
                 { 
                     usuario.idUsuario,
+                    usuario.nome,
                     token = tokenString 
                 });
             });

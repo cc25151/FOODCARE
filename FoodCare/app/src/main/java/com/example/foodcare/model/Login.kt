@@ -7,5 +7,6 @@ data class LoginRequest(
 
 data class LoginResposta(
     val idUsuario: Int,
+    val nome: String,
     val token: String
 )

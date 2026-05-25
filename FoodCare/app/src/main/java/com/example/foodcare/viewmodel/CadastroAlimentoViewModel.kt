@@ -26,7 +26,7 @@ class CadastroAlimentoViewModel : ViewModel() {
     var cadastroSucesso by mutableStateOf(false)
         private set
 
-    var categoriaSelecionada by mutableStateOf<CategoriaUi?>(List<CategoriaUi>)
+    var categoriaSelecionada: CategoriaUi? by mutableStateOf<CategoriaUi?>(null)
 
     private val repository = AlimentoRepository()
 

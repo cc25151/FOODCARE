@@ -21,8 +21,7 @@ class LoginViewModel() : ViewModel()
 
 
 
-    private val repository =
-        LoginRepository()
+    private val repository = LoginRepository()
 
     fun FazerLogin(){
         viewModelScope.launch{
