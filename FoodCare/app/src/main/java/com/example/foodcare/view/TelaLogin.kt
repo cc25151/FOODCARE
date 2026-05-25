@@ -32,7 +32,6 @@ import com.example.foodcare.viewmodel.LoginViewModel
 @Composable
 fun TelaLogin(
     onLoginClick: () -> Unit = {},
-    onGoogleLogin: () -> Unit = {},
     onCriarConta: () -> Unit = {},
     onVoltar: () -> Unit = {},
     viewModel: LoginViewModel = viewModel()

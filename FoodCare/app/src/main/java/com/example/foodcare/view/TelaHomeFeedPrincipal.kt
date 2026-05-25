@@ -53,24 +53,24 @@ fun TelaHomeFeedPrincipal(
                         },
                         label = {
                             Text(
-                                text       = tab.label,
-                                fontSize   = 11.sp,
-                                fontWeight = if (selecionado) FontWeight.SemiBold
-                                else FontWeight.Normal
-                            )
-                        },
-                        colors = NavigationBarItemDefaults.colors(
-                            selectedIconColor   = Vermelho,
-                            selectedTextColor   = Vermelho,
-                            unselectedIconColor = Cinza,
-                            unselectedTextColor = Cinza,
-                            indicatorColor      = Vermelho.copy(alpha = 0.10f)
-                        )
-                    )
-                }
-            }
-        }
-    ) { innerPadding ->
+        text       = tab.label,
+        fontSize   = 11.sp,
+        fontWeight = if (selecionado) FontWeight.SemiBold
+        else FontWeight.Normal
+        )
+    },
+    colors = NavigationBarItemDefaults.colors(
+        selectedIconColor   = Vermelho,
+        selectedTextColor   = Vermelho,
+        unselectedIconColor = Cinza,
+        unselectedTextColor = Cinza,
+        indicatorColor      = Vermelho.copy(alpha = 0.10f)
+    )
+    )
+}
+}
+}
+) { innerPadding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
