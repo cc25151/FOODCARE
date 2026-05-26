@@ -24,4 +24,31 @@ class CadastroRepository {
                 )
             )
         }
+
+        suspend fun cadastrarDoador(
+            idUsuario: Int
+        ): Boolean {
+
+            val resposta =
+                RetrofitClient.api
+                    .cadastroDoador(
+                        idUsuario
+                    )
+
+            return resposta.isSuccessful
+        }
+
+    suspend fun cadastrarReceptor(
+        idUsuario: Int
+    ): Boolean {
+
+        val resposta =
+            RetrofitClient.api
+                .cadastroReceptor(
+                    idUsuario
+                )
+
+        return resposta.isSuccessful
+    }
+
     }

@@ -3,7 +3,6 @@ package com.example.foodcare.view
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -29,12 +28,21 @@ import com.example.foodcare.viewmodel.CadastroViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TelaCadastroReceptor(
+fun TelaCadastro(
+    tipo : String = "",
     onEntrar: () -> Unit = {},
     onJaTenhoConta: () -> Unit = {},
     onVoltar: () -> Unit = {},
     viewModel: CadastroViewModel = viewModel()
 ) {
+
+    // assim que executa a tela, atribui um valor para tipoUsuario
+    LaunchedEffect(Unit){
+
+        viewModel.tipoUsuario =
+            tipo
+
+    }
 
 
     Scaffold(
@@ -159,14 +167,14 @@ fun TelaCadastroReceptor(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            if (viewModel.mensagemErro.isNotEmpty()) {
-                Text(
-                    text = viewModel.mensagemErro,
-                    color = Color.Red,
-                    fontSize = 16.sp,
-                    modifier = Modifier.padding(bottom = 12.dp)
-                )
-            }
+
+            Text(
+                text = viewModel.mensagemErro,
+                color = Color.Red,
+                fontSize = 16.sp,
+                modifier = Modifier.padding(bottom = 12.dp)
+            )
+
 
             FoodCareButton(text = "Entrar", onClick = { viewModel.FazerCadastro() })
 

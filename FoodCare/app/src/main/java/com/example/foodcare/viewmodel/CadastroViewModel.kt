@@ -6,9 +6,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.foodcare.data.api.SessaoUsuario
 import com.example.foodcare.data.repository.CadastroRepository
+import com.example.foodcare.data.repository.LoginRepository
 import com.example.foodcare.model.CadastroRequest
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 
 class CadastroViewModel : ViewModel() {
     var nome by mutableStateOf("")
@@ -21,25 +24,57 @@ class CadastroViewModel : ViewModel() {
     var tipoPessoa by mutableStateOf("")
     var mensagemErro by mutableStateOf("")
 
+    var tipoUsuario by mutableStateOf("")
+
     private val cadastroRepository = CadastroRepository()
+
+    private val loginRepository = LoginRepository()
 
     var cadastroSucesso by mutableStateOf(false)
         private set
 
     fun FazerCadastro() {
         if (nome.isBlank() || email.isBlank() || senha.isBlank() || tipoPessoa.isBlank() || documento.isBlank()) {
-            mensagemErro = "Preencha todos os campos!"
+            mensagemErro = "Preencha todos os campos."
 
         }
 
-        mensagemErro
+        else {
+            viewModelScope.launch {
+                try {
+                    val resposta =
+                        cadastroRepository.cadastro(nome, email, senha, tipoPessoa, documento)
+                    when (tipoUsuario) {
+                        "doador" -> {
+                            cadastroRepository.cadastrarDoador(resposta.idUsuario)
+                        }
 
-        viewModelScope.launch {
-            try {
-                val resposta = cadastroRepository.cadastro(nome, email, senha, tipoPessoa, documento)
-                cadastroSucesso = true
-            } catch (e: Exception) {
-                mensagemErro = "Erro ao realizar cadastro: ${e}"
+                        "receptor" -> {
+                            cadastroRepository.cadastrarReceptor(resposta.idUsuario)
+                        }
+
+                        "ambos" -> {
+                            cadastroRepository.cadastrarDoador(resposta.idUsuario)
+                            cadastroRepository.cadastrarReceptor(resposta.idUsuario)
+                        }
+                    }
+
+                    //faz o login logo após o cadastro
+                    val respostaLogin = loginRepository.login(email, senha)
+                    SessaoUsuario.idUsuario = respostaLogin.idUsuario
+                    SessaoUsuario.token = respostaLogin.token
+                    SessaoUsuario.nomeUsuario = respostaLogin.nome
+
+                    cadastroSucesso = true
+                }
+                catch (e: HttpException) {
+
+                    mensagemErro =
+                        if (e.code() == 400) "Erro ao realizar cadastro."
+                        else "Erro de conexão"
+
+                }
+
             }
         }
     }

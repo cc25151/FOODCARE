@@ -4,7 +4,7 @@ object Routes {
     const val TELA_INICIAL      = "tela_inicial"
     const val QUEM_SOMOS        = "quem_somos"
     const val LOGIN             = "login"
-    const val CADASTRO = "cadastro_receptor"
+    const val CADASTRO = "cadastro/{tipo}"
 
     const val MAIN              = "main"
     const val FINALIDADE = "finalidade"
@@ -22,6 +22,6 @@ object Routes {
     fun produto(id: Int)             = "produto/$id"
     fun produto_req(id: Int)         = "produto_req/$id"
     fun perfilDoadorPublico(id: Int) = "perfil_doador_publico/$id"
-    fun finalidade(tipo:String) = "finalidade/{tipo}"
+    fun cadastro(tipo:String) = "cadastro/$tipo"
 
 }

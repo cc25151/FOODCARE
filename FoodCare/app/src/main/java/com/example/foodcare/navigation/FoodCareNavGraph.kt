@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.foodcare.data.api.SessaoUsuario
 import com.example.foodcare.view.*
 import com.example.foodcare.model.*
 
@@ -26,12 +27,7 @@ fun FoodCareNavGraph(
                 onQuemSomosClick = { navController.navigate(Routes.QUEM_SOMOS) }
             )
         }
-        composable(Routes.FINALIDADE){
-            TelaFinalidade(
-                onAvançar = {navController.navigate(Routes.finalidade(tipo))},
-            )
 
-        }
 
         composable(Routes.QUEM_SOMOS) {
             TelaQuemSomos(onVoltar = { navController.popBackStack() })
@@ -44,18 +40,25 @@ fun FoodCareNavGraph(
                         popUpTo(Routes.TELA_INICIAL) { inclusive = false }
                     }
                 },
-                onGoogleLogin = {
-                    navController.navigate(Routes.MAIN) {
-                        popUpTo(Routes.TELA_INICIAL) { inclusive = false }
-                    }
-                },
+
                 onCriarConta  = { navController.navigate(Routes.CADASTRO) },
                 onVoltar      = { navController.popBackStack() }
             )
         }
+        composable(Routes.FINALIDADE){
+            TelaFinalidade(
+                onAvancar = {tipo -> navController.navigate(Routes.cadastro(tipo))},
+                onVoltar = {navController.popBackStack()}
+            )
 
-        composable(Routes.CADASTRO) {
-            TelaCadastroReceptor(
+        }
+
+        composable(
+            route = Routes.CADASTRO,
+            arguments = listOf(navArgument("tipoUsuario"){type = NavType.StringType})
+        ) { back -> val tipo = back.arguments?.getString("tipoUsuario") ?: ""
+            TelaCadastro(
+                tipo = tipo,
                 onEntrar = {
                     navController.navigate(Routes.MAIN) {
                         popUpTo(Routes.TELA_INICIAL) { inclusive = false }
@@ -68,8 +71,8 @@ fun FoodCareNavGraph(
 
         composable(Routes.MAIN) {
             TelaHomeFeedPrincipal(
-                nomeUsuario                 = "",
-                nomeDoador                  = "",
+                nomeUsuario                 = SessaoUsuario.nomeUsuario,
+                nomeDoador                  = SessaoUsuario.nomeUsuario,
                 doacoesPendentes            = emptyList(),
                 onProdutoClick              = { id -> navController.navigate(Routes.produto(id)) },
                 onPerfilClick               = { navController.navigate(Routes.PERFIL_PROPRIO) },
