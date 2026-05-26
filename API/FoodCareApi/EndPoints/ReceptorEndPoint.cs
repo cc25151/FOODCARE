@@ -11,7 +11,7 @@ public static class ReceptorEndpoints
         var grupo = app.MapGroup("/receptores"); 
 
 
-        grupo.MapPost("/", async (Receptor novoReceptor, AppDbContext db) =>
+        grupo.MapPost("/cadastro", async (Receptor novoReceptor, AppDbContext db) =>
         {
             var usuarioExiste = await db.Usuario.AnyAsync(u => u.idUsuario == novoReceptor.idUsuario);
             if (!usuarioExiste)

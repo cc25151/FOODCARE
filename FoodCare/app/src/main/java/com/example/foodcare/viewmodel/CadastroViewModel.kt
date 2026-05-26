@@ -12,6 +12,7 @@ import com.example.foodcare.data.repository.LoginRepository
 import com.example.foodcare.model.CadastroRequest
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
+import java.net.ConnectException
 
 class CadastroViewModel : ViewModel() {
     var nome by mutableStateOf("")
@@ -67,12 +68,17 @@ class CadastroViewModel : ViewModel() {
 
                     cadastroSucesso = true
                 }
+                catch (e: ConnectException) {
+                    mensagemErro = "Servidor indisponível"
+                }
                 catch (e: HttpException) {
+                    val code = e.code()
+                    val errorBody = e.response()?.errorBody()?.string()
 
-                    mensagemErro =
-                        if (e.code() == 400) "Erro ao realizar cadastro."
-                        else "Erro de conexão"
-
+                    mensagemErro = "HTTP $code - $errorBody"
+                }
+                catch(e: Exception){
+                    mensagemErro = "Erro: ${e.message}"
                 }
 
             }

@@ -89,3 +89,10 @@ FROM FoodCare.Doador d
 WHERE d.idDoador = @idDoador;
 */
 
+
+INSERT INTO FoodCare.Categoria (nome, imagem)
+VALUES
+('Marmitas e Refeições Prontas', 'marmitas.png'),
+('Padaria e Confeitaria', 'padaria.png'),
+('Frutas e Hortifruti', 'hortifruti.png'),
+('Alimentos Embalados', 'embalados.png')

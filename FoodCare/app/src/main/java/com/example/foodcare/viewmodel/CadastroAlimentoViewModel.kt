@@ -10,13 +10,13 @@ import retrofit2.HttpException
 import com.example.foodcare.model.*
 
 class CadastroAlimentoViewModel : ViewModel() {
-    // UI
+
     var nome by mutableStateOf("")
     var descricao by mutableStateOf("")
     var quantidade by mutableStateOf("")
     var validade by mutableStateOf("")
 
-    // Controle
+
     var carregando by mutableStateOf(false)
         private set
 

@@ -7,18 +7,18 @@ import retrofit2.http.POST
 import retrofit2.http.Path // Não esqueça de importar o Path!
 
 interface ApiService {
-    @POST("cadastro")
+    @POST("usuarios/cadastro")
     suspend fun  cadastro(
         @Body CadastroRequest : CadastroRequest
     ) : CadastroResposta
 
-    @POST("cadastroDoador")
+    @POST("doadores/cadastro")
     suspend fun cadastroDoador(
         @Body idUsuario: Int
     ): Response<Unit>
 
 
-    @POST("cadastroReceptor")
+    @POST("receptores/cadastro")
     suspend fun cadastroReceptor(
         @Body idUsuario: Int
     ): Response<Unit>

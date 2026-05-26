@@ -12,7 +12,7 @@ public static class DoadorEndpoints
     {
         var grupo = app.MapGroup("/doadores");
 
-        grupo.MapPost("/", async (CriarDoadorRequisicao doador, AppDbContext db) =>
+        grupo.MapPost("/cadastro", async (CriarDoadorRequisicao doador, AppDbContext db) =>
         {
             var usuarioExiste = await db.Usuario.AnyAsync(u => u.idUsuario == doador.idUsuario);
             if (!usuarioExiste)
