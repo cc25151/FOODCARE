@@ -3,6 +3,7 @@ package com.example.foodcare.data.api
 import com.example.foodcare.model.*
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
 
@@ -32,4 +33,15 @@ interface ApiService {
         @Path("nomeDoador") nomeDoador: String,
         @Body alimento: AlimentoRequest
     ): AlimentoResposta
+
+    @PATCH("completar-perfil/{id}")
+    suspend fun completarPerfil(
+
+        @Path("id")
+        id: Int,
+
+        @Body
+        dados: CompletarPerfilRequest
+
+    ): Response<Unit>
 }

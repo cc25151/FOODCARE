@@ -19,3 +19,15 @@ data class DoadorRequest(
 data class ReceptorRequest(
     val idUsuario: Int
 )
+
+data class CompletarPerfilRequest(
+
+    val cep: String?,
+    val cidade: String?,
+    val bairro: String?,
+    val rua: String?,
+    val numero: String?,
+
+    val latitude: Double?,
+    val longitude: Double?
+)

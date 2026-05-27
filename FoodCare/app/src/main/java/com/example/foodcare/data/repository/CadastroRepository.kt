@@ -2,6 +2,7 @@ package com.example.foodcare.data.repository
 
 import com.example.foodcare.data.api.RetrofitClient
 import com.example.foodcare.model.*
+import kotlin.String
 
 class CadastroRepository {
 
@@ -50,4 +51,30 @@ class CadastroRepository {
         return resposta.isSuccessful
     }
 
+    suspend fun completarPerfil(
+        id: Int,
+        cep: String,
+        cidade: String,
+        bairro: String,
+        rua: String,
+        numero: String,
+        latitude: Double,
+        longitude: Double
+    ): Boolean {
+
+        return RetrofitClient.api.completarPerfil(
+            id,
+
+            CompletarPerfilRequest(
+                cep = cep,
+                cidade = cidade,
+                bairro = bairro,
+                rua = rua,
+                numero = numero,
+                latitude = latitude,
+                longitude = longitude
+            )
+
+        ).isSuccessful
     }
+}

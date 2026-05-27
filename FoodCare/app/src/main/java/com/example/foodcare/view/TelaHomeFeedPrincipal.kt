@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.foodcare.ui.theme.*
-import com.example.foodcare.viewmodel.FeedPrincipalViewModel
+import com.example.foodcare.viewmodel.FeedReceptorViewModel
 
 
 enum class NavTab(val label: String, val icon: ImageVector) {
@@ -29,9 +29,9 @@ fun TelaHomeFeedPrincipal(
     onProdutoClick: (Int) -> Unit        = {},
     onPerfilClick: () -> Unit            = {},
     onRegistrarNovaDoacao: () -> Unit    = {},
-    viewModel: FeedPrincipalViewModel = viewModel()
 ) {
 
+    var tabAtiva by  remember{mutableStateOf(NavTab.RECEPTOR)}
 
     Scaffold(
         containerColor = BrancoAlt,
@@ -41,10 +41,10 @@ fun TelaHomeFeedPrincipal(
                 tonalElevation = 0.dp
             ) {
                 NavTab.entries.forEach { tab ->
-                    val selecionado = viewModel.tabAtiva == tab
+                    val selecionado = tabAtiva == tab
                     NavigationBarItem(
                         selected = selecionado,
-                        onClick  = { viewModel.tabAtiva = tab },
+                        onClick  = { tabAtiva = tab },
                         icon = {
                             Icon(
                                 imageVector        = tab.icon,
@@ -76,7 +76,7 @@ fun TelaHomeFeedPrincipal(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            when (viewModel.tabAtiva) {
+            when (tabAtiva) {
                 NavTab.RECEPTOR ->
                     TelaHomeFeedReceptor(
                         onProdutoClick = onProdutoClick,

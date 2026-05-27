@@ -25,12 +25,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.foodcare.model.FoodCareData.produtos
 import com.example.foodcare.model.FoodCareData.categoriasVisuais
 import com.example.foodcare.model.Produto
 import com.example.foodcare.R
 import com.example.foodcare.data.api.SessaoUsuario
 import com.example.foodcare.ui.theme.*
+import com.example.foodcare.viewmodel.FeedReceptorViewModel
 
 
 private fun emojiParaProduto(categoria: String): String = when {
@@ -46,7 +48,8 @@ private fun emojiParaProduto(categoria: String): String = when {
 @Composable
 fun TelaHomeFeedReceptor(
     onProdutoClick: (Int) -> Unit = {},
-    onPerfilClick: () -> Unit = {}
+    onPerfilClick: () -> Unit = {},
+    viewModel : FeedReceptorViewModel = viewModel()
 ) {
     var busca by remember { mutableStateOf("") }
     var categoriaSelecionada by remember { mutableStateOf<String?>(null) }

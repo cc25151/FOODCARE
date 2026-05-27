@@ -51,7 +51,7 @@ public static class UsuarioEndpoints
             });
         });
 
-        // 4. PUT - Completar Perfil com as informações de endereço
+        // 4. PATCH - Completar Perfil com as informações de endereço
         // O EndPoint é chamado quando o usuario entra na página de perfil
         grupo.MapPatch("/completar-perfil/{id}", async (int id, Usuario dadosPerfil, AppDbContext db) =>
         {
@@ -66,9 +66,9 @@ public static class UsuarioEndpoints
          usuario.rua    =  !string.IsNullOrWhiteSpace(dadosPerfil.rua) ? dadosPerfil.rua : usuario.rua;
          usuario.numero =  !string.IsNullOrWhiteSpace(dadosPerfil.numero) ? dadosPerfil.numero : usuario.numero;
     
-        // Para as coordenadas calculadas pela api externa, checamos se elas foram enviadas (diferentes de zero)
-        usuario.latitude = dadosPerfil.latitude != 0 ? dadosPerfil.latitude : usuario.latitude;
-        usuario.longitude = dadosPerfil.longitude != 0 ? dadosPerfil.longitude : usuario.longitude;
+        // Para as coordenadas calculadas pela api externa, checamos se elas foram enviadas 
+        usuario.latitude = dadosPerfil.latitude ?? usuario.latitude;
+        usuario.longitude = dadosPerfil.longitude ?? usuario.longitude;
                 
         
                 await db.SaveChangesAsync();
