@@ -1,8 +1,7 @@
 package com.example.foodcare.data.repository
 
 import com.example.foodcare.data.api.RetrofitClient
-import com.example.foodcare.model.CadastroRequest
-import com.example.foodcare.model.CadastroResposta
+import com.example.foodcare.model.*
 
 class CadastroRepository {
 
@@ -32,7 +31,7 @@ class CadastroRepository {
             val resposta =
                 RetrofitClient.api
                     .cadastroDoador(
-                        idUsuario
+                        DoadorRequest(idUsuario)
                     )
 
             return resposta.isSuccessful
@@ -45,7 +44,7 @@ class CadastroRepository {
         val resposta =
             RetrofitClient.api
                 .cadastroReceptor(
-                    idUsuario
+                    ReceptorRequest(idUsuario)
                 )
 
         return resposta.isSuccessful

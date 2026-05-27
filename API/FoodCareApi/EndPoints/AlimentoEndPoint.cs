@@ -48,11 +48,10 @@ public static class AlimentoEndPoint
 
         rotas.MapPost("/doador/{nomeDoador}", async (Alimento novoAlimento, string nomeDoador, AppDbContext bd) => {
             var usuario = await bd.Usuario.FirstOrDefaultAsync(u => u.nome.ToLower() == nomeDoador.ToLower());
-             var doador = await bd.Doador.FirstOrDefaultAsync(d => d.idUsuario == usuario.idUsuario);
-
             if (usuario == null) 
-                return Results.NotFound($"Doador '{nomeDoador}' não encontrado.");
+                            return Results.NotFound($"Doador '{nomeDoador}' não encontrado.");
 
+            var doador = await bd.Doador.FirstOrDefaultAsync(d => d.idUsuario == usuario.idUsuario);
             if (doador == null)         
                 return Results.NotFound($"Doador '{nomeDoador}' não encontrado.");
 

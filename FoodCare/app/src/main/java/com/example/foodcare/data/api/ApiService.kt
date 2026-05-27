@@ -4,7 +4,7 @@ import com.example.foodcare.model.*
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.POST
-import retrofit2.http.Path // Não esqueça de importar o Path!
+import retrofit2.http.Path
 
 interface ApiService {
     @POST("usuarios/cadastro")
@@ -14,13 +14,12 @@ interface ApiService {
 
     @POST("doadores/cadastro")
     suspend fun cadastroDoador(
-        @Body idUsuario: Int
+        @Body doador: DoadorRequest
     ): Response<Unit>
-
 
     @POST("receptores/cadastro")
     suspend fun cadastroReceptor(
-        @Body idUsuario: Int
+        @Body receptor: ReceptorRequest
     ): Response<Unit>
 
     @POST("login")

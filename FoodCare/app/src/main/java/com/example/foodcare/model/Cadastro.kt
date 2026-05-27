@@ -11,3 +11,11 @@ data class CadastroRequest(
 data class CadastroResposta(
     val idUsuario: Int
 )
+
+data class DoadorRequest(
+    val idUsuario: Int
+)
+
+data class ReceptorRequest(
+    val idUsuario: Int
+)

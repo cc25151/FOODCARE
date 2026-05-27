@@ -13,25 +13,25 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.foodcare.ui.theme.*
+import com.example.foodcare.viewmodel.FeedPrincipalViewModel
 
 
-private enum class NavTab(val label: String, val icon: ImageVector) {
+enum class NavTab(val label: String, val icon: ImageVector) {
     RECEPTOR("Receptor",  Icons.Default.Home),
     DOADOR  ("Doador",    Icons.Default.VolunteerActivism)
 }
 
 @Composable
 fun TelaHomeFeedPrincipal(
-
-    nomeUsuario: String                  = "",
-    nomeDoador: String                   = "",
     doacoesPendentes: List<DoacaoPendenteUi> = emptyList(),
     onProdutoClick: (Int) -> Unit        = {},
     onPerfilClick: () -> Unit            = {},
-    onRegistrarNovaDoacao: () -> Unit    = {}
+    onRegistrarNovaDoacao: () -> Unit    = {},
+    viewModel: FeedPrincipalViewModel = viewModel()
 ) {
-    var tabAtiva by remember { mutableStateOf(NavTab.RECEPTOR) }
+
 
     Scaffold(
         containerColor = BrancoAlt,
@@ -41,10 +41,10 @@ fun TelaHomeFeedPrincipal(
                 tonalElevation = 0.dp
             ) {
                 NavTab.entries.forEach { tab ->
-                    val selecionado = tabAtiva == tab
+                    val selecionado = viewModel.tabAtiva == tab
                     NavigationBarItem(
                         selected = selecionado,
-                        onClick  = { tabAtiva = tab },
+                        onClick  = { viewModel.tabAtiva = tab },
                         icon = {
                             Icon(
                                 imageVector        = tab.icon,
@@ -76,17 +76,15 @@ fun TelaHomeFeedPrincipal(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            when (tabAtiva) {
+            when (viewModel.tabAtiva) {
                 NavTab.RECEPTOR ->
-                    TelaHomeFeed(
-                        nomeUsuario    = nomeUsuario,
+                    TelaHomeFeedReceptor(
                         onProdutoClick = onProdutoClick,
                         onPerfilClick  = onPerfilClick
                     )
 
                 NavTab.DOADOR ->
                     TelaHomeFeedDoador(
-                        nomeDoador            = nomeDoador,
                         doacoes               = doacoesPendentes,
                         onPerfilClick         = onPerfilClick,
                         onRegistrarNovaDoacao = onRegistrarNovaDoacao

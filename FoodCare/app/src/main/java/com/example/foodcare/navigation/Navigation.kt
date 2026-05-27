@@ -6,7 +6,7 @@ object Routes {
     const val LOGIN             = "login"
     const val CADASTRO = "cadastro/{tipoUsuario}"
 
-    const val MAIN              = "main"
+    const val HOMEFEEDPRINCIPAL              = "homefeedprincipal"
     const val FINALIDADE = "finalidade"
 
     const val PRODUTO           = "produto/{produtoId}"

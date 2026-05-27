@@ -37,51 +37,50 @@ class CadastroViewModel : ViewModel() {
     fun FazerCadastro() {
         if (nome.isBlank() || email.isBlank() || senha.isBlank() || tipoPessoa.isBlank() || documento.isBlank()) {
             mensagemErro = "Preencha todos os campos."
-
+            return
         }
 
-        else {
-            viewModelScope.launch {
-                try {
-                    val resposta =
-                        cadastroRepository.cadastro(nome, email, senha, tipoPessoa, documento)
-                    when (tipoUsuario) {
-                        "doador" -> {
-                            cadastroRepository.cadastrarDoador(resposta.idUsuario)
-                        }
 
-                        "receptor" -> {
-                            cadastroRepository.cadastrarReceptor(resposta.idUsuario)
-                        }
-
-                        "ambos" -> {
-                            cadastroRepository.cadastrarDoador(resposta.idUsuario)
-                            cadastroRepository.cadastrarReceptor(resposta.idUsuario)
-                        }
+        viewModelScope.launch {
+            try {
+                val resposta =
+                    cadastroRepository.cadastro(nome, email, senha, tipoPessoa, documento)
+                when (tipoUsuario) {
+                    "doador" -> {
+                        cadastroRepository.cadastrarDoador(resposta.idUsuario)
                     }
 
-                    //faz o login logo após o cadastro
-                    val respostaLogin = loginRepository.login(email, senha)
-                    SessaoUsuario.idUsuario = respostaLogin.idUsuario
-                    SessaoUsuario.token = respostaLogin.token
-                    SessaoUsuario.nomeUsuario = respostaLogin.nome
+                    "receptor" -> {
+                        cadastroRepository.cadastrarReceptor(resposta.idUsuario)
+                    }
 
-                    cadastroSucesso = true
-                }
-                catch (e: ConnectException) {
-                    mensagemErro = "Servidor indisponível"
-                }
-                catch (e: HttpException) {
-                    val code = e.code()
-                    val errorBody = e.response()?.errorBody()?.string()
-
-                    mensagemErro = "HTTP $code - $errorBody"
-                }
-                catch(e: Exception){
-                    mensagemErro = "Erro: ${e.message}"
+                    "ambos" -> {
+                        cadastroRepository.cadastrarDoador(resposta.idUsuario)
+                        cadastroRepository.cadastrarReceptor(resposta.idUsuario)
+                    }
                 }
 
+                //faz o login logo após o cadastro
+                val respostaLogin = loginRepository.login(email, senha)
+                SessaoUsuario.idUsuario = respostaLogin.idUsuario
+                SessaoUsuario.token = respostaLogin.token
+                SessaoUsuario.nomeUsuario = respostaLogin.nome
+
+                cadastroSucesso = true
             }
+            catch (e: ConnectException) {
+                mensagemErro = "Servidor indisponível"
+            }
+            catch (e: HttpException) {
+                val code = e.code()
+                val errorBody = e.response()?.errorBody()?.string()
+
+                mensagemErro = "HTTP $code - $errorBody"
+            }
+            catch(e: Exception){
+                mensagemErro = "Erro: ${e.message}"
+            }
+
         }
     }
 }

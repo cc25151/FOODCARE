@@ -36,7 +36,7 @@ fun FoodCareNavGraph(
         composable(Routes.LOGIN) {
             TelaLogin(
                 onLoginClick  = {
-                    navController.navigate(Routes.MAIN) {
+                    navController.navigate(Routes.HOMEFEEDPRINCIPAL) {
                         popUpTo(Routes.TELA_INICIAL) { inclusive = false }
                     }
                 },
@@ -60,7 +60,7 @@ fun FoodCareNavGraph(
             TelaCadastro(
                 tipo = tipo,
                 onEntrar = {
-                    navController.navigate(Routes.MAIN) {
+                    navController.navigate(Routes.HOMEFEEDPRINCIPAL) {
                         popUpTo(Routes.TELA_INICIAL) { inclusive = false }
                     }
                 },
@@ -69,10 +69,8 @@ fun FoodCareNavGraph(
             )
         }
 
-        composable(Routes.MAIN) {
+        composable(Routes.HOMEFEEDPRINCIPAL) {
             TelaHomeFeedPrincipal(
-                nomeUsuario                 = SessaoUsuario.nomeUsuario,
-                nomeDoador                  = SessaoUsuario.nomeUsuario,
                 doacoesPendentes            = emptyList(),
                 onProdutoClick              = { id -> navController.navigate(Routes.produto(id)) },
                 onPerfilClick               = { navController.navigate(Routes.PERFIL_PROPRIO) },
@@ -100,8 +98,8 @@ fun FoodCareNavGraph(
             TelaProdutoRequisitado(
                 produtoId = id,
                 onVoltar  = {
-                    navController.navigate(Routes.MAIN) {
-                        popUpTo(Routes.MAIN) { inclusive = true }
+                    navController.navigate(Routes.HOMEFEEDPRINCIPAL) {
+                        popUpTo(Routes.HOMEFEEDPRINCIPAL) { inclusive = true }
                     }
                 }
             )
@@ -144,8 +142,8 @@ fun FoodCareNavGraph(
                 alimentoFormData = AlimentoFormData("", "", 0, "", 0),
                 onVoltar         = { navController.popBackStack() },
                 onConfirmar      = { doacaoData ->
-                    navController.navigate(Routes.MAIN) {
-                        popUpTo(Routes.MAIN) { inclusive = true }
+                    navController.navigate(Routes.HOMEFEEDPRINCIPAL) {
+                        popUpTo(Routes.HOMEFEEDPRINCIPAL) { inclusive = true }
                     }
                 }
             )

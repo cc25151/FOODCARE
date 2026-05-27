@@ -21,15 +21,14 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.foodcare.data.api.SessaoUsuario
 import com.example.foodcare.ui.theme.*
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TelaHomeFeedDoador(
-    nomeDoador: String                  = "",
     doacoes: List<DoacaoPendenteUi>     = emptyList(),
-
     onPerfilClick: () -> Unit           = {},
     onRegistrarNovaDoacao: () -> Unit   = {}
 ) {
@@ -67,11 +66,6 @@ fun TelaHomeFeedDoador(
                                 fontSize = 20.sp,
                                 color = DHTexto,
                                 letterSpacing = (-0.3).sp
-                            )
-                            Text(
-                                "Olá, $nomeDoador 👋",
-                                fontSize = 11.sp,
-                                color = DHSub
                             )
                         }
                     }
@@ -126,7 +120,7 @@ fun TelaHomeFeedDoador(
                             fontSize = 14.sp
                         )
                         Text(
-                            nomeDoador.ifBlank { "Doador" },
+                            SessaoUsuario.nomeUsuario.split(" ")[0].ifBlank { "Doador" },
                             color = DHBranco,
                             fontWeight = FontWeight.ExtraBold,
                             fontSize = 22.sp

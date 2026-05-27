@@ -4,7 +4,6 @@ using FoodCareApi.Models;
 
 namespace FoodCareApi.Endpoints;
 
-public record CriarDoadorRequisicao(int idUsuario);
 
 public static class DoadorEndpoints
 {
@@ -12,7 +11,7 @@ public static class DoadorEndpoints
     {
         var grupo = app.MapGroup("/doadores");
 
-        grupo.MapPost("/cadastro", async (CriarDoadorRequisicao doador, AppDbContext db) =>
+        grupo.MapPost("/cadastro", async (Doador doador, AppDbContext db) =>
         {
             var usuarioExiste = await db.Usuario.AnyAsync(u => u.idUsuario == doador.idUsuario);
             if (!usuarioExiste)

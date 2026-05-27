@@ -29,10 +29,8 @@ import com.example.foodcare.model.FoodCareData.produtos
 import com.example.foodcare.model.FoodCareData.categoriasVisuais
 import com.example.foodcare.model.Produto
 import com.example.foodcare.R
+import com.example.foodcare.data.api.SessaoUsuario
 import com.example.foodcare.ui.theme.*
-
-
-
 
 
 private fun emojiParaProduto(categoria: String): String = when {
@@ -46,8 +44,7 @@ private fun emojiParaProduto(categoria: String): String = when {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TelaHomeFeed(
-    nomeUsuario: String = "Receptor",
+fun TelaHomeFeedReceptor(
     onProdutoClick: (Int) -> Unit = {},
     onPerfilClick: () -> Unit = {}
 ) {
@@ -106,7 +103,7 @@ fun TelaHomeFeed(
                                     letterSpacing = (-0.3).sp
                                 )
                                 Text(
-                                    text     = "Olá, $nomeUsuario 👋",
+                                    text     = "Olá, ${SessaoUsuario.nomeUsuario.split(" ")[0]} 👋",
                                     fontSize = 11.sp,
                                     color    = Sub
                                 )
