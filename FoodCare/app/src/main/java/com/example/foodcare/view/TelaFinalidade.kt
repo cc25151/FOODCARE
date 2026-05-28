@@ -23,16 +23,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.foodcare.R
 import com.example.foodcare.ui.theme.*
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.foodcare.viewmodel.FinalidadeViewModel
+import com.example.foodcare.data.api.SessaoUsuario
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TelaFinalidade(
-    onAvancar: (String) -> Unit = {},
-    onVoltar: () -> Unit = {},
-    viewModel: FinalidadeViewModel = viewModel()
+    onAvancar: () -> Unit = {},
+    onVoltar: () -> Unit = {}
 ) {
 
     var visivel by remember { mutableStateOf(false) }
@@ -162,8 +160,8 @@ fun TelaFinalidade(
                             FoodCareButton(
                                 text = "Doar Alimentos",
                                 onClick = {
-                                    viewModel.tipoUsuario = "doador"
-                                    onAvancar(viewModel.tipoUsuario)
+                                    SessaoUsuario.tipoUsuario = "doador"
+                                    onAvancar()
                                 },
                                 backgroundColor = Vermelho,
                                 textColor = Branco
@@ -171,8 +169,8 @@ fun TelaFinalidade(
                             FoodCareButton(
                                 text = "Receber Doações",
                                 onClick = {
-                                    viewModel.tipoUsuario = "receptor"
-                                    onAvancar(viewModel.tipoUsuario)
+                                    SessaoUsuario.tipoUsuario = "receptor"
+                                    onAvancar()
                                 },
                                 backgroundColor = Vermelho,
                                 textColor = Branco
@@ -180,8 +178,8 @@ fun TelaFinalidade(
                             FoodCareButton(
                                 text = "Doar e Receber",
                                 onClick = {
-                                    viewModel.tipoUsuario = "ambos"
-                                    onAvancar(viewModel.tipoUsuario)
+                                    SessaoUsuario.tipoUsuario = "ambos"
+                                    onAvancar()
                                 },
                                 backgroundColor = Vermelho,
                                 textColor = Branco

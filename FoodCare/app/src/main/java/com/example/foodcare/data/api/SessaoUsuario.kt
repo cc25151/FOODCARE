@@ -4,4 +4,5 @@ object SessaoUsuario {
     var idUsuario: Int = 0
     var token: String = ""
     var nomeUsuario : String = ""
+    var tipoUsuario = ""
 }

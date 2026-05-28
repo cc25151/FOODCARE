@@ -14,6 +14,7 @@
     import androidx.compose.ui.unit.dp
     import androidx.compose.ui.unit.sp
     import androidx.lifecycle.viewmodel.compose.viewModel
+    import com.example.foodcare.data.api.SessaoUsuario
     import com.example.foodcare.ui.theme.*
     import com.example.foodcare.viewmodel.FeedReceptorViewModel
 
@@ -25,7 +26,6 @@
 
     @Composable
     fun TelaHomeFeedPrincipal(
-        tipoUsuario: String = "",
         doacoesPendentes: List<DoacaoPendenteUi> = emptyList(),
         onProdutoClick: (Int) -> Unit        = {},
         onPerfilClick: () -> Unit            = {},
@@ -41,56 +41,59 @@
                     containerColor = Branco,
                     tonalElevation = 0.dp
                 ) {
-                    NavTab.entries.forEach { tab ->
-                        val selecionado = tabAtiva == tab
-                        NavigationBarItem(
-                            selected = selecionado,
-                            onClick  = { tabAtiva = tab },
-                            icon = {
-                                Icon(
-                                    imageVector        = tab.icon,
-                                    contentDescription = tab.label
+                    NavTab.entries.forEach {
+                        tab ->if(tab.label.lowercase() == SessaoUsuario.tipoUsuario || SessaoUsuario.tipoUsuario == "ambos") {
+                            val selecionado = tabAtiva == tab
+                            NavigationBarItem(
+                                selected = selecionado,
+                                onClick = { tabAtiva = tab },
+                                icon = {
+                                    Icon(
+                                        imageVector = tab.icon,
+                                        contentDescription = tab.label
+                                    )
+                                },
+                                label = {
+                                    Text(
+                                        text = tab.label,
+                                        fontSize = 11.sp,
+                                        fontWeight = if (selecionado) FontWeight.SemiBold
+                                        else FontWeight.Normal
+                                    )
+                                },
+                                colors = NavigationBarItemDefaults.colors(
+                                    selectedIconColor = Vermelho,
+                                    selectedTextColor = Vermelho,
+                                    unselectedIconColor = Cinza,
+                                    unselectedTextColor = Cinza,
+                                    indicatorColor = Vermelho.copy(alpha = 0.10f)
                                 )
-                            },
-                            label = {
-                                Text(
-            text       = tab.label,
-            fontSize   = 11.sp,
-            fontWeight = if (selecionado) FontWeight.SemiBold
-            else FontWeight.Normal
-            )
-        },
-        colors = NavigationBarItemDefaults.colors(
-            selectedIconColor   = Vermelho,
-            selectedTextColor   = Vermelho,
-            unselectedIconColor = Cinza,
-            unselectedTextColor = Cinza,
-            indicatorColor      = Vermelho.copy(alpha = 0.10f)
-        )
-        )
-    }
-    }
-    }
-    ) { innerPadding ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
-            ) {
-                when (tabAtiva) {
-                    NavTab.RECEPTOR ->
-                        TelaHomeFeedReceptor(
-                            onProdutoClick = onProdutoClick,
-                            onPerfilClick  = onPerfilClick
-                        )
+                            )
+                        }
 
-                    NavTab.DOADOR ->
-                        TelaHomeFeedDoador(
-                            doacoes               = doacoesPendentes,
-                            onPerfilClick         = onPerfilClick,
-                            onRegistrarNovaDoacao = onRegistrarNovaDoacao
-                        )
+                    }
                 }
             }
-        }
+        ) { innerPadding ->
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                ) {
+                    when (tabAtiva) {
+                        NavTab.RECEPTOR ->
+                            TelaHomeFeedReceptor(
+                                onProdutoClick = onProdutoClick,
+                                onPerfilClick  = onPerfilClick
+                            )
+
+                        NavTab.DOADOR ->
+                            TelaHomeFeedDoador(
+                                doacoes               = doacoesPendentes,
+                                onPerfilClick         = onPerfilClick,
+                                onRegistrarNovaDoacao = onRegistrarNovaDoacao
+                            )
+                    }
+                }
+            }
     }

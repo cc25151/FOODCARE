@@ -4,9 +4,9 @@ object Routes {
     const val TELA_INICIAL      = "tela_inicial"
     const val QUEM_SOMOS        = "quem_somos"
     const val LOGIN             = "login"
-    const val CADASTRO = "cadastro/{tipoUsuario}"
+    const val CADASTRO = "cadastro"
 
-    const val HOMEFEEDPRINCIPAL  = "homefeedprincipal/{tipoUsuario}"
+    const val HOMEFEEDPRINCIPAL  = "homefeedprincipal"
     const val FINALIDADE = "finalidade"
 
     const val PRODUTO           = "produto/{produtoId}"
@@ -22,12 +22,9 @@ object Routes {
 
 
 
-    fun homeFeedPrincipal(tipoUsuario: String): String {
-        return "homefeedprincipal/$tipoUsuario"
-    }
+
     fun produto(id: Int)             = "produto/$id"
     fun produto_req(id: Int)         = "produto_req/$id"
     fun perfilDoadorPublico(id: Int) = "perfil_doador_publico/$id"
-    fun cadastro(tipoUsuario:String) = "cadastro/$tipoUsuario"
 
 }

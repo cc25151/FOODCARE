@@ -21,7 +21,8 @@ data class ReceptorRequest(
 )
 
 data class CompletarPerfilRequest(
-
+    val nome: String,
+    val email: String,
     val cep: String?,
     val cidade: String?,
     val bairro: String?,
@@ -30,4 +31,26 @@ data class CompletarPerfilRequest(
 
     val latitude: Double?,
     val longitude: Double?
+)
+data class LoginRequest(
+    val email: String,
+    val senha: String
+)
+
+data class LoginResposta(
+    val idUsuario: Int,
+    val nome: String,
+    val token: String,
+    val tipoUsuario : String
+)
+
+data class Usuario(
+    val nome: String,
+    val email: String,
+    val documento: String,
+    val cep: String,
+    val cidade: String,
+    val bairro: String,
+    val rua: String,
+    val numero: String
 )

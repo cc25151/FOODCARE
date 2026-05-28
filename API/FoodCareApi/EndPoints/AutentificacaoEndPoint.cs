@@ -56,12 +56,25 @@
                 // Transforma o objeto do Token em uma string real formatada
                 var tokenString = tokenHandler.WriteToken(token);
 
+                // checa qual tipo de usuário
+                var ehDoador = db.Doador.Any(d -> d.idUsuario == usuario.idUsuario);
+                var ehReceptor = db.Receptor.Any(r -> r.idUsuario == usuario.idUsuario);
+                var tipo = "";
+
+                if(ehDoador){
+                    if(ehReceptor)
+                        tipo = "ambos";
+                    tipo = "doador";
+                }
+                tipo = "receptor";
+
                 // Envia o nome do usuário e a string do token para usar nas próximas requisições.
                 return Results.Ok(new 
                 { 
                     usuario.idUsuario,
                     usuario.nome,
-                    token = tokenString 
+                    token = tokenString,
+                    tipo 
                 });
             });
         }

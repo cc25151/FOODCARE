@@ -4,7 +4,7 @@ import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.foodcare.data.api.SessaoUsuario
-import com.example.foodcare.data.repository.LoginRepository
+import com.example.foodcare.data.repository.UsuarioRepository
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 
@@ -19,10 +19,9 @@ class LoginViewModel() : ViewModel()
     var mensagemErro by mutableStateOf("")
         private set
 
-    var qualTipoUsuario by mutableStateOf("")
 
 
-    private val repository = LoginRepository()
+    private val repository = UsuarioRepository()
 
     fun FazerLogin(){
         viewModelScope.launch{
@@ -41,22 +40,9 @@ class LoginViewModel() : ViewModel()
                     SessaoUsuario.idUsuario = resposta.idUsuario
                     SessaoUsuario.token = resposta.token
                     SessaoUsuario.nomeUsuario = resposta.nome
+                    SessaoUsuario.tipoUsuario = resposta.tipoUsuario
+                    loginSucesso = true
 
-                    val responseDoador = repository.verificarDoador(resposta.idUsuario)
-
-                    if (responseDoador.isSuccessful && responseDoador.body() != null) {
-                        qualTipoUsuario = "doador"
-                        loginSucesso = true
-
-                        val responseReceptor = repository.verificarReceptor(resposta.idUsuario)
-
-                        if (responseReceptor.isSuccessful && responseReceptor.body() != null) {
-                            qualTipoUsuario = "receptor"
-                            loginSucesso = true
-                        } else {
-                            mensagemErro = "Perfil de usuário não encontrado."
-                        }
-                    }
                 } catch (e: HttpException) {
 
                     if (e.code() == 401) {

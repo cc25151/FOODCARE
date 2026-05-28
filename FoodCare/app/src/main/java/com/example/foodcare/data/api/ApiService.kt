@@ -53,9 +53,14 @@ interface ApiService {
 
     ): Response<Unit>
 
+    @GET("usuarios/{id}")
+    suspend fun dados(
+        @Path("id") id: Int
+    ): Usuario
+
 
     @POST("doacoes")
     suspend fun cadastrarDoacao(
         @Body doacao: DoacaoRequest
-    ): Response<DoacaoResponse>
+    ): Response<DoacaoResposta>
 }

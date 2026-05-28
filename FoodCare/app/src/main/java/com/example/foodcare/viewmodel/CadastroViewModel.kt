@@ -2,14 +2,11 @@ package com.example.foodcare.viewmodel
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.foodcare.data.api.SessaoUsuario
-import com.example.foodcare.data.repository.CadastroRepository
-import com.example.foodcare.data.repository.LoginRepository
-import com.example.foodcare.model.CadastroRequest
+import com.example.foodcare.data.repository.UsuarioRepository
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.net.ConnectException
@@ -25,11 +22,8 @@ class CadastroViewModel : ViewModel() {
     var tipoPessoa by mutableStateOf("")
     var mensagemErro by mutableStateOf("")
 
-    var tipoUsuario by mutableStateOf("")
 
-    private val cadastroRepository = CadastroRepository()
-
-    private val loginRepository = LoginRepository()
+    private val repository = UsuarioRepository()
 
     var cadastroSucesso by mutableStateOf(false)
         private set
@@ -44,24 +38,24 @@ class CadastroViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 val resposta =
-                    cadastroRepository.cadastro(nome, email, senha, tipoPessoa, documento)
-                when (tipoUsuario) {
+                    repository.cadastro(nome, email, senha, tipoPessoa, documento)
+                when (SessaoUsuario.tipoUsuario) {
                     "doador" -> {
-                        cadastroRepository.cadastrarDoador(resposta.idUsuario)
+                        repository.cadastrarDoador(resposta.idUsuario)
                     }
 
                     "receptor" -> {
-                        cadastroRepository.cadastrarReceptor(resposta.idUsuario)
+                        repository.cadastrarReceptor(resposta.idUsuario)
                     }
 
                     "ambos" -> {
-                        cadastroRepository.cadastrarDoador(resposta.idUsuario)
-                        cadastroRepository.cadastrarReceptor(resposta.idUsuario)
+                        repository.cadastrarDoador(resposta.idUsuario)
+                        repository.cadastrarReceptor(resposta.idUsuario)
                     }
                 }
 
                 //faz o login logo após o cadastro
-                val respostaLogin = loginRepository.login(email, senha)
+                val respostaLogin = repository.login(email, senha)
                 SessaoUsuario.idUsuario = respostaLogin.idUsuario
                 SessaoUsuario.token = respostaLogin.token
                 SessaoUsuario.nomeUsuario = respostaLogin.nome
@@ -72,10 +66,10 @@ class CadastroViewModel : ViewModel() {
                 mensagemErro = "Servidor indisponível"
             }
             catch (e: HttpException) {
-                val code = e.code()
-                val errorBody = e.response()?.errorBody()?.string()
-
-                mensagemErro = "HTTP $code - $errorBody"
+                if (e.code() == 400)
+                    mensagemErro = "Credenciais já estão em uso."
+                else
+                    mensagemErro = "${e.code()}"
             }
             catch(e: Exception){
                 mensagemErro = "Erro: ${e.message}"

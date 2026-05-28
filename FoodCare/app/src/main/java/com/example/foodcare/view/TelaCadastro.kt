@@ -29,20 +29,12 @@ import com.example.foodcare.viewmodel.CadastroViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TelaCadastro(
-    tipo : String = "",
     onEntrar: () -> Unit = {},
     onJaTenhoConta: () -> Unit = {},
     onVoltar: () -> Unit = {},
     viewModel: CadastroViewModel = viewModel()
 ) {
 
-    // assim que executa a tela, atribui um valor para tipoUsuario
-    LaunchedEffect(Unit){
-
-        viewModel.tipoUsuario =
-            tipo
-
-    }
 
 
     Scaffold(
