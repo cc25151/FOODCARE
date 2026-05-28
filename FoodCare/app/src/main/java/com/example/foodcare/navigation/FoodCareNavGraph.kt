@@ -35,8 +35,8 @@ fun FoodCareNavGraph(
 
         composable(Routes.LOGIN) {
             TelaLogin(
-                onLoginClick  = {
-                    navController.navigate(Routes.HOMEFEEDPRINCIPAL) {
+                onLoginClick  = { tipo ->
+                    navController.navigate(Routes.homeFeedPrincipal(tipo)) {
                         popUpTo(Routes.TELA_INICIAL) { inclusive = false }
                     }
                 },
@@ -56,11 +56,12 @@ fun FoodCareNavGraph(
         composable(
             route = Routes.CADASTRO,
             arguments = listOf(navArgument("tipoUsuario"){type = NavType.StringType})
-        ) { back -> val tipo = back.arguments?.getString("tipoUsuario") ?: ""
+        ) { back ->
+            val tipo = back.arguments?.getString("tipoUsuario") ?: ""
             TelaCadastro(
                 tipo = tipo,
                 onEntrar = {
-                    navController.navigate(Routes.HOMEFEEDPRINCIPAL) {
+                    navController.navigate(Routes.homeFeedPrincipal(tipo)) {
                         popUpTo(Routes.TELA_INICIAL) { inclusive = false }
                     }
                 },
@@ -69,12 +70,25 @@ fun FoodCareNavGraph(
             )
         }
 
-        composable(Routes.HOMEFEEDPRINCIPAL) {
+        composable(
+            route = Routes.HOMEFEEDPRINCIPAL,
+            //Essa rota vai receber, como um argumento, um tipo de usuário, que,futuramente será extraido para determinar seu homefeed e outras coisas
+            arguments = listOf(
+                navArgument("tipoUsuario") {
+                    type = NavType.StringType
+
+                }
+            )
+        ) { back ->
+
+            val tipoUsuarioLogado = back.arguments?.getString("tipoUsuario") ?: ""
+
             TelaHomeFeedPrincipal(
-                doacoesPendentes            = emptyList(),
-                onProdutoClick              = { id -> navController.navigate(Routes.produto(id)) },
-                onPerfilClick               = { navController.navigate(Routes.PERFIL_PROPRIO) },
-                onRegistrarNovaDoacao       = { navController.navigate(Routes.CADASTRAR_ALIMENTO) }
+                tipoUsuario           = tipoUsuarioLogado,
+                doacoesPendentes      = emptyList(),
+                onProdutoClick        = { id -> navController.navigate(Routes.produto(id)) },
+                onPerfilClick         = { navController.navigate(Routes.PERFIL_PROPRIO) },
+                onRegistrarNovaDoacao = { navController.navigate(Routes.CADASTRAR_ALIMENTO) }
             )
         }
 

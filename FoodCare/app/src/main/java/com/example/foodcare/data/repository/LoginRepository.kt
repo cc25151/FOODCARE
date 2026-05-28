@@ -17,4 +17,7 @@ class LoginRepository {
             )
         )
     }
+
+    suspend fun verificarDoador(id: Int) = RetrofitClient.api.getDoadorPorId(id)
+    suspend fun verificarReceptor(id: Int) = RetrofitClient.api.getReceptorPorId(id)
 }

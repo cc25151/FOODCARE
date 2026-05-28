@@ -31,12 +31,16 @@ import com.example.foodcare.viewmodel.LoginViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TelaLogin(
-    onLoginClick: () -> Unit = {},
+    onLoginClick: (String) -> Unit = {},
     onCriarConta: () -> Unit = {},
     onVoltar: () -> Unit = {},
     viewModel: LoginViewModel = viewModel()
 ) {
-
+    LaunchedEffect(viewModel.loginSucesso) {
+        if (viewModel.loginSucesso) {
+            onLoginClick(viewModel.qualTipoUsuario)
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -125,7 +129,7 @@ fun TelaLogin(
             LaunchedEffect(viewModel.loginSucesso){
 
                 if(viewModel.loginSucesso){
-                    onLoginClick()
+                    onLoginClick(viewModel.qualTipoUsuario)
                 }
             }
 

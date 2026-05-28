@@ -106,7 +106,7 @@ fun TelaHomeFeedReceptor(
                                     letterSpacing = (-0.3).sp
                                 )
                                 Text(
-                                    text     = "Olá, ${SessaoUsuario.nomeUsuario.split(" ")[0]} 👋",
+                                    text     = "Olá, ${SessaoUsuario.nomeUsuario.split(" ")[0]}",
                                     fontSize = 11.sp,
                                     color    = Sub
                                 )

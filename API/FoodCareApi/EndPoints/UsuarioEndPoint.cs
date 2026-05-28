@@ -24,6 +24,7 @@ public static class UsuarioEndpoints
             // Zera a senha na memória antes de enviar para o Front-end por segurança
             usuario.senha = string.Empty; 
             return Results.Ok(usuario);
+            
         });
 
         // 3. POST - Cadastro Inicial (Sem Endereço)

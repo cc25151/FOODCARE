@@ -3,11 +3,18 @@ package com.example.foodcare.data.api
 import com.example.foodcare.model.*
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
 
 interface ApiService {
+    @GET("doadores/{id}")
+    suspend fun getDoadorPorId(@Path("id") id: Int): Response<Doador>
+
+    @GET("receptores/{id}")
+    suspend fun getReceptorPorId(@Path("id") id: Int): Response<Receptor>
+
     @POST("usuarios/cadastro")
     suspend fun  cadastro(
         @Body CadastroRequest : CadastroRequest
@@ -27,6 +34,7 @@ interface ApiService {
     suspend fun login(
         @Body loginRequest: LoginRequest
     ): LoginResposta
+
 
     @POST("alimentos/doador/{nomeDoador}")
     suspend fun cadastrarAlimento(

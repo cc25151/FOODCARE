@@ -70,7 +70,7 @@ public class AppDbContext : DbContext
             entity.HasKey(r => r.idReceptor);
 
             // Define que o Receptor tem apenas um usuário
-            entity.HasOne(r => r.usuarioReceptor)
+            entity.HasOne<Usuario>() // Cada receptor deve ter um usuário associado
                   .WithOne()
                   .HasForeignKey<Receptor>(r => r.idUsuario);
         });

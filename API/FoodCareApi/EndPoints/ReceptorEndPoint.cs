@@ -9,7 +9,14 @@ public static class ReceptorEndpoints
     public static void MapReceptorEndpoints(this WebApplication app)
     {
         var grupo = app.MapGroup("/receptores"); 
+        grupo.MapGet("/{id}" , async (int id, AppDbContext db) =>
+        {
+            var receptor = await db.Receptor.FindAsync(id);
+            if (receptor is null)
+                return Results.NotFound("Receptor não encontrado.");
 
+            return Results.Ok(receptor);
+        });
 
         grupo.MapPost("/cadastro", async (Receptor novoReceptor, AppDbContext db) =>
         {
@@ -24,8 +31,6 @@ public static class ReceptorEndpoints
             {
                 return Results.BadRequest("Este usuário já está cadastrado como receptor.");
             }
-
-            novoReceptor.usuarioReceptor = null!;
 
 
             db.Receptor.Add(novoReceptor);

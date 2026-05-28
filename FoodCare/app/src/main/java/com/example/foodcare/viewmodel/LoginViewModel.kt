@@ -19,6 +19,7 @@ class LoginViewModel() : ViewModel()
     var mensagemErro by mutableStateOf("")
         private set
 
+    var qualTipoUsuario by mutableStateOf("")
 
 
     private val repository = LoginRepository()
@@ -36,13 +37,26 @@ class LoginViewModel() : ViewModel()
                             senha
                         )
 
-                    //se login foi efetuado, executa abaixo
+
                     SessaoUsuario.idUsuario = resposta.idUsuario
                     SessaoUsuario.token = resposta.token
                     SessaoUsuario.nomeUsuario = resposta.nome
 
-                    loginSucesso = true
+                    val responseDoador = repository.verificarDoador(resposta.idUsuario)
 
+                    if (responseDoador.isSuccessful && responseDoador.body() != null) {
+                        qualTipoUsuario = "doador"
+                        loginSucesso = true
+
+                        val responseReceptor = repository.verificarReceptor(resposta.idUsuario)
+
+                        if (responseReceptor.isSuccessful && responseReceptor.body() != null) {
+                            qualTipoUsuario = "receptor"
+                            loginSucesso = true
+                        } else {
+                            mensagemErro = "Perfil de usuário não encontrado."
+                        }
+                    }
                 } catch (e: HttpException) {
 
                     if (e.code() == 401) {
