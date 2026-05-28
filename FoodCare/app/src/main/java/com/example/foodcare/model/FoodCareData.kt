@@ -20,6 +20,7 @@ data class CategoriaUi(
 
 
 data class AlimentoFormData(
+    val idAlimento : Int,
     val nome: String,
     val descricao: String,
     val quantidade: Int,

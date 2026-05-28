@@ -22,7 +22,9 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.foodcare.ui.theme.*
+import com.example.foodcare.viewmodel.PerfilViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -42,7 +44,8 @@ fun TelaPerfil(
 
     onVoltar: () -> Unit       = {},
     onEditarPerfil: () -> Unit = {},
-    onLogout: () -> Unit       = {}
+    onLogout: () -> Unit       = {},
+    viewModel : PerfilViewModel = viewModel()
 ) {
     val ehDoador      = tipoUsuario == "DOADOR"
     val tipoLabel     = if (ehDoador) "Doador" else "Receptor"

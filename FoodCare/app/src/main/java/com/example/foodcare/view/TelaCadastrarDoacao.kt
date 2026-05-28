@@ -32,7 +32,7 @@ import java.util.*
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TelaCadastrarDoacao(
-    alimentoFormData: AlimentoFormData    = AlimentoFormData("", "", 0, "", 0),
+    alimentoFormData: AlimentoFormData    = AlimentoFormData(0,"", "", 0, "", 0),
     onVoltar: () -> Unit                  = {},
     onConfirmar: (DoacaoFormData) -> Unit = {},
     viewModel: CadastroDoacaoViewModel    = viewModel()

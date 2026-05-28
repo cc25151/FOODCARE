@@ -271,6 +271,7 @@ fun TelaCadastrarAlimento(
                         if (camposValidos) {
                             onProximo(
                                 AlimentoFormData(
+                                    idAlimento = 0,
                                     nome = viewModel.nome,
                                     descricao = viewModel.descricao,
                                     quantidade = viewModel.quantidade.toIntOrNull() ?: 0,
@@ -325,13 +326,6 @@ fun TelaCadastrarAlimento(
     }
 }
 
-
-fun FormatarData(millis: Long): String {
-    val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
-    calendar.timeInMillis = millis
-    val format = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-    return format.format(calendar.time)
-}
 
 
 @Composable
