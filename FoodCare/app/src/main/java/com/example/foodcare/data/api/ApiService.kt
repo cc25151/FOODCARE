@@ -52,4 +52,10 @@ interface ApiService {
         dados: CompletarPerfilRequest
 
     ): Response<Unit>
+
+
+    @POST("doacoes")
+    suspend fun cadastrarDoacao(
+        @Body doacao: DoacaoRequest
+    ): Response<DoacaoResponse>
 }

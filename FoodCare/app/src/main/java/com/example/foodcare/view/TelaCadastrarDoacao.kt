@@ -1,6 +1,7 @@
 package com.example.foodcare.view
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,26 +22,43 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.foodcare.ui.theme.*
 import com.example.foodcare.model.*
-
+import com.example.foodcare.viewmodel.CadastroDoacaoViewModel
+import java.text.SimpleDateFormat
+import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TelaCadastrarDoacao(
     alimentoFormData: AlimentoFormData    = AlimentoFormData("", "", 0, "", 0),
     onVoltar: () -> Unit                  = {},
-    onConfirmar: (DoacaoFormData) -> Unit = {}
+    onConfirmar: (DoacaoFormData) -> Unit = {},
+    viewModel: CadastroDoacaoViewModel    = viewModel()
 ) {
-    var dataDoacao      by remember { mutableStateOf("") }
-    var horarioInicial  by remember { mutableStateOf("") }
-    var horarioFinal    by remember { mutableStateOf("") }
 
     var confirmacaoVisivel by remember { mutableStateOf(false) }
 
-    val camposValidos = dataDoacao.isNotBlank()
-            && horarioInicial.isNotBlank()
-            && horarioFinal.isNotBlank()
+    var mostrarCalendario by remember { mutableStateOf(false) }
+    val datePickerState = rememberDatePickerState()
+
+    val camposValidos = viewModel.dataDoacao.isNotBlank()
+            && viewModel.horarioInicial.isNotBlank()
+            && viewModel.horarioFinal.isNotBlank()
+
+    LaunchedEffect(viewModel.cadastroSucesso) {
+        if (viewModel.cadastroSucesso) {
+            onConfirmar(
+                DoacaoFormData(
+                    dataDoacao = viewModel.dataDoacao,
+                    horarioInicial = viewModel.horarioInicial,
+                    horarioFinal = viewModel.horarioFinal
+                )
+            )
+            viewModel.resetarFormulario()
+        }
+    }
 
     Scaffold(
         containerColor = CDFundo,
@@ -94,7 +112,6 @@ fun TelaCadastrarDoacao(
                 verticalArrangement = Arrangement.spacedBy(18.dp)
             ) {
 
-
                 Card(
                     shape  = RoundedCornerShape(14.dp),
                     colors = CardDefaults.cardColors(containerColor = CDBranco),
@@ -144,20 +161,25 @@ fun TelaCadastrarDoacao(
 
                 HorizontalDivider(color = Color(0xFFEEEEEE))
 
-
                 CampoFormulario(
                     label       = "Data da doação *",
                     icone       = Icons.Default.Today,
-                    placeholder = "DD/MM/AAAA"
+                    placeholder = "Selecione a data"
                 ) {
-                    CampoTexto(
-                        value         = dataDoacao,
-                        onValueChange = { dataDoacao = it },
-                        placeholder   = "DD/MM/AAAA",
-                        keyboardType  = KeyboardType.Number
-                    )
+                    Box(modifier = Modifier.fillMaxWidth()) {
+                        CampoTexto(
+                            value         = viewModel.dataDoacao,
+                            onValueChange = { },
+                            placeholder   = "Clique para selecionar",
+                            readOnly      = true
+                        )
+                        Box(
+                            modifier = Modifier
+                                .matchParentSize()
+                                .clickable { mostrarCalendario = true }
+                        )
+                    }
                 }
-
 
                 CampoFormulario(
                     label       = "Horário de início *",
@@ -165,13 +187,12 @@ fun TelaCadastrarDoacao(
                     placeholder = "HH:MM"
                 ) {
                     CampoTexto(
-                        value         = horarioInicial,
-                        onValueChange = { horarioInicial = it },
+                        value         = viewModel.horarioInicial,
+                        onValueChange = { viewModel.horarioInicial = it },
                         placeholder   = "Ex.: 08:00",
                         keyboardType  = KeyboardType.Number
                     )
                 }
-
 
                 CampoFormulario(
                     label       = "Horário de encerramento *",
@@ -179,13 +200,12 @@ fun TelaCadastrarDoacao(
                     placeholder = "HH:MM"
                 ) {
                     CampoTexto(
-                        value         = horarioFinal,
-                        onValueChange = { horarioFinal = it },
+                        value         = viewModel.horarioFinal,
+                        onValueChange = { viewModel.horarioFinal = it },
                         placeholder   = "Ex.: 12:00",
                         keyboardType  = KeyboardType.Number
                     )
                 }
-
 
                 Surface(
                     shape = RoundedCornerShape(10.dp),
@@ -202,7 +222,7 @@ fun TelaCadastrarDoacao(
                             modifier = Modifier.size(16.dp).padding(top = 1.dp))
                         Text(
                             "O receptor e a avaliação serão preenchidos " +
-                            "automaticamente após a conclusão da doação.",
+                                    "automaticamente após a conclusão da doação.",
                             fontSize = 12.sp,
                             color = Color(0xFF4A148C),
                             lineHeight = 17.sp
@@ -212,12 +232,20 @@ fun TelaCadastrarDoacao(
 
                 Spacer(Modifier.height(4.dp))
 
+                if (viewModel.mensagemErro.isNotBlank()) {
+                    Text(
+                        text = viewModel.mensagemErro,
+                        color = Color.Red,
+                        fontSize = 12.sp,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                }
 
                 Button(
                     onClick = {
                         if (camposValidos) confirmacaoVisivel = true
                     },
-                    enabled  = camposValidos,
+                    enabled  = camposValidos && !viewModel.carregando,
                     modifier = Modifier.fillMaxWidth().height(52.dp),
                     shape    = RoundedCornerShape(14.dp),
                     colors   = ButtonDefaults.buttonColors(
@@ -228,16 +256,43 @@ fun TelaCadastrarDoacao(
                     ),
                     elevation = ButtonDefaults.buttonElevation(3.dp)
                 ) {
-                    Icon(Icons.Default.Check, null, modifier = Modifier.size(20.dp))
-                    Spacer(Modifier.width(8.dp))
-                    Text("Confirmar doação", fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                    if (viewModel.carregando) {
+                        CircularProgressIndicator(
+                            color = CDBranco,
+                            modifier = Modifier.size(24.dp),
+                            strokeWidth = 2.dp
+                        )
+                    } else {
+                        Icon(Icons.Default.Check, null, modifier = Modifier.size(20.dp))
+                        Spacer(Modifier.width(8.dp))
+                        Text("Confirmar doação", fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                    }
                 }
 
                 Spacer(Modifier.height(16.dp))
             }
+
+            // DIALOG DO CALENDÁRIO
+            if (mostrarCalendario) {
+                DatePickerDialog(
+                    onDismissRequest = { mostrarCalendario = false },
+                    confirmButton = {
+                        TextButton(onClick = {
+                            datePickerState.selectedDateMillis?.let { milis ->
+                                viewModel.dataDoacao = FormatarData(milis)
+                            }
+                            mostrarCalendario = false
+                        }) {
+                            Text("OK")
+                        }
+                    }
+                ) {
+                    DatePicker(state = datePickerState)
+                }
+            }
+
         }
     }
-
 
     if (confirmacaoVisivel) {
         AlertDialog(
@@ -257,9 +312,9 @@ fun TelaCadastrarDoacao(
                 ) {
                     Text("Alimento: ${alimentoFormData.nome.ifBlank { "—" }}",
                         fontSize = 13.sp, color = CDSub)
-                    Text("Data: $dataDoacao",
+                    Text("Data: ${viewModel.dataDoacao}",
                         fontSize = 13.sp, color = CDSub)
-                    Text("Horário: $horarioInicial – $horarioFinal",
+                    Text("Horário: ${viewModel.horarioInicial} – ${viewModel.horarioFinal}",
                         fontSize = 13.sp, color = CDSub)
                 }
             },
@@ -267,13 +322,7 @@ fun TelaCadastrarDoacao(
                 Button(
                     onClick = {
                         confirmacaoVisivel = false
-                        onConfirmar(
-                            DoacaoFormData(
-                                dataDoacao     = dataDoacao,
-                                horarioInicial = horarioInicial,
-                                horarioFinal   = horarioFinal
-                            )
-                        )
+                        viewModel.cadastrarDoacao(idAlimentoGerado = alimentoFormData.idAlimento)
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = CDVermelho),
                     shape  = RoundedCornerShape(10.dp)
@@ -291,6 +340,12 @@ fun TelaCadastrarDoacao(
     }
 }
 
+fun FormatarData(millis: Long): String {
+    val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+    calendar.timeInMillis = millis
+    val format = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+    return format.format(calendar.time)
+}
 
 data class DoacaoFormData(
     val dataDoacao: String,
