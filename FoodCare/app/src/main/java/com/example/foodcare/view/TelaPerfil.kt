@@ -23,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.foodcare.data.api.SessaoUsuario
 import com.example.foodcare.ui.theme.*
 import com.example.foodcare.viewmodel.PerfilViewModel
 
@@ -47,7 +48,7 @@ fun TelaPerfil(
     onLogout: () -> Unit       = {},
     viewModel : PerfilViewModel = viewModel()
 ) {
-    val ehDoador      = tipoUsuario == "DOADOR"
+    val ehDoador      = SessaoUsuario.tipoUsuario == "DOADOR"
     val tipoLabel     = if (ehDoador) "Doador" else "Receptor"
     val tipoEmoji     = if (ehDoador) "🤝" else "🙏"
     val tipoColor     = if (ehDoador) PVerde else PAzul

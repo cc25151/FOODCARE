@@ -32,7 +32,11 @@
         onRegistrarNovaDoacao: () -> Unit    = {},
     ) {
 
-        var tabAtiva by  remember{mutableStateOf(NavTab.RECEPTOR)}
+        var tabAtiva by remember {
+            mutableStateOf(
+                if (SessaoUsuario.tipoUsuario == "doador") NavTab.DOADOR else NavTab.RECEPTOR
+            )
+        }
 
         Scaffold(
             containerColor = BrancoAlt,

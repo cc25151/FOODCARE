@@ -1,6 +1,8 @@
 package com.example.foodcare.viewmodel
 
-class FeedReceptorViewModel (){
+import androidx.lifecycle.ViewModel
+
+class FeedReceptorViewModel (): ViewModel(){
 
 
 }

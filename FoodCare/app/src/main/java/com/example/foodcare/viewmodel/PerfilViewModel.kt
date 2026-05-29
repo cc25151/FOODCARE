@@ -1,5 +1,7 @@
 package com.example.foodcare.viewmodel
 
-class PerfilViewModel(){
+import androidx.lifecycle.ViewModel
+
+class PerfilViewModel() : ViewModel(){
 
 }
