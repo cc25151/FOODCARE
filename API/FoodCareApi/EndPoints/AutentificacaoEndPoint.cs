@@ -57,8 +57,8 @@
                 var tokenString = tokenHandler.WriteToken(token);
 
                 // checa qual tipo de usuário
-                var ehDoador = db.Doador.Any(d -> d.idUsuario == usuario.idUsuario);
-                var ehReceptor = db.Receptor.Any(r -> r.idUsuario == usuario.idUsuario);
+                var ehDoador = db.Doador.Any(d => d.idUsuario == usuario.idUsuario);
+                var ehReceptor = db.Receptor.Any(r => r.idUsuario == usuario.idUsuario);
                 var tipo = "";
 
                 if(ehDoador){

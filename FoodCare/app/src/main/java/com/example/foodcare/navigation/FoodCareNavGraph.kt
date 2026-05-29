@@ -135,7 +135,7 @@ fun FoodCareNavGraph(
 
         composable(Routes.CADASTRAR_DOACAO) {
             TelaCadastrarDoacao(
-                alimentoFormData = AlimentoFormData("", "", 0, "", 0),
+                alimentoFormData = AlimentoFormData(0, "", "", 0, "", 0),
                 onVoltar         = { navController.popBackStack() },
                 onConfirmar      = { doacaoData ->
                     navController.navigate(Routes.HOMEFEEDPRINCIPAL) {
