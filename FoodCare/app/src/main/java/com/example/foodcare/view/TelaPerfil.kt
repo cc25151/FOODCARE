@@ -13,6 +13,7 @@ import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,18 +32,6 @@ import com.example.foodcare.viewmodel.PerfilViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TelaPerfil(
-    nome: String        = "",
-    email: String       = "",
-    documento: String   = "",
-    tipoPessoa: String  = "",
-    tipoUsuario: String = "",
-    cidade: String      = "",
-    bairro: String      = "",
-    rua: String         = "",
-    numero: String      = "",
-    cep: String         = "",
-    pontuacao: Double?  = null,
-
     onVoltar: () -> Unit       = {},
     onEditarPerfil: () -> Unit = {},
     onLogout: () -> Unit       = {},
@@ -57,7 +46,11 @@ fun TelaPerfil(
     else          Icons.Default.CardGiftcard
     val tipoMensagem  = if (ehDoador) "Obrigado por contribuir com a comunidade! 💚"
     else          "Conectado com doadores próximos a você 💙"
-    val docLabel      = if (tipoPessoa == "PJ") "CNPJ" else "CPF"
+    val docLabel      = if (viewModel.tipoPessoa == "PJ") "CNPJ" else "CPF"
+
+    LaunchedEffect(Unit) {
+        viewModel.carregarPerfil()
+    }
 
     Scaffold(
         containerColor = PFundo,
@@ -110,7 +103,7 @@ fun TelaPerfil(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = nome.take(1).uppercase(),
+                            text = viewModel.nome.take(1).uppercase(),
                             fontSize = 36.sp,
                             fontWeight = FontWeight.ExtraBold,
                             color = PBranco
@@ -118,7 +111,7 @@ fun TelaPerfil(
                     }
 
                     Spacer(Modifier.height(12.dp))
-                    Text(nome, fontSize = 22.sp, fontWeight = FontWeight.Bold, color = PBranco)
+                    Text(viewModel.nome, fontSize = 22.sp, fontWeight = FontWeight.Bold, color = PBranco)
                     Spacer(Modifier.height(8.dp))
 
                     Surface(
@@ -135,7 +128,7 @@ fun TelaPerfil(
                                 fontWeight = FontWeight.SemiBold, color = PBranco)
                             Text("·", color = PBranco.copy(alpha = 0.6f))
                             Text(
-                                if (tipoPessoa == "PJ") "Pessoa Jurídica" else "Pessoa Física",
+                                if (viewModel.tipoPessoa == "PJ") "Pessoa Jurídica" else "Pessoa Física",
                                 fontSize = 13.sp, color = PBranco.copy(alpha = 0.85f)
                             )
                         }
@@ -144,7 +137,7 @@ fun TelaPerfil(
 
                     if (ehDoador) {
                         Spacer(Modifier.height(12.dp))
-                        EstrelasInline(pontuacao = pontuacao, corTexto = PBranco)
+                        EstrelasInline(pontuacao = viewModel.pontuacao, corTexto = PBranco)
                     }
                 }
             }
@@ -181,23 +174,23 @@ fun TelaPerfil(
 
 
                 CardSecao("Dados Pessoais", Icons.Default.Person) {
-                    LinhaDetalhe(Icons.Default.Badge,         "Nome",     nome)
-                    LinhaDetalhe(Icons.Default.Email,         "E-mail",   email)
-                    LinhaDetalhe(Icons.Default.AssignmentInd, docLabel,   documento)
+                    LinhaDetalhe(Icons.Default.Badge,         "Nome",     viewModel.nome)
+                    LinhaDetalhe(Icons.Default.Email,         "E-mail",   viewModel.email)
+                    LinhaDetalhe(Icons.Default.AssignmentInd, docLabel,   viewModel.documento)
                 }
 
                 CardSecao("Endereço", Icons.Default.LocationOn) {
                     LinhaDetalhe(Icons.Default.Home,
-                        "Logradouro", "$rua, $numero".trimEnd(',', ' '))
-                    LinhaDetalhe(Icons.Default.Map,              "Bairro",  bairro)
-                    LinhaDetalhe(Icons.Default.LocationCity,     "Cidade",  cidade)
-                    LinhaDetalhe(Icons.Default.MarkunreadMailbox,"CEP",     cep)
+                        "Logradouro", "${viewModel.rua}, ${viewModel.numero}".trimEnd(',', ' '))
+                    LinhaDetalhe(Icons.Default.Map,              "Bairro",  viewModel.bairro)
+                    LinhaDetalhe(Icons.Default.LocationCity,     "Cidade",  viewModel.cidade)
+                    LinhaDetalhe(Icons.Default.MarkunreadMailbox,"CEP",     viewModel.cep)
                 }
 
 
                 if (ehDoador) {
                     CardSecao("Meu Desempenho", Icons.Default.Star) {
-                        CardNota(pontuacao)
+                        CardNota(viewModel.pontuacao)
                     }
                 }
 
@@ -205,7 +198,9 @@ fun TelaPerfil(
 
                 OutlinedButton(
                     onClick = onEditarPerfil,
-                    modifier = Modifier.fillMaxWidth().height(50.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp),
                     shape = RoundedCornerShape(12.dp),
                     border = androidx.compose.foundation.BorderStroke(1.5.dp, PVermelho),
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = PVermelho)
@@ -216,8 +211,13 @@ fun TelaPerfil(
                 }
 
                 Button(
-                    onClick = onLogout,
-                    modifier = Modifier.fillMaxWidth().height(50.dp),
+                    onClick = {
+                        viewModel.logout()
+                        onLogout()
+                       },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp),
                     shape = RoundedCornerShape(12.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(0xFFFFF0F0),
@@ -228,7 +228,7 @@ fun TelaPerfil(
                     Icon(Icons.AutoMirrored.Filled.Logout, null,
                         modifier = Modifier.size(18.dp))
                     Spacer(Modifier.width(8.dp))
-                    Text("Sair da conta", fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
+                    Text("Sair da conta", fontWeight = FontWeight.SemiBold, fontSize = 15.sp, )
                 }
 
                 Spacer(Modifier.height(16.dp))

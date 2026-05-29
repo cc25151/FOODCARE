@@ -66,7 +66,8 @@
                         tipo = "ambos";
                     tipo = "doador";
                 }
-                tipo = "receptor";
+                else
+                    tipo = "receptor";
 
                 // Envia o nome do usuário e a string do token para usar nas próximas requisições.
                 return Results.Ok(new 
@@ -74,7 +75,7 @@
                     usuario.idUsuario,
                     usuario.nome,
                     token = tokenString,
-                    tipo 
+                    tipoUsuario = tipo
                 });
             });
         }

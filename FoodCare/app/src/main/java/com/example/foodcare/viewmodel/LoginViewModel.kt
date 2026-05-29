@@ -52,9 +52,8 @@ class LoginViewModel() : ViewModel()
                     }
 
                 } catch (e: Exception) {
-
-                    mensagemErro = "Erro de conexão"
-
+                    mensagemErro = e.message.toString()
+                    e.printStackTrace()
                 }
             }
         }

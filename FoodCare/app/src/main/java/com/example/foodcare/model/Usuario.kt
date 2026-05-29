@@ -48,9 +48,10 @@ data class Usuario(
     val nome: String,
     val email: String,
     val documento: String,
-    val cep: String,
-    val cidade: String,
-    val bairro: String,
-    val rua: String,
-    val numero: String
+    val tipoPessoa: String,
+    val cep: String?,
+    val cidade: String?,
+    val bairro: String?,
+    val rua: String?,
+    val numero: String?
 )
