@@ -16,8 +16,8 @@ interface ApiService {
     suspend fun getReceptorPorId(@Path("id") id: Int): Response<Receptor>
 
     @POST("usuarios/cadastro")
-    suspend fun  cadastro(
-        @Body CadastroRequest : CadastroRequest
+    suspend fun cadastro(
+        @Body request: CadastroRequest
     ) : CadastroResposta
 
     @POST("doadores/cadastro")
