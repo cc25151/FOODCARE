@@ -34,6 +34,12 @@ class CadastroDoacaoViewModel : ViewModel() {
             return
         }
 
+        val regexHora = Regex("^([01]\\d|2[0-3]):([0-5]\\d)$")
+        if (!regexHora.matches(horarioInicial) || !regexHora.matches(horarioFinal)) {
+            mensagemErro = "Formato de hora inválido. Use HH:MM (ex: 08:00)."
+            return
+        }
+
         viewModelScope.launch {
             try {
                 carregando = true
