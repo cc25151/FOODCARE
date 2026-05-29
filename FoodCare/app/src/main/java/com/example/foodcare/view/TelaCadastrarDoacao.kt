@@ -190,9 +190,10 @@ fun TelaCadastrarDoacao(
                         value         = viewModel.horarioInicial,
                         onValueChange = { viewModel.horarioInicial = it },
                         placeholder   = "Ex.: 08:00",
-                        keyboardType  = KeyboardType.Number
+                        keyboardType  = KeyboardType.Text
                     )
                 }
+
 
                 CampoFormulario(
                     label       = "Horário de encerramento *",
@@ -203,7 +204,7 @@ fun TelaCadastrarDoacao(
                         value         = viewModel.horarioFinal,
                         onValueChange = { viewModel.horarioFinal = it },
                         placeholder   = "Ex.: 12:00",
-                        keyboardType  = KeyboardType.Number
+                        keyboardType  = KeyboardType.Text
                     )
                 }
 
@@ -344,6 +345,9 @@ fun FormatarData(millis: Long): String {
     val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
     calendar.timeInMillis = millis
     val format = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+
+    format.timeZone = TimeZone.getTimeZone("UTC")
+
     return format.format(calendar.time)
 }
 

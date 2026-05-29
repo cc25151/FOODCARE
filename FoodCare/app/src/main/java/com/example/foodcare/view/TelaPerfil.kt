@@ -48,28 +48,15 @@ fun TelaPerfil(
     onLogout: () -> Unit       = {},
     viewModel : PerfilViewModel = viewModel()
 ) {
-
-    val ehDoador = SessaoUsuario.tipoUsuario == "DOADOR"
-
-    val ehAmbos = SessaoUsuario.tipoUsuario == "AMBOS"
-
-    val tipoLabel     =
-        if (ehAmbos) {"Instituição de caridade!"}
-        else if (ehDoador) {"Doador"}
-        else{"Receptor"}
-
-    val tipoCor     = if (ehAmbos) PVermelho
-    else if (ehDoador) PAzul
-    else PVerde
-
+    val ehDoador      = SessaoUsuario.tipoUsuario == "DOADOR"
+    val tipoLabel     = if (ehDoador) "Doador" else "Receptor"
+    val tipoEmoji     = if (ehDoador) "🤝" else "🙏"
+    val tipoColor     = if (ehDoador) PVerde else PAzul
     val tipoBg        = if (ehDoador) PVerdeFundo else PAzulFundo
     val tipoIcone     = if (ehDoador) Icons.Default.VolunteerActivism
     else          Icons.Default.CardGiftcard
-
-    val tipoMensagem  =
-        if (ehDoador || ehAmbos) "Obrigado por contribuir com a comunidade!"
-        else          "Conectado com doadores próximos a você"
-
+    val tipoMensagem  = if (ehDoador) "Obrigado por contribuir com a comunidade! 💚"
+    else          "Conectado com doadores próximos a você 💙"
     val docLabel      = if (tipoPessoa == "PJ") "CNPJ" else "CPF"
 
     Scaffold(
