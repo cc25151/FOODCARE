@@ -180,9 +180,13 @@ fun TelaPerfilDoadorPublico(
 
                 CardSecao("Localização", Icons.Default.LocationOn) {
                     LinhaDetalhe(Icons.Default.LocationCity, "Cidade",
-                        if (cidade.isBlank()) "—" else cidade)
+                        if (cidade.isBlank()) "—" else cidade,
+                        false,
+                        {})
                     LinhaDetalhe(Icons.Default.Map, "Bairro",
-                        if (bairro.isBlank()) "—" else bairro)
+                        if (bairro.isBlank()) "—" else bairro,
+                    false,
+                    {})
                 }
 
                 CardSecao("Avaliação da Comunidade", Icons.Default.Star) {
@@ -220,9 +224,13 @@ fun TelaPerfilDoadorPublico(
 
                 CardSecao("Tipo de Cadastro", Icons.Default.Badge) {
                     LinhaDetalhe(Icons.Default.AssignmentInd, "Categoria",
-                        if (tipoPessoa == "PJ") "Pessoa Jurídica" else "Pessoa Física")
+                        if (tipoPessoa == "PJ") "Pessoa Jurídica" else "Pessoa Física",
+                        false,
+                        {})
                     LinhaDetalhe(Icons.Default.VolunteerActivism,
-                        "Papel na plataforma", "Doador de Alimentos 🤝")
+                        "Papel na plataforma", "Doador de Alimentos 🤝",
+                        false,
+                        {})
                 }
 
                 Spacer(Modifier.height(24.dp))

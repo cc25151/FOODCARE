@@ -1,11 +1,11 @@
 package com.example.foodcare.data.repository
 
 import com.example.foodcare.data.remote.GeocodingApi
+import com.example.foodcare.data.remote.RetrofitClientGeo
 import com.example.foodcare.model.Location
 
-class GeocodingRepository(
-    private val api: GeocodingApi
-) {
+class GeocodingRepository() {
+    private val api = RetrofitClientGeo.api
 
     suspend fun getCoordenadas(address: String): Location? {
 

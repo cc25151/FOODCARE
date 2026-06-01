@@ -72,8 +72,8 @@ class UsuarioRepository {
         bairro: String,
         rua: String,
         numero: String,
-        latitude: Double,
-        longitude: Double
+        latitude: Double?,
+        longitude: Double?
     ): Boolean {
 
         return RetrofitClient.api.completarPerfil(

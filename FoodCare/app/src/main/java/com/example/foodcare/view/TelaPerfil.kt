@@ -174,17 +174,17 @@ fun TelaPerfil(
 
 
                 CardSecao("Dados Pessoais", Icons.Default.Person) {
-                    LinhaDetalhe(Icons.Default.Badge,         "Nome",     viewModel.nome)
-                    LinhaDetalhe(Icons.Default.Email,         "E-mail",   viewModel.email)
-                    LinhaDetalhe(Icons.Default.AssignmentInd, docLabel,   viewModel.documento)
+                    LinhaDetalhe(Icons.Default.Badge,         "Nome",     viewModel.nome, viewModel.modoEdicao,onValueChange = { viewModel.nome = it })
+                    LinhaDetalhe(Icons.Default.Email,         "E-mail",   viewModel.email, viewModel.modoEdicao,onValueChange = { viewModel.nome = it })
+                    LinhaDetalhe(Icons.Default.AssignmentInd, docLabel,   viewModel.documento, viewModel.modoEdicao,onValueChange = { viewModel.nome = it })
                 }
 
                 CardSecao("Endereço", Icons.Default.LocationOn) {
                     LinhaDetalhe(Icons.Default.Home,
-                        "Logradouro", "${viewModel.rua}, ${viewModel.numero}".trimEnd(',', ' '))
-                    LinhaDetalhe(Icons.Default.Map,              "Bairro",  viewModel.bairro)
-                    LinhaDetalhe(Icons.Default.LocationCity,     "Cidade",  viewModel.cidade)
-                    LinhaDetalhe(Icons.Default.MarkunreadMailbox,"CEP",     viewModel.cep)
+                        "Logradouro", "${viewModel.rua}, ${viewModel.numero}".trimEnd(',', ' '), viewModel.modoEdicao,onValueChange = { viewModel.nome = it })
+                    LinhaDetalhe(Icons.Default.Map,              "Bairro",  viewModel.bairro, viewModel.modoEdicao,onValueChange = { viewModel.nome = it })
+                    LinhaDetalhe(Icons.Default.LocationCity,     "Cidade",  viewModel.cidade, viewModel.modoEdicao,onValueChange = { viewModel.nome = it })
+                    LinhaDetalhe(Icons.Default.MarkunreadMailbox,"CEP",     viewModel.cep, viewModel.modoEdicao,onValueChange = { viewModel.nome = it })
                 }
 
 
@@ -197,7 +197,12 @@ fun TelaPerfil(
                 Spacer(Modifier.height(4.dp))
 
                 OutlinedButton(
-                    onClick = onEditarPerfil,
+                    onClick = {
+                        viewModel.modoEdicao = !viewModel.modoEdicao
+                        if(!viewModel.modoEdicao){
+                            viewModel.salvarPerfil()
+                        }
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(50.dp),
@@ -207,7 +212,11 @@ fun TelaPerfil(
                 ) {
                     Icon(Icons.Default.Edit, null, modifier = Modifier.size(18.dp))
                     Spacer(Modifier.width(8.dp))
-                    Text("Editar Perfil", fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
+                    Text(
+                        text = if(viewModel.modoEdicao)"Editar Perfil" else "Salvar Alterações",
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 15.sp)
+
                 }
 
                 Button(
@@ -270,7 +279,13 @@ internal fun CardSecao(
 }
 
 @Composable
-internal fun LinhaDetalhe(icone: ImageVector, label: String, valor: String) {
+internal fun LinhaDetalhe(
+    icone: ImageVector,
+    label: String,
+    valor: String,
+    modoEdicao: Boolean,
+    onValueChange: (String) -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -282,12 +297,19 @@ internal fun LinhaDetalhe(icone: ImageVector, label: String, valor: String) {
         Spacer(Modifier.width(10.dp))
         Column {
             Text(label, fontSize = 11.sp, color = Color(0xFF757575))
-            Text(
-                if (valor.isBlank()) "—" else valor,
-                fontSize = 14.sp,
-                color = Color(0xFF1C1C1C),
-                fontWeight = FontWeight.Medium
-            )
+
+            if(modoEdicao){
+                FoodCareTextField(valor, onValueChange)
+            }
+            else{
+                Text(
+                    if (valor.isBlank()) "—" else valor,
+                    fontSize = 14.sp,
+                    color = Color(0xFF1C1C1C),
+                    fontWeight = FontWeight.Medium
+                )
+            }
+
         }
     }
 }
