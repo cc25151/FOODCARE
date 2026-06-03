@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 public static class CategoriaEndPoint
 {
-    public static void MapAlimentoEndPoints(this WebApplication app)
+    public static void MapCategoriaEndPoints(this WebApplication app)
     {
         var rotas = app.MapGroup("/categoria");
 
