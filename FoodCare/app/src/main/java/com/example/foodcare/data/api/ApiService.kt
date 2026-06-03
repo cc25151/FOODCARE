@@ -63,4 +63,13 @@ interface ApiService {
     suspend fun cadastrarDoacao(
         @Body doacao: DoacaoRequest
     ): Response<DoacaoResposta>
+
+
+    @GET("categorias")
+    suspend fun listarCategorias(): Response<List<CategoriaResposta>>
+
+    @GET("categorias/nome/{nome}")
+    suspend fun buscarCategoriaPorNome(
+        @Path("nome") nome: String
+    ): Response<CategoriaResposta>
 }
