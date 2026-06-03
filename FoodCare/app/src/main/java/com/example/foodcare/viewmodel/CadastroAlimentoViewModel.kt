@@ -4,6 +4,7 @@ import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.foodcare.data.api.SessaoUsuario
+import com.example.foodcare.data.api.RetrofitClient
 import com.example.foodcare.data.repository.AlimentoRepository
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
@@ -26,9 +27,34 @@ class CadastroAlimentoViewModel : ViewModel() {
     var cadastroSucesso by mutableStateOf(false)
         private set
 
-    var categoriaSelecionada: CategoriaUi? by mutableStateOf<CategoriaUi?>(null)
+    var categoriaSelecionada by mutableStateOf<CategoriaResposta?>(null)
+    var listaCategorias by mutableStateOf<List<CategoriaResposta>>(emptyList())
+        private set
+    var carregandoCategorias by mutableStateOf(false)
+        private set
+
+    init {
+        buscarCategorias()
+    }
 
     private val repository = AlimentoRepository()
+
+    private fun buscarCategorias() {
+        viewModelScope.launch {
+            try {
+                carregandoCategorias = true
+                // Aqui você chama a sua instância do Retrofit/Repository
+                // Ex: repository.listarCategorias() ou apiService.listarCategorias()
+                listaCategorias = RetrofitClient.api.listarCategorias();
+            } catch (e: Exception) {
+                mensagemErro = "Não foi possível carregar as categorias."
+            } finally {
+                carregandoCategorias = false
+            }
+        }
+    }
+
+
 
     fun cadastrar(idCategoria: Int) {
         if (nome.isBlank() || quantidade.isBlank() || validade.isBlank() || idCategoria == 0) {

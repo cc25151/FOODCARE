@@ -70,5 +70,5 @@ interface ApiService {
     ): Response<CategoriaResposta>
 
     @GET("categorias")
-    suspend fun listarCategorias(): Response<List<CategoriaResposta>>
+    suspend fun listarCategorias(): List<CategoriaResposta>
 }

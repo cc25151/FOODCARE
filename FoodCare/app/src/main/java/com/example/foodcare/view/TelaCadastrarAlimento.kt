@@ -37,7 +37,6 @@ import com.example.foodcare.model.*
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TelaCadastrarAlimento(
-    categorias: List<CategoriaUi>         = emptyList(),
     onVoltar: () -> Unit                  = {},
     onProximo: (AlimentoFormData) -> Unit = {},
     viewModel: CadastroAlimentoViewModel = viewModel()
@@ -229,23 +228,24 @@ fun TelaCadastrarAlimento(
                             expanded = categoriaExpandida,
                             onDismissRequest = { categoriaExpandida = false }
                         ) {
-
-                            if (categorias.isEmpty()) {
+                            if (viewModel.carregandoCategorias) {
                                 DropdownMenuItem(
-                                    text = {
-                                        Text(
-                                            "Carregando categorias...",
-                                            color = CASub, fontSize = 13.sp
-                                        )
-                                    },
+                                    text = { Text("Buscando no servidor...", color = CASub, fontSize = 13.sp) },
                                     onClick = {}
                                 )
-                            } else {
-                                categorias.forEach { cat ->
+                            }
+                            else if (viewModel.listaCategorias.isEmpty()) {
+                                DropdownMenuItem(
+                                    text = { Text("Nenhuma categoria encontrada", color = CASub, fontSize = 13.sp) },
+                                    onClick = {}
+                                )
+                            }
+                            else {
+                                viewModel.listaCategorias.forEach { cat ->
                                     DropdownMenuItem(
                                         text = { Text(cat.nome, fontSize = 14.sp) },
                                         onClick = {
-                                            viewModel.categoriaSelecionada = cat // ATUALIZA O VM
+                                            viewModel.categoriaSelecionada = cat
                                             categoriaExpandida = false
                                         }
                                     )

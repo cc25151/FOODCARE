@@ -7,7 +7,7 @@ public static class CategoriaEndPoint
 {
     public static void MapCategoriaEndPoints(this WebApplication app)
     {
-        var rotas = app.MapGroup("/categoria");
+        var rotas = app.MapGroup("/categorias");
 
         rotas.MapGet("/", async (AppDbContext bd) =>
             await bd.Categoria.ToListAsync()
