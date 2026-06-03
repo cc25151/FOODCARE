@@ -16,7 +16,7 @@ public static class CategoriaEndPoint
         rotas.MapGet("/{nome}", async (string nome, AppDbContext bd) =>
         {
             var resultados = await bd.Categoria
-                .Where(c => c.categoria.nome.ToLower() == categoria.nome.ToLower())
+                .Where(c => c.nome.ToLower() == nome.ToLower())
                 .ToListAsync();
 
             return resultados.Any() ? Results.Ok(resultados) : Results.NotFound();
