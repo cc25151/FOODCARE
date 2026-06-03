@@ -43,8 +43,6 @@ class CadastroAlimentoViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 carregandoCategorias = true
-                // Aqui você chama a sua instância do Retrofit/Repository
-                // Ex: repository.listarCategorias() ou apiService.listarCategorias()
                 listaCategorias = RetrofitClient.api.listarCategorias();
             } catch (e: Exception) {
                 mensagemErro = "Não foi possível carregar as categorias."
