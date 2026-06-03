@@ -35,6 +35,7 @@ app.MapDoadorEndpoints(); // Registra as rotas de doador
 app.MapDoacaoEndPoints(); // Registra as rotas de doações
 app.MapAlimentoEndPoints(); // Registra as rotas de alimentos
 app.MapReceptorEndpoints();// Registra as rotas de receptor
+app.MapCategoriaEndPoints();
 
 // Deixa a API ativa e escutando o aplicativo Android
 app.Run();
