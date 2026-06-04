@@ -42,7 +42,7 @@ interface ApiService {
         @Body alimento: AlimentoRequest
     ): AlimentoResposta
 
-    @PATCH("completar-perfil/{id}")
+    @PATCH("usuarios/completar-perfil/{id}")
     suspend fun completarPerfil(
 
         @Path("id")

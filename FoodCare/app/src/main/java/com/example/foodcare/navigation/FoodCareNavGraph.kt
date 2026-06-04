@@ -125,7 +125,6 @@ fun FoodCareNavGraph(
 
         composable(Routes.CADASTRAR_ALIMENTO) {
             TelaCadastrarAlimento(
-                categorias = emptyList(),
                 onVoltar   = { navController.popBackStack() },
                 onProximo  = { alimentoData ->
                     navController.navigate(Routes.CADASTRAR_DOACAO)

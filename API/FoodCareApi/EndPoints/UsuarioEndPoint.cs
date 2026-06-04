@@ -61,21 +61,20 @@ public static class UsuarioEndpoints
             if (usuario is null) return Results.NotFound("Usuário não encontrado.");
 
             // Atualização dos campos de endereço que vieram nulos
-         usuario.cep    =  !string.IsNullOrWhiteSpace(dadosPerfil.cep) ? dadosPerfil.cep : usuario.cep;
-         usuario.cidade =  !string.IsNullOrWhiteSpace(dadosPerfil.cidade) ? dadosPerfil.cidade : usuario.cidade;
-         usuario.bairro =  !string.IsNullOrWhiteSpace(dadosPerfil.bairro) ? dadosPerfil.bairro : usuario.bairro;
-         usuario.rua    =  !string.IsNullOrWhiteSpace(dadosPerfil.rua) ? dadosPerfil.rua : usuario.rua;
-         usuario.numero =  !string.IsNullOrWhiteSpace(dadosPerfil.numero) ? dadosPerfil.numero : usuario.numero;
-    
-        // Para as coordenadas calculadas pela api externa, checamos se elas foram enviadas 
-        usuario.latitude = dadosPerfil.latitude ?? usuario.latitude;
-        usuario.longitude = dadosPerfil.longitude ?? usuario.longitude;
-                
+            usuario.cep    =  !string.IsNullOrWhiteSpace(dadosPerfil.cep) ? dadosPerfil.cep : usuario.cep;
+            usuario.cidade =  !string.IsNullOrWhiteSpace(dadosPerfil.cidade) ? dadosPerfil.cidade : usuario.cidade;
+            usuario.bairro =  !string.IsNullOrWhiteSpace(dadosPerfil.bairro) ? dadosPerfil.bairro : usuario.bairro;
+            usuario.rua    =  !string.IsNullOrWhiteSpace(dadosPerfil.rua) ? dadosPerfil.rua : usuario.rua;
+            usuario.numero =  !string.IsNullOrWhiteSpace(dadosPerfil.numero) ? dadosPerfil.numero : usuario.numero;
         
-                await db.SaveChangesAsync();
+            // Para as coordenadas calculadas pela api externa, checamos se elas foram enviadas 
+            usuario.latitude = dadosPerfil.latitude ?? usuario.latitude;
+            usuario.longitude = dadosPerfil.longitude ?? usuario.longitude;
+    
+            await db.SaveChangesAsync();
 
-                return Results.Ok(new { mensagem = "Perfil e localização atualizados com sucesso!" });
-            }); 
+            return Results.Ok(new { mensagem = "Perfil e localização atualizados com sucesso!" });
+        }); 
 
         //DELETE - Excluir conta
         grupo.MapDelete("/{id}", async (int id, AppDbContext db) =>

@@ -12,8 +12,8 @@ create table FoodCare.Usuario(
 	bairro varchar(60) null,
 	rua varchar(60) null,
 	numero varchar(10) null,
-	latitude decimal(9,6),
-	longitude decimal(9,6),
+	latitude float null,
+	longitude float null,
 	check (
     (tipoPessoa = 'PF' and LEN(documento) = 11)
     or

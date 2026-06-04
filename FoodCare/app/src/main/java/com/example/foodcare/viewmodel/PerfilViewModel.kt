@@ -1,5 +1,6 @@
 package com.example.foodcare.viewmodel
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -9,6 +10,7 @@ import com.example.foodcare.data.repository.UsuarioRepository
 import androidx.lifecycle.viewModelScope
 import com.example.foodcare.data.repository.GeocodingRepository
 import kotlinx.coroutines.launch
+import java.net.ConnectException
 
 
 class PerfilViewModel(): ViewModel(){
@@ -26,8 +28,12 @@ class PerfilViewModel(): ViewModel(){
 
     var modoEdicao by mutableStateOf(false)
 
+    var mensagemSucesso by mutableStateOf(false)
+
     val repository = UsuarioRepository()
     val coordRepository = GeocodingRepository()
+
+    var mensagemErro by mutableStateOf<String?>(null)
 
     fun carregarPerfil(){
 
@@ -42,18 +48,14 @@ class PerfilViewModel(): ViewModel(){
                     this@PerfilViewModel.numero = numero ?: ""
                     this@PerfilViewModel.cidade = cidade ?: ""
                     this@PerfilViewModel.bairro = bairro ?: ""
-                    this@PerfilViewModel.cep = cep ?: ""
+                    this@PerfilViewModel.cep = "${cep?.substring(0, 5)}-${cep?.substring(5)}"
                     this@PerfilViewModel.tipoPessoa = tipoPessoa
                 }
             }
             catch (e : Exception){
-
+                mensagemErro = "Não foi possível salvar as alterações."
             }
-
         }
-
-
-
     }
 
     fun salvarPerfil(){
@@ -61,25 +63,43 @@ class PerfilViewModel(): ViewModel(){
         // quando o usuario clica pela segunda vez, modoEdicao vira false, e o programa deve salvar as informações
         viewModelScope.launch{
             try{
-                val enderecoCompleto = "$rua, $numero, $bairro, $cidade, $cep"
+                val enderecoCompleto = "$rua, $cidade, $cep"
                 val coordenadas = coordRepository.getCoordenadas(enderecoCompleto)
+
+                Log.d("GEO", "Endereço: $enderecoCompleto")
+                Log.d("GEO", "Coordenadas: $coordenadas")
+
+                if (coordenadas == null) {
+                    mensagemErro = "Não foi possível localizar o endereço."
+                    return@launch
+                }
+
                 val resposta = repository.completarPerfil(
                     SessaoUsuario.idUsuario,
                     nome,
                     email,
-                    cep,
+                    cep.replace("-", ""),
                     cidade,
                     bairro,
                     rua,
                     numero,
-                    coordenadas?.latitude,
-                    coordenadas?.longitude
+                    coordenadas.latitude,
+                    coordenadas.longitude
                     )
                 if(resposta){
-                    modoEdicao = !modoEdicao
+                    mensagemSucesso = true
+                    carregarPerfil()
+                }else{
+                    mensagemErro = "Não foi possível salvar as alterações."
+                    modoEdicao = !modoEdicao // volta para o estado anterior, já que modoEdicao muda ao clicar no botao
                 }
-            }catch(e : Exception){
+            }catch (e: ConnectException) {
 
+                mensagemErro = "Servidor indisponível"
+            }
+            catch(e : Exception){
+                mensagemErro = "Localização inválida."
+                modoEdicao = !modoEdicao
             }
         }
     }

@@ -43,8 +43,8 @@ public class AppDbContext : DbContext
             entity.Property(u => u.numero).HasColumnType("varchar(10)");
 
             // Latitude e Longitude usadas para calcular a coordenada através da API externa
-            entity.Property(u => u.latitude).HasColumnType("decimal(9,6)");
-            entity.Property(u => u.longitude).HasColumnType("decimal(9,6)");
+            entity.Property(u => u.latitude).HasColumnType("float");
+            entity.Property(u => u.longitude).HasColumnType("float");
         }); 
         //-----------------------TABELA DOADOR-----------------------//
         modelBuilder.Entity<Doador>(entity =>

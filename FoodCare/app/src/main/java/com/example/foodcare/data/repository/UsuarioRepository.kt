@@ -1,5 +1,6 @@
 package com.example.foodcare.data.repository
 
+import android.util.Log
 import com.example.foodcare.data.api.RetrofitClient
 import com.example.foodcare.model.*
 
@@ -76,7 +77,7 @@ class UsuarioRepository {
         longitude: Double?
     ): Boolean {
 
-        return RetrofitClient.api.completarPerfil(
+        val resposta = RetrofitClient.api.completarPerfil(
             id,
 
             CompletarPerfilRequest(
@@ -91,7 +92,13 @@ class UsuarioRepository {
                 longitude = longitude
             )
 
-        ).isSuccessful
+        )
+
+        Log.d("PATCH", "Code = ${resposta.code()}")
+        Log.d("PATCH", "Body = ${resposta.errorBody()?.string()}")
+
+
+        return resposta.isSuccessful
     }
 
     suspend fun getDados(

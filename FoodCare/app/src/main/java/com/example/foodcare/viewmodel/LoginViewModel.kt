@@ -7,6 +7,7 @@ import com.example.foodcare.data.api.SessaoUsuario
 import com.example.foodcare.data.repository.UsuarioRepository
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
+import java.net.ConnectException
 
 class LoginViewModel() : ViewModel()
 {
@@ -43,7 +44,10 @@ class LoginViewModel() : ViewModel()
                     SessaoUsuario.tipoUsuario = resposta.tipoUsuario
                     loginSucesso = true
 
-                } catch (e: HttpException) {
+                }catch (e: ConnectException) {
+                    mensagemErro = "Servidor indisponível"
+                }
+                catch (e: HttpException) {
 
                     if (e.code() == 401) {
 
@@ -53,7 +57,6 @@ class LoginViewModel() : ViewModel()
 
                 } catch (e: Exception) {
                     mensagemErro = e.message.toString()
-                    e.printStackTrace()
                 }
             }
         }

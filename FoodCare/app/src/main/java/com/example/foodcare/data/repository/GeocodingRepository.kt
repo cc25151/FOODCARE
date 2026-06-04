@@ -1,6 +1,5 @@
 package com.example.foodcare.data.repository
 
-import com.example.foodcare.data.remote.GeocodingApi
 import com.example.foodcare.data.remote.RetrofitClientGeo
 import com.example.foodcare.model.Location
 

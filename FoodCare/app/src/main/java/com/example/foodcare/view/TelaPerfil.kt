@@ -37,7 +37,7 @@ fun TelaPerfil(
     onLogout: () -> Unit       = {},
     viewModel : PerfilViewModel = viewModel()
 ) {
-    val ehDoador      = SessaoUsuario.tipoUsuario == "DOADOR"
+    val ehDoador      = SessaoUsuario.tipoUsuario == "doador" || SessaoUsuario.tipoUsuario == "ambos"
     val tipoLabel     = if (ehDoador) "Doador" else "Receptor"
     val tipoEmoji     = if (ehDoador) "🤝" else "🙏"
     val tipoColor     = if (ehDoador) PVerde else PAzul
@@ -142,6 +142,30 @@ fun TelaPerfil(
                 }
             }
 
+            //exibe mensagem de erro
+            if (viewModel.mensagemErro != null) {
+                AlertDialog(
+                    onDismissRequest = {
+                        viewModel.mensagemErro = null
+                    },
+                    title = {
+                        Text("Erro")
+                    },
+                    text = {
+                        Text(viewModel.mensagemErro!!)
+                    },
+                    confirmButton = {
+                        TextButton(
+                            onClick = {
+                                viewModel.mensagemErro = null
+                            }
+                        ) {
+                            Text("OK")
+                        }
+                    }
+                )
+            }
+
 
             Column(
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 20.dp),
@@ -175,22 +199,34 @@ fun TelaPerfil(
 
                 CardSecao("Dados Pessoais", Icons.Default.Person) {
                     LinhaDetalhe(Icons.Default.Badge,         "Nome",     viewModel.nome, viewModel.modoEdicao,onValueChange = { viewModel.nome = it })
-                    LinhaDetalhe(Icons.Default.Email,         "E-mail",   viewModel.email, viewModel.modoEdicao,onValueChange = { viewModel.nome = it })
-                    LinhaDetalhe(Icons.Default.AssignmentInd, docLabel,   viewModel.documento, viewModel.modoEdicao,onValueChange = { viewModel.nome = it })
+                    LinhaDetalhe(Icons.Default.Email,         "E-mail",   viewModel.email, viewModel.modoEdicao,onValueChange = { viewModel.email = it })
+                    LinhaDetalhe(Icons.Default.AssignmentInd, docLabel,   viewModel.documento, false,onValueChange = { })
                 }
 
                 CardSecao("Endereço", Icons.Default.LocationOn) {
                     LinhaDetalhe(Icons.Default.Home,
-                        "Logradouro", "${viewModel.rua}, ${viewModel.numero}".trimEnd(',', ' '), viewModel.modoEdicao,onValueChange = { viewModel.nome = it })
-                    LinhaDetalhe(Icons.Default.Map,              "Bairro",  viewModel.bairro, viewModel.modoEdicao,onValueChange = { viewModel.nome = it })
-                    LinhaDetalhe(Icons.Default.LocationCity,     "Cidade",  viewModel.cidade, viewModel.modoEdicao,onValueChange = { viewModel.nome = it })
-                    LinhaDetalhe(Icons.Default.MarkunreadMailbox,"CEP",     viewModel.cep, viewModel.modoEdicao,onValueChange = { viewModel.nome = it })
+                        "Rua", viewModel.rua, viewModel.modoEdicao,onValueChange = { viewModel.rua = it })
+                    LinhaDetalhe(Icons.Default.Pin, "Número", viewModel.numero, viewModel.modoEdicao, { viewModel.numero = it })
+                    LinhaDetalhe(Icons.Default.Map,              "Bairro",  viewModel.bairro, viewModel.modoEdicao,onValueChange = { viewModel.bairro = it })
+                    LinhaDetalhe(Icons.Default.LocationCity,     "Cidade",  viewModel.cidade, viewModel.modoEdicao,onValueChange = { viewModel.cidade = it })
+                    LinhaDetalhe(Icons.Default.MarkunreadMailbox,"CEP",     viewModel.cep, viewModel.modoEdicao,onValueChange = { viewModel.cep = it })
                 }
 
 
                 if (ehDoador) {
                     CardSecao("Meu Desempenho", Icons.Default.Star) {
                         CardNota(viewModel.pontuacao)
+                    }
+                }
+
+                Spacer(Modifier.height(4.dp))
+
+                Column{
+                    if (viewModel.mensagemSucesso) {
+                        Text(
+                            text = "Alterações realizadas com sucesso.",
+                            color = Color.Green
+                        )
                     }
                 }
 
@@ -213,7 +249,7 @@ fun TelaPerfil(
                     Icon(Icons.Default.Edit, null, modifier = Modifier.size(18.dp))
                     Spacer(Modifier.width(8.dp))
                     Text(
-                        text = if(viewModel.modoEdicao)"Editar Perfil" else "Salvar Alterações",
+                        text = if(viewModel.modoEdicao)"Salvar Alterações" else "Editar Perfil",
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 15.sp)
 
@@ -284,7 +320,7 @@ internal fun LinhaDetalhe(
     label: String,
     valor: String,
     modoEdicao: Boolean,
-    onValueChange: (String) -> Unit
+    onValueChange: (String) -> Unit,
 ) {
     Row(
         modifier = Modifier
