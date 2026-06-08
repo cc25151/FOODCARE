@@ -64,7 +64,8 @@
                 if(ehDoador){
                     if(ehReceptor)
                         tipo = "ambos";
-                    tipo = "doador";
+                    else
+                        tipo = "doador";
                 }
                 else
                     tipo = "receptor";

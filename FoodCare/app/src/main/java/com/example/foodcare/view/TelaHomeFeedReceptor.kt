@@ -26,8 +26,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.foodcare.model.FoodCareData.produtos
-import com.example.foodcare.model.FoodCareData.categoriasVisuais
 import com.example.foodcare.model.Produto
 import com.example.foodcare.R
 import com.example.foodcare.data.api.SessaoUsuario
@@ -51,15 +49,33 @@ fun TelaHomeFeedReceptor(
     onPerfilClick: () -> Unit = {},
     viewModel : FeedReceptorViewModel = viewModel()
 ) {
-    var busca by remember { mutableStateOf("") }
-    var categoriaSelecionada by remember { mutableStateOf<String?>(null) }
 
-    val produtosFiltrados = remember(busca, categoriaSelecionada) {
-        produtos.filter { p ->
-            (busca.isBlank() || p.nome.contains(busca, ignoreCase = true)) &&
-                    (categoriaSelecionada == null ||
-                            p.categoria.contains(categoriaSelecionada!!, ignoreCase = true))
-        }
+    LaunchedEffect(Unit) {
+        viewModel.CarregarPagina()
+    }
+
+    //exibe mensagem de erro
+    if (viewModel.mensagemErro != null) {
+        AlertDialog(
+            onDismissRequest = {
+                viewModel.mensagemErro = null
+            },
+            title = {
+                Text("Erro")
+            },
+            text = {
+                Text(viewModel.mensagemErro!!)
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        viewModel.mensagemErro = null
+                    }
+                ) {
+                    Text("OK")
+                }
+            }
+        )
     }
 
     Scaffold(
@@ -140,8 +156,8 @@ fun TelaHomeFeedReceptor(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         OutlinedTextField(
-                            value         = busca,
-                            onValueChange = { busca = it },
+                            value         = viewModel.busca,
+                            onValueChange = { viewModel.busca = it },
                             modifier      = Modifier.weight(1f),
                             placeholder   = {
                                 Text(
@@ -208,23 +224,28 @@ fun TelaHomeFeedReceptor(
                     .padding(horizontal = 12.dp, vertical = 10.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
+                item {
+                    CategoriaChip(
+                        nome       = "Recomendados",
+                        selecionado = viewModel.categoriaSelecionada == 0,
+                        onClick    = {
+                            viewModel.categoriaSelecionada = 0 }
+                    )
+                }
 
                 item {
                     CategoriaChip(
                         nome       = "Todos",
-                        emoji      = "🍽️",
-                        selecionado = categoriaSelecionada == null,
-                        onClick    = { categoriaSelecionada = null }
+                        selecionado = viewModel.categoriaSelecionada == null,
+                        onClick    = { viewModel.categoriaSelecionada = null }
                     )
                 }
-                items(categoriasVisuais) { cat ->
+                items(viewModel.categorias) { categoria ->
                     CategoriaChip(
-                        nome        = cat.nome,
-                        emoji       = cat.emoji,
-                        selecionado = categoriaSelecionada == cat.nome,
-                        onClick     = {
-                            categoriaSelecionada =
-                                if (categoriaSelecionada == cat.nome) null else cat.nome
+                        nome = categoria.nome,
+                        selecionado = viewModel.categoriaSelecionada == categoria.idCategoria,
+                        onClick = {
+                            viewModel.categoriaSelecionada = categoria.idCategoria
                         }
                     )
                 }
@@ -246,16 +267,10 @@ fun TelaHomeFeedReceptor(
                     fontSize   = 17.sp,
                     color      = textoEscuro
                 )
-                Text(
-                    text     = "Ver todos",
-                    fontSize = 12.sp,
-                    color    = Vermelho,
-                    fontWeight = FontWeight.Medium
-                )
             }
 
 
-            if (produtosFiltrados.isEmpty()) {
+            if (viewModel.produtosFiltrados.isEmpty()) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -282,11 +297,16 @@ fun TelaHomeFeedReceptor(
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                     verticalArrangement   = Arrangement.spacedBy(10.dp)
                 ) {
-                    items(produtosFiltrados) { produto ->
-                        AlimentoCard(
-                            produto = produto,
-                            onClick = { onProdutoClick(produto.id) }
-                        )
+                    items(viewModel.produtosFiltrados) {
+                        produto ->
+                            AlimentoCard(
+                                produto = produto,
+                                categoria = viewModel.categorias
+                                    .firstOrNull { it.idCategoria == produto.idCategoria }
+                                    ?.nome ?: "",
+                                onClick = { onProdutoClick(produto.id) }
+                            )
+
                     }
                 }
             }
@@ -296,8 +316,7 @@ fun TelaHomeFeedReceptor(
 
 
 @Composable
-private fun AlimentoCard(produto: Produto, onClick: () -> Unit) {
-    var favoritado by remember { mutableStateOf(false) }
+private fun AlimentoCard(produto: Produto, categoria: String, onClick: () -> Unit) {
 
     Card(
         modifier = Modifier
@@ -314,13 +333,13 @@ private fun AlimentoCard(produto: Produto, onClick: () -> Unit) {
                     .fillMaxWidth()
                     .height(110.dp)
                     .background(
-                        color = Color(produto.imageColor),
+                        color = Color.Gray,
                         shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
                     )
             ) {
 
                 Text(
-                    text     = emojiParaProduto(produto.categoria),
+                    text     = emojiParaProduto(categoria),
                     fontSize = 42.sp,
                     modifier = Modifier.align(Alignment.Center)
                 )
@@ -335,7 +354,7 @@ private fun AlimentoCard(produto: Produto, onClick: () -> Unit) {
                         .padding(horizontal = 6.dp, vertical = 2.dp)
                 ) {
                     Text(
-                        text     = "📍 ${produto.distancia}",
+                        text     = "📍 ${Math.round(produto.distancia * 100) / 100.0} Km",
                         fontSize = 9.sp,
                         color    = Branco,
                         fontWeight = FontWeight.Medium
@@ -401,7 +420,6 @@ private fun AlimentoCard(produto: Produto, onClick: () -> Unit) {
 @Composable
 private fun CategoriaChip(
     nome: String,
-    emoji: String,
     selecionado: Boolean,
     onClick: () -> Unit
 ) {
@@ -416,8 +434,6 @@ private fun CategoriaChip(
             .padding(horizontal = 12.dp, vertical = 6.dp)
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(emoji, fontSize = 13.sp)
-            Spacer(Modifier.width(4.dp))
             Text(
                 text       = nome,
                 fontSize   = 12.sp,

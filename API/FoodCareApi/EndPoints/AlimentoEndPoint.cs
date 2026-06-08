@@ -9,9 +9,54 @@ public static class AlimentoEndPoint
     {
         var rotas = app.MapGroup("/alimentos");
 
-        rotas.MapGet("/", async (AppDbContext bd) =>
-            await bd.Alimento.ToListAsync()
-        );
+        rotas.MapGet("/feed/{idUsuario}", async (int idUsuario, AppDbContext bd) =>
+        {
+            var usuario = await bd.Usuario.FindAsync(idUsuario);
+
+            if (usuario is null)
+                return Results.NotFound("Usuário não encontrado.");
+
+            if (usuario.latitude is null || usuario.longitude is null)
+                return Results.BadRequest("Usuário sem localização cadastrada.");
+
+            var alimentos = await bd.Alimento
+                                        .Include(a => a.doador)
+                                        .ThenInclude(d => d.usuario)
+                                        .ToListAsync();
+
+
+            foreach (var alimento in alimentos)
+            {
+                var usuarioDoador = alimento.doador.usuario;
+
+                if (usuarioDoador?.latitude != null &&
+                    usuarioDoador?.longitude != null)
+                {
+                    var lat1 = (double)usuario.latitude!;
+                    var lon1 = (double)usuario.longitude!;
+
+                    var lat2 = (double)usuarioDoador.latitude!;
+                    var lon2 = (double)usuarioDoador.longitude!;
+
+                    var R = 6371.0;
+
+                    var dLat = (lat2 - lat1) * Math.PI / 180.0;
+                    var dLon = (lon2 - lon1) * Math.PI / 180.0;
+
+                    var a =
+                        Math.Sin(dLat / 2) * Math.Sin(dLat / 2) +
+                        Math.Cos(lat1 * Math.PI / 180.0) *
+                        Math.Cos(lat2 * Math.PI / 180.0) *
+                        Math.Sin(dLon / 2) * Math.Sin(dLon / 2);
+
+                    var c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
+
+                    alimento.distancia = R * c;
+                }
+            }
+
+            return Results.Ok(alimentos);
+        });
 
         rotas.MapGet("/{categoria}", async (string categoria, AppDbContext bd) =>
         {

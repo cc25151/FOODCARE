@@ -22,4 +22,8 @@ class AlimentoRepository {
 
         return RetrofitClient.api.cadastrarAlimento(nomeDoador, request)
     }
+
+    suspend fun getAlimentos(idUsuario: Int): List<Produto> {
+        return RetrofitClient.api.getAlimentos(idUsuario)
+    }
 }

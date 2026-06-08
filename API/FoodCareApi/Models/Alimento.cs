@@ -1,5 +1,7 @@
 namespace FoodCareApi.Models;
 
+using System.ComponentModel.DataAnnotations.Schema;
+
 public class Alimento{
         public int idAlimento{ get; set; }
         public int idCategoria{ get; set; }
@@ -11,5 +13,7 @@ public class Alimento{
         public int qntd { get; set; } = 0;
         public DateOnly validade {get; set;} = default;
         
+        [NotMapped]
+        public double distancia { get; set; }
      
     }

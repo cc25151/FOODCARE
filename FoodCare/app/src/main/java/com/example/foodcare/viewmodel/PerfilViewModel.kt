@@ -66,11 +66,10 @@ class PerfilViewModel(): ViewModel(){
                 val enderecoCompleto = "$rua, $cidade, $cep"
                 val coordenadas = coordRepository.getCoordenadas(enderecoCompleto)
 
-                Log.d("GEO", "Endereço: $enderecoCompleto")
-                Log.d("GEO", "Coordenadas: $coordenadas")
 
                 if (coordenadas == null) {
                     mensagemErro = "Não foi possível localizar o endereço."
+                    modoEdicao = !modoEdicao
                     return@launch
                 }
 
@@ -94,8 +93,8 @@ class PerfilViewModel(): ViewModel(){
                     modoEdicao = !modoEdicao // volta para o estado anterior, já que modoEdicao muda ao clicar no botao
                 }
             }catch (e: ConnectException) {
-
                 mensagemErro = "Servidor indisponível"
+                modoEdicao = !modoEdicao
             }
             catch(e : Exception){
                 mensagemErro = "Localização inválida."

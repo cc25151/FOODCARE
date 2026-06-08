@@ -64,11 +64,16 @@ interface ApiService {
         @Body doacao: DoacaoRequest
     ): Response<DoacaoResposta>
 
-    @GET("categorias/nome/{nome}")
+    @GET("categorias/{nome}")
     suspend fun buscarCategoriaPorNome(
         @Path("nome") nome: String
     ): Response<CategoriaResposta>
 
     @GET("categorias")
     suspend fun listarCategorias(): List<CategoriaResposta>
+
+    @GET("alimentos/feed/{idUsuario}")
+    suspend fun getAlimentos(
+        @Path("idUsuario") idUsuario: Int
+    ): List<Produto>
 }

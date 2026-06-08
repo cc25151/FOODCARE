@@ -1,7 +1,6 @@
 package com.example.foodcare.view
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -28,9 +27,6 @@ import androidx.compose.ui.unit.sp
 import com.example.foodcare.ui.theme.*
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.foodcare.viewmodel.CadastroAlimentoViewModel
-import java.text.SimpleDateFormat
-import java.util.*
-import com.example.foodcare.model.FoodCareData
 import android.widget.Toast
 import com.example.foodcare.model.*
 
@@ -276,7 +272,7 @@ fun TelaCadastrarAlimento(
                                     descricao = viewModel.descricao,
                                     quantidade = viewModel.quantidade.toIntOrNull() ?: 0,
                                     validade = viewModel.validade,
-                                    idCategoria = viewModel.categoriaSelecionada?.id ?: 0
+                                    idCategoria = viewModel.categoriaSelecionada?.idCategoria ?: 0
 
                                 )
                             )

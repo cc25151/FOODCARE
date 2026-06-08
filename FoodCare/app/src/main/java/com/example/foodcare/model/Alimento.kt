@@ -14,3 +14,12 @@ data class AlimentoResposta(
     val quantidade: Int,
     val mensagem: String
 )
+
+//model para o feed
+data class Produto(
+    val id: Int,
+    val nome: String,
+    val idCategoria: Int,
+    val distancia: Double,
+    val validade: String
+)
