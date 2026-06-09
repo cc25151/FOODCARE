@@ -32,6 +32,8 @@ create table FoodCare.Doador(
 	idDoador int identity primary key,
 	idUsuario int not null unique,
 	pontuacao decimal(2,1) null,
+	horarioInicial time not null,
+	horarioFinal time not null,
 	constraint fkUsuario foreign key(idUsuario) references FoodCare.Usuario(idUsuario)
 )
 
@@ -57,12 +59,11 @@ create table FoodCare.Alimento(
 create table FoodCare.Doacao(
 	idDoacao int identity primary key,
 	dataDoacao date not null,
-	horarioInicial time not null,
-	horarioFinal time not null,
 	avaliacao int null,
 	idDoador int not null,
 	idReceptor int not null,
 	idAlimento int not null,
+	horario time not null,
 	constraint fkDoadorDoacao foreign key(idDoador) references FoodCare.Doador(idDoador),
     check (avaliacao between 1 and 5),
 	constraint fkReceptor foreign key(idReceptor) references FoodCare.Receptor(idReceptor),
