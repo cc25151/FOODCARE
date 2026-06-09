@@ -1,18 +1,17 @@
 namespace FoodCareApi.Models;
 
 public class Doacao{
-        public int IdDoacao { get; set; }
-        public DateOnly DataDoacao { get; set; }
-        public TimeSpan HorarioInicial { get; set; }
-        public TimeSpan HorarioFinal { get; set; } 
-        public int? Avaliacao { get; set; }
+        public int idDoacao { get; set; }
+        public DateOnly dataDoacao { get; set; }
+        public TimeOnly horario { get; set; }
+        public int? avaliacao { get; set; }
         //Chave estrangeira do doador
-        public int IdDoador { get; set; }
-        public Doador Doador { get; set; } = null!;
+        public int idDoador { get; set; }
+        public Doador doador { get; set; } = null!;
         //Chave estrangeira do receptor
-        public int IdReceptor { get; set; }
-        public Receptor Receptor { get; set; } = null!;
+        public int idReceptor { get; set; }
+        public Receptor receptor { get; set; } = null!;
         //Chave estrangeira do alimento
-        public int IdAlimento { get; set; }
-        public Alimento Alimento { get; set; } = null!;
+        public int idAlimento { get; set; }
+        public Alimento alimento { get; set; } = null!;
     }

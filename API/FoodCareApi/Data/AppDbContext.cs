@@ -54,6 +54,8 @@ public class AppDbContext : DbContext
 
             // Configuração da Chave Estrangeira (Relacionamento 1:1)
             entity.Property(d => d.idUsuario).IsRequired();
+            entity.Property(d => d.horarioInicial).HasColumnType("time");
+            entity.Property(d => d.horarioFinal).HasColumnType("time");
             
             
             // Define que o Doador tem apenas um usuário
@@ -107,27 +109,26 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Doacao>(entity =>
         {
             //Chave Primária
-            entity.HasKey(doa => doa.IdDoacao);
+            entity.HasKey(doa => doa.idDoacao);
 
-            entity.Property(doa => doa.DataDoacao).IsRequired().HasColumnType("date");
-            entity.Property(doa => doa.HorarioInicial).IsRequired().HasColumnType("time");
-            entity.Property(doa => doa.HorarioFinal).HasColumnType("time");
+            entity.Property(doa => doa.dataDoacao).IsRequired().HasColumnType("date");
+            entity.Property(doa => doa.horario).IsRequired().HasColumnType("time");
             
             
-            entity.Property(doa => doa.Avaliacao).HasColumnType("int");
+            entity.Property(doa => doa.avaliacao).HasColumnType("int");
 
             //Relacionamentos
-            entity.HasOne(doa => doa.Doador)
+            entity.HasOne(doa => doa.doador)
                   .WithMany()
-                  .HasForeignKey(doa => doa.IdDoador);
+                  .HasForeignKey(doa => doa.idDoador);
 
-            entity.HasOne(d => d.Receptor)
+            entity.HasOne(d => d.receptor)
                   .WithMany()
-                  .HasForeignKey(d => d.IdReceptor);
+                  .HasForeignKey(d => d.idReceptor);
 
-            entity.HasOne(d => d.Alimento)
+            entity.HasOne(d => d.alimento)
                   .WithOne()
-                  .HasForeignKey<Doacao>(d => d.IdAlimento);
+                  .HasForeignKey<Doacao>(d => d.idAlimento);
         });
     }
 }
