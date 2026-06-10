@@ -64,6 +64,7 @@ create table FoodCare.Doacao(
 	idReceptor int not null,
 	idAlimento int not null,
 	horario time not null,
+	status varchar(20) not null,
 	constraint fkDoadorDoacao foreign key(idDoador) references FoodCare.Doador(idDoador),
     check (avaliacao between 1 and 5),
 	constraint fkReceptor foreign key(idReceptor) references FoodCare.Receptor(idReceptor),

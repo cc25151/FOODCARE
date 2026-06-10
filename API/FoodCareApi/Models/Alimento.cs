@@ -11,7 +11,7 @@ public class Alimento{
         public string nome  { get; set; } = string.Empty;
         public string descricao { get; set; } = string.Empty;
         public int qntd { get; set; } = 0;
-        public DateOnly validade {get; set;} = default;
+        public DateOnly? validade {get; set;} = default;
         
         [NotMapped]
         public double distancia { get; set; }

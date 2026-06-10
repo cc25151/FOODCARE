@@ -17,9 +17,20 @@ data class AlimentoResposta(
 
 //model para o feed
 data class Produto(
+    val id: Int = 0,
+    val nome: String = "",
+    val idCategoria: Int = 0,
+    val idDoador: Int = 0,
+    val descricao: String = "",
+    val distancia: Double = 0.0,
+    val validade: String = ""
+)
+
+data class AlimentoDoador(
     val id: Int,
     val nome: String,
-    val idCategoria: Int,
-    val distancia: Double,
+    val categoria: String,
+    val qntd: Int,
     val validade: String
+
 )

@@ -27,8 +27,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.foodcare.model.FoodCareData
 import com.example.foodcare.ui.theme.*
+import com.example.foodcare.viewmodel.ProdutoViewModel
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.*
@@ -39,12 +41,13 @@ import com.google.maps.android.compose.*
 fun TelaProduto(
     produtoId: Int,
     onVoltar: () -> Unit = {},
-    onQueroEsteProduto: (Int) -> Unit = {}
+    onQueroEsteProduto: (Int) -> Unit = {},
+    viewModel: ProdutoViewModel = viewModel()
 ) {
-    val produto = FoodCareData.produtos.find { it.id == produtoId }
-        ?: FoodCareData.produtos.first()
 
-    var mapaExpandido by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        viewModel.carregarProduto()
+    }
 
     Scaffold(
         topBar = {
@@ -86,7 +89,7 @@ fun TelaProduto(
             ) {
                 FoodCareButton(
                     text = "Quero este produto",
-                    onClick = { onQueroEsteProduto(produto.id) }
+                    onClick = { onQueroEsteProduto(viewModel.produto.id) }
                 )
             }
         }
@@ -106,8 +109,8 @@ fun TelaProduto(
                     .background(
                         brush = Brush.radialGradient(
                             colors = listOf(
-                                Color(produto.imageColor).copy(alpha = 0.6f),
-                                Color(produto.imageColor)
+                                Color(0xFFFFF5F5).copy(alpha = 0.6f),
+                                Color(0xFFFFE3E3)
                             )
                         )
                     ),
@@ -119,7 +122,7 @@ fun TelaProduto(
             Column(modifier = Modifier.padding(20.dp)) {
 
                 Text(
-                    text = produto.nome,
+                    text = viewModel.produto.nome,
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
                     color = textoEscuro
@@ -133,7 +136,7 @@ fun TelaProduto(
                     color = Vermelho.copy(alpha = 0.1f)
                 ) {
                     Text(
-                        text = produto.validade,
+                        text = viewModel.produto.validade,
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
                         fontSize = 12.sp,
                         color = Vermelho,
@@ -164,7 +167,7 @@ fun TelaProduto(
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                DoadorCard(nome = produto.doador, distancia = produto.distancia)
+                DoadorCard(nome = "", distancia = "${ viewModel.produto.distancia }")
 
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -186,7 +189,7 @@ fun TelaProduto(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
-                    text = produto.descricao,
+                    text = viewModel.produto.descricao,
                     fontSize = 14.sp,
                     color = Color(0xFF555555),
                     lineHeight = 22.sp

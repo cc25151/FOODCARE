@@ -76,31 +76,38 @@ public static class AlimentoEndPoint
             return resultados.Any() ? Results.Ok(resultados) : Results.NotFound();
         });
 
+<<<<<<< Updated upstream
         // 3. GET por Doador - Buscar por nome do doador
         // Procura o usuário pelo nome e, caso localize seu perfil de doador, retorna todos os seus alimentos cadastrados
         rotas.MapGet("/doador/{nomeDoador}", async (string nomeDoador, AppDbContext bd) =>
+=======
+        rotas.MapGet("/doador/{idUsuario}", async (int idUsuario, AppDbContext bd) =>
+>>>>>>> Stashed changes
         {
-            var usuario = await bd.Usuario.FirstOrDefaultAsync(u => u.nome.ToLower() == nomeDoador.ToLower());
-            
-            if (usuario == null) 
-                return Results.NotFound($"Nenhum alimento encontrado para o doador: {nomeDoador}");
-
-            var doador = await bd.Doador.FirstOrDefaultAsync(d => d.idUsuario == usuario.idUsuario);
-            
-            if (doador == null) 
-                return Results.NotFound($"Nenhum alimento encontrado para o doador: {nomeDoador}");
-
             var alimentos = await bd.Alimento
-                .Where(a => a.idDoador == doador.idDoador)
-                .ToListAsync();
-                
+                    .Include(a => a.doador)
+                    .Include(a => a.categoria)
+                    .Where(a => a.doador.idUsuario == idUsuario)
+                    .ToListAsync();
 
-            return alimentos.Any() 
-                ? Results.Ok(alimentos) 
-                : Results.NotFound($"Nenhum alimento encontrado para o doador: {nomeDoador}");
+            return Results.Ok(alimentos.Select(a => new
+            {
+                nome = a.nome,
+                categoria = a.categoria.nome,
+                qntd = a.qntd,
+                descricao = a.descricao,
+                validade = a.validade
+
+            }).ToList()); 
         });
 
+<<<<<<< Updated upstream
    
+=======
+    
+
+        // talvez fazer filtro por distancia
+>>>>>>> Stashed changes
 
         // 4. POST - Cadastrar Alimento para Doação
         // Vincula um novo alimento ao ID do doador logado e o disponibiliza na plataforma
