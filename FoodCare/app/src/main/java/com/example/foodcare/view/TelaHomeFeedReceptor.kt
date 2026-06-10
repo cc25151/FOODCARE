@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -33,13 +34,6 @@ import com.example.foodcare.ui.theme.*
 import com.example.foodcare.viewmodel.FeedReceptorViewModel
 
 
-private fun emojiParaProduto(categoria: String): String = when {
-    categoria.contains("Marmita", ignoreCase = true) -> "🍱"
-    categoria.contains("Grão",    ignoreCase = true) -> "🌾"
-    categoria.contains("Vegetal", ignoreCase = true) -> "🥦"
-    categoria.contains("Padaria", ignoreCase = true) -> "🍞"
-    else -> "🛒"
-}
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -338,10 +332,26 @@ private fun AlimentoCard(produto: Produto, categoria: String, onClick: () -> Uni
                     )
             ) {
 
-                Text(
-                    text     = emojiParaProduto(categoria),
-                    fontSize = 42.sp,
-                    modifier = Modifier.align(Alignment.Center)
+                Image(
+                    painter = painterResource(id = when(categoria){
+                        "Marmitas e Refeições Prontas" -> R.drawable.marmita
+                        "Padaria e Confeitaria" -> R.drawable.padaria
+                        "Frutas e Hortifruti" -> R.drawable.frutas
+                        "Alimentos Embalados" -> R.drawable.embalados
+                        "Enlatados e Conservas" -> R.drawable.enlatados
+                        else -> R.drawable.imagemcesta
+                    } ),
+                    contentDescription = "Imagem Alimento",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(120.dp)
+                        .clip(
+                            RoundedCornerShape(
+                                topStart = 16.dp,
+                                topEnd = 16.dp
+                            )
+                        ),
+                    contentScale = ContentScale.Crop
                 )
 
 
