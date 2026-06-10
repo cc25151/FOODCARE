@@ -9,10 +9,14 @@ public static class CategoriaEndPoint
     {
         var rotas = app.MapGroup("/categorias");
 
+        // 1. GET - Listar todas
+        // Retorna a lista completa de categorias cadastradas para classificação dos alimentos
         rotas.MapGet("/", async (AppDbContext bd) =>
             await bd.Categoria.ToListAsync()
         );
 
+        // 2. GET por Nome - Consulta categoria específica
+        // Busca categorias filtrando pelo nome exato enviado na URL
         rotas.MapGet("/{nome}", async (string nome, AppDbContext bd) =>
         {
             var resultados = await bd.Categoria
