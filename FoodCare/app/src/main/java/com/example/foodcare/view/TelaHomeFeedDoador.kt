@@ -30,7 +30,8 @@ import com.example.foodcare.ui.theme.*
 fun TelaHomeFeedDoador(
     doacoes: List<DoacaoPendenteUi>     = emptyList(),
     onPerfilClick: () -> Unit           = {},
-    onRegistrarNovaDoacao: () -> Unit   = {}
+    onRegistrarNovaDoacao: () -> Unit   = {},
+    onMeusAlimentosClick: () -> Unit    = {}
 ) {
     Scaffold(
         containerColor = DHBrancoAlt,
@@ -47,7 +48,6 @@ fun TelaHomeFeedDoador(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Box(
                             modifier = Modifier
@@ -96,7 +96,7 @@ fun TelaHomeFeedDoador(
                 .verticalScroll(rememberScrollState())
         ) {
 
-
+            // ── Banner de boas-vindas ──────────────────────────────────────
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -138,36 +138,71 @@ fun TelaHomeFeedDoador(
                 }
             }
 
-
-            Button(
-                onClick = onRegistrarNovaDoacao,
+            // ── Botões de ação ─────────────────────────────────────────────
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .height(52.dp),
-                shape = RoundedCornerShape(14.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = DHVermelho,
-                    contentColor = DHBranco
-                ),
-                elevation = ButtonDefaults.buttonElevation(defaultElevation = 3.dp)
+                    .padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                Icon(
-                    Icons.Default.Add,
-                    contentDescription = null,
-                    modifier = Modifier.size(20.dp)
-                )
-                Spacer(Modifier.width(8.dp))
-                Text(
-                    "Registrar nova doação",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 15.sp
-                )
+                // Registrar nova doação
+                Button(
+                    onClick   = onRegistrarNovaDoacao,
+                    modifier  = Modifier
+                        .weight(1f)
+                        .height(52.dp),
+                    shape     = RoundedCornerShape(14.dp),
+                    colors    = ButtonDefaults.buttonColors(
+                        containerColor = DHVermelho,
+                        contentColor   = DHBranco
+                    ),
+                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 3.dp)
+                ) {
+                    Icon(
+                        Icons.Default.Add,
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(Modifier.width(6.dp))
+                    Text(
+                        "Nova doação",
+                        fontWeight = FontWeight.Bold,
+                        fontSize   = 13.sp
+                    )
+                }
+
+                // ── NOVO: Meus Alimentos ─────────────────────────────────
+                OutlinedButton(
+                    onClick   = onMeusAlimentosClick,
+                    modifier  = Modifier
+                        .weight(1f)
+                        .height(52.dp),
+                    shape     = RoundedCornerShape(14.dp),
+                    border    = ButtonDefaults.outlinedButtonBorder.copy(
+                        width = 1.5.dp,
+                        brush = Brush.linearGradient(listOf(DHVermelho, DHVermelho))
+                    ),
+                    colors    = ButtonDefaults.outlinedButtonColors(
+                        contentColor = DHVermelho
+                    )
+                ) {
+                    Icon(
+                        Icons.Default.Kitchen,
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(Modifier.width(6.dp))
+                    Text(
+                        "Meus alimentos",
+                        fontWeight = FontWeight.Bold,
+                        fontSize   = 13.sp
+                    )
+                }
             }
 
             Spacer(Modifier.height(24.dp))
 
-            //doações pendentes
+            // ── Doações pendentes ──────────────────────────────────────────
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -186,11 +221,10 @@ fun TelaHomeFeedDoador(
                     Text(
                         "Doações Pendentes",
                         fontWeight = FontWeight.Bold,
-                        fontSize = 17.sp,
-                        color = DHTexto
+                        fontSize   = 17.sp,
+                        color      = DHTexto
                     )
                 }
-                //contador
                 Surface(
                     shape = RoundedCornerShape(20.dp),
                     color = DHAmbarBg
@@ -207,9 +241,7 @@ fun TelaHomeFeedDoador(
 
             Spacer(Modifier.height(12.dp))
 
-
             if (doacoes.isEmpty()) {
-
                 CardDoacaoVazio()
                 Spacer(Modifier.height(10.dp))
                 CardDoacaoVazio()
@@ -225,14 +257,16 @@ fun TelaHomeFeedDoador(
     }
 }
 
-data class DoacaoPendenteUi(
+// ─────────────────────────────────────────────────────────────────────────────
+// Data classes e componentes de suporte (inalterados)
+// ─────────────────────────────────────────────────────────────────────────────
 
+data class DoacaoPendenteUi(
     val nomeAlimento: String,
     val descricao: String,
     val quantidade: String,
     val validade: String,
     val categoria: String,
-
     val dataDoacao: String,
     val horarioInicial: String,
     val horarioFinal: String
@@ -249,7 +283,6 @@ private fun CardDoacaoPendente(doacao: DoacaoPendenteUi) {
             .padding(horizontal = 16.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -269,7 +302,7 @@ private fun CardDoacaoPendente(doacao: DoacaoPendenteUi) {
                         Icon(
                             Icons.Default.Fastfood,
                             null,
-                            tint = DHVermelho,
+                            tint     = DHVermelho,
                             modifier = Modifier.size(20.dp)
                         )
                     }
@@ -278,14 +311,10 @@ private fun CardDoacaoPendente(doacao: DoacaoPendenteUi) {
                         Text(
                             doacao.nomeAlimento,
                             fontWeight = FontWeight.Bold,
-                            fontSize = 15.sp,
-                            color = DHTexto
+                            fontSize   = 15.sp,
+                            color      = DHTexto
                         )
-                        Text(
-                            doacao.categoria,
-                            fontSize = 11.sp,
-                            color = DHSub
-                        )
+                        Text(doacao.categoria, fontSize = 11.sp, color = DHSub)
                     }
                 }
                 BadgePendente()
@@ -303,8 +332,8 @@ private fun CardDoacaoPendente(doacao: DoacaoPendenteUi) {
                         "${doacao.horarioInicial} – ${doacao.horarioFinal}")
                 }
                 Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    CampoCard(Icons.Default.EventBusy,  "Validade",   doacao.validade)
-                    CampoCard(Icons.Default.Description, "Descrição",  doacao.descricao)
+                    CampoCard(Icons.Default.EventBusy,   "Validade",  doacao.validade)
+                    CampoCard(Icons.Default.Description, "Descrição", doacao.descricao)
                 }
             }
         }
@@ -323,7 +352,6 @@ private fun CardDoacaoVazio() {
             .border(1.5.dp, DHAmbar.copy(alpha = 0.3f), RoundedCornerShape(16.dp))
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -338,24 +366,16 @@ private fun CardDoacaoVazio() {
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(Icons.Default.Fastfood, null,
-                            tint = DHVermelho.copy(alpha = 0.5f),
+                            tint     = DHVermelho.copy(alpha = 0.5f),
                             modifier = Modifier.size(20.dp))
                     }
                     Spacer(Modifier.width(10.dp))
                     Column {
-                        Box(
-                            Modifier
-                                .width(120.dp).height(12.dp)
-                                .clip(RoundedCornerShape(4.dp))
-                                .background(DHCinza)
-                        )
+                        Box(Modifier.width(120.dp).height(12.dp)
+                            .clip(RoundedCornerShape(4.dp)).background(DHCinza))
                         Spacer(Modifier.height(4.dp))
-                        Box(
-                            Modifier
-                                .width(70.dp).height(9.dp)
-                                .clip(RoundedCornerShape(4.dp))
-                                .background(DHCinza)
-                        )
+                        Box(Modifier.width(70.dp).height(9.dp)
+                            .clip(RoundedCornerShape(4.dp)).background(DHCinza))
                     }
                 }
                 BadgePendente()
@@ -365,33 +385,23 @@ private fun CardDoacaoVazio() {
             HorizontalDivider(color = DHCinza)
             Spacer(Modifier.height(12.dp))
 
-
             Row(Modifier.fillMaxWidth()) {
                 Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     repeat(3) {
-                        Box(
-                            Modifier
-                                .fillMaxWidth(0.85f).height(10.dp)
-                                .clip(RoundedCornerShape(4.dp))
-                                .background(DHCinza)
-                        )
+                        Box(Modifier.fillMaxWidth(0.85f).height(10.dp)
+                            .clip(RoundedCornerShape(4.dp)).background(DHCinza))
                     }
                 }
                 Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     repeat(2) {
-                        Box(
-                            Modifier
-                                .fillMaxWidth(0.85f).height(10.dp)
-                                .clip(RoundedCornerShape(4.dp))
-                                .background(DHCinza)
-                        )
+                        Box(Modifier.fillMaxWidth(0.85f).height(10.dp)
+                            .clip(RoundedCornerShape(4.dp)).background(DHCinza))
                     }
                 }
             }
         }
     }
 }
-
 
 @Composable
 private fun BadgePendente() {
@@ -404,14 +414,13 @@ private fun BadgePendente() {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            Box(
-                Modifier
-                    .size(6.dp)
-                    .clip(CircleShape)
-                    .background(DHAmbar)
+            Box(Modifier.size(6.dp).clip(CircleShape).background(DHAmbar))
+            Text(
+                "Pendente",
+                fontSize   = 11.sp,
+                fontWeight = FontWeight.SemiBold,
+                color      = DHAmbar
             )
-            Text("Pendente", fontSize = 11.sp,
-                fontWeight = FontWeight.SemiBold, color = DHAmbar)
         }
     }
 }
@@ -426,8 +435,8 @@ private fun CampoCard(icone: ImageVector, label: String, valor: String) {
             Text(label, fontSize = 10.sp, color = DHSub)
             Text(
                 valor.ifBlank { "—" },
-                fontSize = 12.sp,
-                color = DHTexto,
+                fontSize   = 12.sp,
+                color      = DHTexto,
                 fontWeight = FontWeight.Medium
             )
         }
