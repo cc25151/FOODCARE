@@ -28,29 +28,27 @@ fun FoodCareNavGraph(
             )
         }
 
-
         composable(Routes.QUEM_SOMOS) {
             TelaQuemSomos(onVoltar = { navController.popBackStack() })
         }
 
         composable(Routes.LOGIN) {
             TelaLogin(
-                onLoginClick  = {
+                onLoginClick = {
                     navController.navigate(Routes.HOMEFEEDPRINCIPAL) {
                         popUpTo(Routes.TELA_INICIAL) { inclusive = false }
                     }
                 },
-
-                onCriarConta  = { navController.navigate(Routes.CADASTRO) },
-                onVoltar      = { navController.popBackStack() }
+                onCriarConta = { navController.navigate(Routes.CADASTRO) },
+                onVoltar     = { navController.popBackStack() }
             )
         }
-        composable(Routes.FINALIDADE){
-            TelaFinalidade(
-                onAvancar = { navController.navigate(Routes.CADASTRO)},
-                onVoltar = {navController.popBackStack()}
-            )
 
+        composable(Routes.FINALIDADE) {
+            TelaFinalidade(
+                onAvancar = { navController.navigate(Routes.CADASTRO) },
+                onVoltar  = { navController.popBackStack() }
+            )
         }
 
         composable(Routes.CADASTRO) {
@@ -70,7 +68,9 @@ fun FoodCareNavGraph(
                 doacoesPendentes      = emptyList(),
                 onProdutoClick        = { id -> navController.navigate(Routes.produto(id)) },
                 onPerfilClick         = { navController.navigate(Routes.PERFIL_PROPRIO) },
-                onRegistrarNovaDoacao = { navController.navigate(Routes.CADASTRAR_ALIMENTO) }
+                onRegistrarNovaDoacao = { navController.navigate(Routes.CADASTRAR_ALIMENTO) },
+                // Novo callback: abre a listagem de alimentos do doador
+                onMeusAlimentosClick  = { navController.navigate(Routes.MEUS_ALIMENTOS) }
             )
         }
 
@@ -104,7 +104,7 @@ fun FoodCareNavGraph(
         composable(Routes.PERFIL_PROPRIO) {
             TelaPerfil(
                 onVoltar       = { navController.popBackStack() },
-                onEditarPerfil = {  },
+                onEditarPerfil = { },
                 onLogout       = {
                     navController.navigate(Routes.TELA_INICIAL) {
                         popUpTo(0) { inclusive = true }
@@ -122,25 +122,17 @@ fun FoodCareNavGraph(
             )
         }
 
-
         composable(Routes.CADASTRAR_ALIMENTO) {
             TelaCadastrarAlimento(
-                onVoltar   = { navController.popBackStack() },
-                onProximo  = { alimentoData ->
-                    navController.navigate(Routes.CADASTRAR_DOACAO)
-                }
+                onVoltar  = { navController.popBackStack() },
+
             )
         }
 
-        composable(Routes.CADASTRAR_DOACAO) {
-            TelaCadastrarDoacao(
-                alimentoFormData = AlimentoFormData(0, "", "", 0, "", 0),
-                onVoltar         = { navController.popBackStack() },
-                onConfirmar      = { doacaoData ->
-                    navController.navigate(Routes.HOMEFEEDPRINCIPAL) {
-                        popUpTo(Routes.HOMEFEEDPRINCIPAL) { inclusive = true }
-                    }
-                }
+
+        composable(Routes.MEUS_ALIMENTOS) {
+            TelaAlimentosDoador(
+                onVoltar = { navController.popBackStack() }
             )
         }
     }

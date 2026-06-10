@@ -9,13 +9,11 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -28,19 +26,20 @@ import com.example.foodcare.ui.theme.*
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.foodcare.viewmodel.CadastroAlimentoViewModel
 import android.widget.Toast
-import com.example.foodcare.model.*
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
+import java.util.TimeZone
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TelaCadastrarAlimento(
-    onVoltar: () -> Unit                  = {},
-    onProximo: (AlimentoFormData) -> Unit = {},
+    onVoltar: () -> Unit = {},
     viewModel: CadastroAlimentoViewModel = viewModel()
 ) {
     val context = LocalContext.current
     var mostrarCalendario by remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState()
-
     var categoriaExpandida by remember { mutableStateOf(false) }
 
     val camposValidos = viewModel.nome.isNotBlank() &&
@@ -48,26 +47,26 @@ fun TelaCadastrarAlimento(
             viewModel.validade.isNotBlank() &&
             viewModel.categoriaSelecionada != null
 
+
     LaunchedEffect(viewModel.cadastroSucesso) {
         if (viewModel.cadastroSucesso) {
-            Toast.makeText(context, "Alimento cadastrado!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Alimento cadastrado com sucesso!", Toast.LENGTH_SHORT).show()
             viewModel.resetarFormulario()
+            onVoltar()
         }
     }
-
 
     Scaffold(
         containerColor = CAFundo,
         topBar = {
             TopAppBar(
                 title = {
-                    Text("Nova Doação", fontWeight = FontWeight.Bold,
+                    Text("Cadastrar Alimento", fontWeight = FontWeight.Bold,
                         fontSize = 18.sp, color = CABranco)
                 },
                 navigationIcon = {
                     IconButton(onClick = onVoltar) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack,
-                            "Voltar", tint = CABranco)
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "Voltar", tint = CABranco)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = CAVermelho)
@@ -81,21 +80,15 @@ fun TelaCadastrarAlimento(
                 .verticalScroll(rememberScrollState())
         ) {
 
-
-            IndicadorPassos(passoAtual = 1, totalPassos = 2)
-
-
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(
-                        Brush.verticalGradient(listOf(CAVermelhoC, CAVermelhoE))
-                    )
+                    .background(Brush.verticalGradient(listOf(CAVermelhoC, CAVermelhoE)))
                     .padding(horizontal = 20.dp, vertical = 20.dp)
             ) {
                 Column {
                     Text(
-                        "Passo 1 de 2", color = CABranco.copy(alpha = 0.75f),
+                        "Novo Registro", color = CABranco.copy(alpha = 0.75f),
                         fontSize = 12.sp
                     )
                     Text(
@@ -104,13 +97,12 @@ fun TelaCadastrarAlimento(
                     )
                     Spacer(Modifier.height(2.dp))
                     Text(
-                        "Preencha as informações sobre o alimento que será doado.",
+                        "Preencha as informações sobre o alimento que será disponibilizado.",
                         color = CABranco.copy(alpha = 0.85f), fontSize = 13.sp,
                         lineHeight = 18.sp
                     )
                 }
             }
-
 
             Column(
                 modifier = Modifier.padding(horizontal = 20.dp, vertical = 20.dp),
@@ -131,7 +123,6 @@ fun TelaCadastrarAlimento(
                     )
                 }
 
-
                 CampoFormulario(
                     label = "Descrição *",
                     icone = Icons.Default.Description,
@@ -145,7 +136,6 @@ fun TelaCadastrarAlimento(
                         contador = "${viewModel.descricao.length}/100"
                     )
                 }
-
 
                 CampoFormulario(
                     label = "Quantidade *",
@@ -161,7 +151,6 @@ fun TelaCadastrarAlimento(
                         keyboardType = KeyboardType.Number
                     )
                 }
-
 
                 CampoFormulario(
                     label = "Data de validade *",
@@ -183,7 +172,6 @@ fun TelaCadastrarAlimento(
                     }
                 }
 
-
                 CampoFormulario(
                     label = "Categoria *",
                     icone = Icons.Default.Category,
@@ -197,20 +185,9 @@ fun TelaCadastrarAlimento(
                             value = viewModel.categoriaSelecionada?.nome ?: "",
                             onValueChange = {},
                             readOnly = true,
-                            placeholder = {
-                                Text(
-                                    "Selecione...",
-                                    color = Color(0xFFBBBBBB), fontSize = 14.sp
-                                )
-                            },
-                            trailingIcon = {
-                                ExposedDropdownMenuDefaults.TrailingIcon(
-                                    expanded = categoriaExpandida
-                                )
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .menuAnchor(),
+                            placeholder = { Text("Selecione...", color = Color(0xFFBBBBBB), fontSize = 14.sp) },
+                            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = categoriaExpandida) },
+                            modifier = Modifier.fillMaxWidth().menuAnchor(),
                             shape = RoundedCornerShape(10.dp),
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = CAVermelho,
@@ -229,14 +206,12 @@ fun TelaCadastrarAlimento(
                                     text = { Text("Buscando no servidor...", color = CASub, fontSize = 13.sp) },
                                     onClick = {}
                                 )
-                            }
-                            else if (viewModel.listaCategorias.isEmpty()) {
+                            } else if (viewModel.listaCategorias.isEmpty()) {
                                 DropdownMenuItem(
                                     text = { Text("Nenhuma categoria encontrada", color = CASub, fontSize = 13.sp) },
                                     onClick = {}
                                 )
-                            }
-                            else {
+                            } else {
                                 viewModel.listaCategorias.forEach { cat ->
                                     DropdownMenuItem(
                                         text = { Text(cat.nome, fontSize = 14.sp) },
@@ -265,17 +240,7 @@ fun TelaCadastrarAlimento(
                 Button(
                     onClick = {
                         if (camposValidos) {
-                            onProximo(
-                                AlimentoFormData(
-                                    idAlimento = 0,
-                                    nome = viewModel.nome,
-                                    descricao = viewModel.descricao,
-                                    quantidade = viewModel.quantidade.toIntOrNull() ?: 0,
-                                    validade = viewModel.validade,
-                                    idCategoria = viewModel.categoriaSelecionada?.idCategoria ?: 0
-
-                                )
-                            )
+                            viewModel.cadastrar()
                         }
                     },
                     enabled = camposValidos,
@@ -289,10 +254,10 @@ fun TelaCadastrarAlimento(
                     ),
                     elevation = ButtonDefaults.buttonElevation(defaultElevation = 3.dp)
                 ) {
-                    Text("Próximo", fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                    Text("Confirmar Cadastro", fontWeight = FontWeight.Bold, fontSize = 15.sp)
                     Spacer(Modifier.width(8.dp))
                     Icon(
-                        Icons.AutoMirrored.Filled.ArrowForward, null,
+                        Icons.Default.Check, null,
                         modifier = Modifier.size(18.dp)
                     )
                 }
@@ -317,38 +282,16 @@ fun TelaCadastrarAlimento(
                     DatePicker(state = datePickerState)
                 }
             }
-
         }
     }
 }
 
-
-
-@Composable
-fun IndicadorPassos(passoAtual: Int, totalPassos: Int) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(CABranco)
-            .padding(horizontal = 20.dp, vertical = 12.dp),
-        horizontalArrangement = Arrangement.spacedBy(6.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        repeat(totalPassos) { index ->
-            val ativo = index + 1 <= passoAtual
-            val largura = if (ativo) 40.dp else 24.dp
-            Box(
-                modifier = Modifier
-                    .height(4.dp)
-                    .width(largura)
-                    .clip(RoundedCornerShape(2.dp))
-                    .background(if (ativo) CAVermelho else Color(0xFFDDDDDD))
-            )
-        }
-        Spacer(Modifier.width(4.dp))
-        Text("$passoAtual de $totalPassos",
-            fontSize = 11.sp, color = CASub)
-    }
+fun FormatarData(millis: Long): String {
+    val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+    calendar.timeInMillis = millis
+    val format = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+    format.timeZone = TimeZone.getTimeZone("UTC")
+    return format.format(calendar.time)
 }
 
 @Composable
@@ -362,8 +305,7 @@ fun CampoFormulario(
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(icone, null, tint = CAVermelho, modifier = Modifier.size(16.dp))
             Spacer(Modifier.width(6.dp))
-            Text(label, fontSize = 13.sp,
-                fontWeight = FontWeight.SemiBold, color = CATexto)
+            Text(label, fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = CATexto)
         }
         content()
     }
@@ -385,9 +327,7 @@ fun CampoTexto(
             onValueChange = onValueChange,
             readOnly = readOnly,
             modifier = Modifier.fillMaxWidth(),
-            placeholder = {
-                Text(placeholder, color = Color(0xFFBBBBBB), fontSize = 14.sp)
-            },
+            placeholder = { Text(placeholder, color = Color(0xFFBBBBBB), fontSize = 14.sp) },
             singleLine = maxLines == 1,
             maxLines = maxLines,
             shape = RoundedCornerShape(10.dp),
@@ -404,9 +344,7 @@ fun CampoTexto(
         if (contador != null) {
             Text(
                 contador,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentWidth(Alignment.End),
+                modifier = Modifier.fillMaxWidth().wrapContentWidth(Alignment.End),
                 fontSize = 10.sp,
                 color = CASub
             )

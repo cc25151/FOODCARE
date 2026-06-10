@@ -31,6 +31,7 @@
         onProdutoClick: (Int) -> Unit        = {},
         onPerfilClick: () -> Unit            = {},
         onRegistrarNovaDoacao: () -> Unit    = {},
+        onMeusAlimentosClick: () -> Unit    = {}
     ) {
 
         var tabAtiva by remember {
@@ -96,7 +97,8 @@
                             TelaHomeFeedDoador(
                                 doacoes               = doacoesPendentes,
                                 onPerfilClick         = onPerfilClick,
-                                onRegistrarNovaDoacao = onRegistrarNovaDoacao
+                                onRegistrarNovaDoacao = onRegistrarNovaDoacao,
+                                onMeusAlimentosClick = onMeusAlimentosClick
                             )
                     }
                 }

@@ -17,7 +17,6 @@ class CadastroAlimentoViewModel : ViewModel() {
     var quantidade by mutableStateOf("")
     var validade by mutableStateOf("")
 
-
     var carregando by mutableStateOf(false)
         private set
 
@@ -33,17 +32,17 @@ class CadastroAlimentoViewModel : ViewModel() {
     var carregandoCategorias by mutableStateOf(false)
         private set
 
+    private val repository = AlimentoRepository()
+
     init {
         buscarCategorias()
     }
-
-    private val repository = AlimentoRepository()
 
     private fun buscarCategorias() {
         viewModelScope.launch {
             try {
                 carregandoCategorias = true
-                listaCategorias = RetrofitClient.api.listarCategorias();
+                listaCategorias = RetrofitClient.api.listarCategorias()
             } catch (e: Exception) {
                 mensagemErro = "Não foi possível carregar as categorias."
             } finally {
@@ -53,8 +52,9 @@ class CadastroAlimentoViewModel : ViewModel() {
     }
 
 
+    fun cadastrar() {
+        val idCategoria = categoriaSelecionada?.idCategoria ?: 0
 
-    fun cadastrar(idCategoria: Int) {
         if (nome.isBlank() || quantidade.isBlank() || validade.isBlank() || idCategoria == 0) {
             mensagemErro = "Preencha todos os campos obrigatórios."
             return
@@ -85,7 +85,7 @@ class CadastroAlimentoViewModel : ViewModel() {
                     else -> "Erro no servidor: ${e.code()}"
                 }
             } catch (e: Exception) {
-                mensagemErro = "Erro de conexão."
+                mensagemErro = "Erro de conexão com o servidor."
             } finally {
                 carregando = false
             }
