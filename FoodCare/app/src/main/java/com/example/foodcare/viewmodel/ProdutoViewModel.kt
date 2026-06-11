@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 
 class ProdutoViewModel : ViewModel() {
     val repository = AlimentoRepository()
-    var produto = Produto()
+    var produto by mutableStateOf<Produto?>(null)
 
 
 

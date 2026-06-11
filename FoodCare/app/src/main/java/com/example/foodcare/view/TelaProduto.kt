@@ -87,7 +87,7 @@ fun TelaProduto(
             ) {
                 FoodCareButton(
                     text = "Quero este produto",
-                    onClick = { onQueroEsteProduto(viewModel.produto.id) }
+                    onClick = { onQueroEsteProduto(viewModel.produto?.id ?: 0) }
                 )
             }
         }
@@ -120,7 +120,7 @@ fun TelaProduto(
             Column(modifier = Modifier.padding(20.dp)) {
 
                 Text(
-                    text = viewModel.produto.nome,
+                    text = viewModel.produto?.nome ?: "",
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
                     color = textoEscuro
@@ -134,7 +134,7 @@ fun TelaProduto(
                     color = Vermelho.copy(alpha = 0.1f)
                 ) {
                     Text(
-                        text = viewModel.produto.validade,
+                        text = viewModel.produto?.validade ?: "",
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
                         fontSize = 12.sp,
                         color = Vermelho,
@@ -165,7 +165,7 @@ fun TelaProduto(
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                DoadorCard(nome = "", distancia = "${ viewModel.produto.distancia }")
+                DoadorCard(nome = "", distancia = "${ viewModel.produto?.distancia ?: 0 }")
 
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -187,7 +187,7 @@ fun TelaProduto(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
-                    text = viewModel.produto.descricao,
+                    text = viewModel.produto?.descricao ?: "",
                     fontSize = 14.sp,
                     color = Color(0xFF555555),
                     lineHeight = 22.sp
