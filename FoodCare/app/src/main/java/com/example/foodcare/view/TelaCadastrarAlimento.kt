@@ -289,7 +289,7 @@ fun TelaCadastrarAlimento(
 fun FormatarData(millis: Long): String {
     val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
     calendar.timeInMillis = millis
-    val format = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+    val format = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
     format.timeZone = TimeZone.getTimeZone("UTC")
     return format.format(calendar.time)
 }

@@ -147,7 +147,7 @@ public static class AlimentoEndPoint
             { 
                 id = novoAlimento.idAlimento, 
                 nome = novoAlimento.nome,
-                quantidade = novoAlimento.qntd,
+                qntd = novoAlimento.qntd,
                 mensagem = "Alimento cadastrado com sucesso e disponível para doação!" 
             });
         });
