@@ -26,10 +26,13 @@ data class Produto(
     val validade: String = ""
 )
 
-data class AlimentoDoador(
+// model para alimentos doador
+data class Alimento(
     val id: Int,
     val nome: String,
+    val idCategoria: Int,
     val categoria: String,
+    val descricao: String,
     val qntd: Int,
     val validade: String
 

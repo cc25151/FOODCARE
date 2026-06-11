@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.foodcare.data.api.SessaoUsuario
 import com.example.foodcare.ui.theme.*
+import com.example.foodcare.viewmodel.FeedDoadorViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -32,7 +33,8 @@ fun TelaHomeFeedDoador(
     doacoes: List<DoacaoPendenteUi>     = emptyList(),
     onPerfilClick: () -> Unit           = {},
     onRegistrarNovaDoacao: () -> Unit   = {},
-    onMeusAlimentosClick: () -> Unit    = {}
+    onMeusAlimentosClick: () -> Unit    = {},
+    viewModel : FeedDoadorViewModel = viewModel()
 ) {
     Scaffold(
         containerColor = DHBrancoAlt,
@@ -172,7 +174,7 @@ fun TelaHomeFeedDoador(
                     )
                 }
 
-                // ── NOVO: Meus Alimentos ─────────────────────────────────
+
                 OutlinedButton(
                     onClick   = onMeusAlimentosClick,
                     modifier  = Modifier

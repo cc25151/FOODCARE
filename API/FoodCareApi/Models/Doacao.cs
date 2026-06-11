@@ -7,6 +7,7 @@ public class Doacao{
         public int? avaliacao { get; set; }
         //Chave estrangeira do doador
         public int idDoador { get; set; }
+        public string status { get; set; } = "Pendente";
         public Doador doador { get; set; } = null!;
         //Chave estrangeira do receptor
         public int idReceptor { get; set; }

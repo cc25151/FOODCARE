@@ -10,34 +10,77 @@ public static class DoacaoEndPoint
         var rotas = app.MapGroup("/doacoes");
 
         // 1. GET - Listar todos
-        // Retorna o histórico completo de doações registradas na base de dados, trazendo os dados do doador e do alimento
+        // Cruzamos as tabelas manualmente para pegar os nomes dos usuários sem depender de navegações complexas no Receptor
         rotas.MapGet("/", async (AppDbContext bd) =>
-            await bd.Doacao
-                .Include(d => d.doador)
+        {
+            var doacoes = await bd.Doacao
+                .Include(d => d.doador).ThenInclude(doad => doad.usuario)
+                .Include(d => d.receptor)
                 .Include(d => d.alimento)
-                .ToListAsync()
-        );
+                .ToListAsync();
 
-        // 2. GET Realizadas - Listar doações finalizadas
-        // Filtra e retorna as doações que já possuem uma nota de avaliação maior que zero
+            // Buscamos a lista de usuários para mapear o nome do receptor sem precisar do objeto interno
+            var usuarios = await bd.Usuario.ToListAsync();
+
+            var resultado = doacoes.Select(d => new
+            {
+                d.idDoacao,
+                d.dataDoacao,
+                d.horario,
+                d.avaliacao,
+                d.status,
+                doadorNome = d.doador?.usuario?.nome ?? "Não informado",
+                // Busca o nome do usuário na tabela de usuários que tenha o mesmo idUsuario cadastrado no receptor
+                receptorNome = usuarios.FirstOrDefault(u => u.idUsuario == d.receptor.idUsuario)?.nome ?? "Não informado",
+                alimentoNome = d.alimento?.nome ?? "Não informado"
+            }).ToList();
+
+            return Results.Ok(resultado);
+        });
+
+        // 2. GET Realizadas - Filtrado por Status
         rotas.MapGet("/realizadas", async (AppDbContext bd) =>
-            await bd.Doacao
-                .Where(d => d.avaliacao > 0)
+        {
+            var doacoes = await bd.Doacao
+                .Where(d => d.status.ToLower() == "finalizada")
                 .Include(d => d.alimento)
-                .ToListAsync()
-        );
+                .ToListAsync();
 
-        // 3. GET Pendentes - Listar doações pendentes
-        // Retorna as doações aguardando conclusão na plataforma, identificadas pela avaliação zerada
+            var resultado = doacoes.Select(d => new
+            {
+                d.idDoacao,
+                d.dataDoacao,
+                d.horario,
+                d.avaliacao,
+                d.status,
+                alimentoNome = d.alimento?.nome ?? "Não informado"
+            }).ToList();
+
+            return Results.Ok(resultado);
+        });
+
+        // 3. GET Pendentes - Filtrado por Status
         rotas.MapGet("/pendentes", async (AppDbContext bd) =>
-            await bd.Doacao
-                .Where(d => d.avaliacao == 0)
+        {
+            var doacoes = await bd.Doacao
+                .Where(d => d.status.ToLower() == "pendente")
                 .Include(d => d.alimento)
-                .ToListAsync()
-        );
+                .ToListAsync();
 
-        // 4. GET por Doador - Consultar doações do doador
-        // Busca e retorna todas as doações associadas ao ID específico do doador informado
+            var resultado = doacoes.Select(d => new
+            {
+                d.idDoacao,
+                d.dataDoacao,
+                d.horario,
+                d.avaliacao,
+                d.status,
+                alimentoNome = d.alimento?.nome ?? "Não informado"
+            }).ToList();
+
+            return Results.Ok(resultado);
+        });
+
+        // 4. GET por Doador - Consultar doações de um doador específico
         rotas.MapGet("/doador/{idDoador:int}", async (int idDoador, AppDbContext bd) =>
         {
             var doacoes = await bd.Doacao
@@ -45,64 +88,44 @@ public static class DoacaoEndPoint
                 .Include(d => d.alimento)
                 .ToListAsync();
 
-            return doacoes.Any() ? Results.Ok(doacoes) : Results.NotFound();
-        });
+            if (!doacoes.Any()) 
+                return Results.NotFound("Nenhuma doação encontrada para este doador.");
 
-        // 5. GET por Avaliação - Filtrar por nota
-        // Consulta o banco de dados filtrando os registros que receberam uma nota de avaliação específica
-        rotas.MapGet("/avaliacao/{nota:int}", async (int nota, AppDbContext bd) =>
-        {
-            var doacoes = await bd.Doacao
-                .Where(d => d.avaliacao == nota)
-                .Include(d => d.doador)
-                .ToListAsync();
+            var resultado = doacoes.Select(d => new
+            {
+                d.idDoacao,
+                d.dataDoacao,
+                d.horario,
+                d.avaliacao,
+                d.status,
+                alimentoNome = d.alimento?.nome ?? "Não informado"
+            }).ToList();
 
-            return Results.Ok(doacoes);
-        });
-
-        // 6. GET por Data - Consultar por dia específico
-        // Converte a propriedade para DateTime para poder realizar a comparação de datas ignorando o horário
-        rotas.MapGet("/data/{data:DateTime}", async (DateTime data, AppDbContext bd) =>
-        {
-            var doacoes = await bd.Doacao
-                .Where(d => d.dataDoacao.ToDateTime(TimeOnly.MinValue).Date == data.Date)
-                .Include(d => d.alimento)
-                .ToListAsync();
-
-            return Results.Ok(doacoes);
-        });
-
-        // 7. GET por Período - Consultar intervalo de datas
-        // Filtra os registros que se enquadram entre a data inicial e final enviadas por parâmetro
-        rotas.MapGet("/periodo", async (DateTime inicio, DateTime fim, AppDbContext bd) =>
-        {
-            var doacoes = await bd.Doacao
-                .Where(d => d.dataDoacao >= DateOnly.FromDateTime(inicio) && d.dataDoacao <= DateOnly.FromDateTime(fim))
-                .Include(d => d.alimento)
-                .ToListAsync();
-
-            return Results.Ok(doacoes);
+            return Results.Ok(resultado);
         });
 
         // 8. POST - Iniciar Nova Doação
-        // Cria a intenção de doação associando o doador ao alimento, forçando a avaliação inicial como pendente (zero)
         rotas.MapPost("/", async (Doacao novaDoacao, AppDbContext bd) =>
         {
-            // Garante que o doador que está tentando registrar a doação realmente existe
-            var doador = await bd.Doador.AnyAsync(d => d.idDoador == novaDoacao.idDoador);
-            if (!doador) return Results.NotFound();
+            var doadorExiste = await bd.Doador.AnyAsync(d => d.idDoador == novaDoacao.idDoador);
+            if (!doadorExiste) 
+                return Results.NotFound("Doador não encontrado na base de dados.");
 
-            // Validação de segurança: verifica se o alimento existe e se pertence de fato ao doador informado
+            var receptorExiste = await bd.Receptor.AnyAsync(r => r.idReceptor == novaDoacao.idReceptor);
+            if (!receptorExiste)
+                return Results.NotFound("Receptor não encontrado na base de dados.");
+
             var alimento = await bd.Alimento.FirstOrDefaultAsync(a => 
                 a.idAlimento == novaDoacao.idAlimento && a.idDoador == novaDoacao.idDoador);
 
-            if (alimento == null) return Results.BadRequest();
+            if (alimento == null) 
+                return Results.BadRequest("Alimento inválido ou não pertence a este doador.");
 
-            novaDoacao.avaliacao = 0; // Inicia obrigatoriamente sem nota (Pendente)
+            novaDoacao.avaliacao = 0; 
+            novaDoacao.status = "Pendente"; // Garante o status inicial correto
             
-            // Caso o front-end não envie uma data, registra automaticamente a data atual do servidor
-            if (novaDoacao.dataDoacao == default)
-                novaDoacao.dataDoacao = DateOnly.FromDateTime(DateTime.Now);
+            if (novaDoacao.dataDoacao == default) novaDoacao.dataDoacao = DateOnly.FromDateTime(DateTime.Now);
+            if (novaDoacao.horario == default) novaDoacao.horario = TimeOnly.FromDateTime(DateTime.Now);
 
             bd.Doacao.Add(novaDoacao);
             await bd.SaveChangesAsync();
@@ -111,25 +134,28 @@ public static class DoacaoEndPoint
             {
                 id = novaDoacao.idDoacao,
                 alimento = alimento.nome,
-                status = "Pendente"
+                status = novaDoacao.status,
+                mensagem = "Doação registrada com sucesso!"
             });
         });
 
-        // 9. PATCH - Finalizar Doação com avaliação
-        // O EndPoint é chamado quando o beneficiário conclui a retirada e atribui uma nota de 1 a 5 para a doação
+        // 9. PATCH - Finalizar Doação com avaliação e mudança de Status
         rotas.MapPatch("/{id:int}/finalizar", async (int id, int nota, AppDbContext bd) =>
         {
             var doacao = await bd.Doacao.FindAsync(id);
 
-            if (doacao is null) return Results.NotFound();
+            if (doacao is null) 
+                return Results.NotFound("Doação não encontrada.");
             
-            // Impede notas fora do intervalo permitido de 1 a 5 estrelas
-            if (nota <= 0 || nota > 5) return Results.BadRequest();
+            if (nota < 1 || nota > 5) 
+                return Results.BadRequest("A nota de avaliação deve estar entre 1 e 5 estrelas.");
 
-            doacao.avaliacao = nota; // Atualiza a nota, movendo a doação de 'pendente' para 'realizada'
+            doacao.avaliacao = nota; 
+            doacao.status = "Finalizada"; // Atualiza para finalizada junto com a nota
+            
             await bd.SaveChangesAsync();
 
-            return Results.Ok();
+            return Results.Ok(new { mensagem = "Doação finalizada e avaliada com sucesso!" });
         });
     }
 }

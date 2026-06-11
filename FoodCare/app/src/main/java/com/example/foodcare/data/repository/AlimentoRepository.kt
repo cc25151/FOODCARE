@@ -26,4 +26,17 @@ class AlimentoRepository {
     suspend fun getAlimentos(idUsuario: Int): List<Produto> {
         return RetrofitClient.api.getAlimentos(idUsuario)
     }
+
+    suspend fun getAlimentosDoador(idUsuario: Int): List<Alimento>{
+        return RetrofitClient.api.getAlimentosDoador(idUsuario)
+    }
+
+    suspend fun atualizarAlimento(idAlimento: Int, novo : Alimento) : Boolean{
+        val resposta = RetrofitClient.api.alterarAlimento(idAlimento)
+        return resposta.isSuccessful
+    }
+
+    suspend fun getProduto(idAlimento: Int) : Produto{
+        return RetrofitClient.api.getProduto(idAlimento)
+    }
 }

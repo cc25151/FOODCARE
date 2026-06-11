@@ -129,6 +129,8 @@ public class AppDbContext : DbContext
             entity.HasOne(d => d.alimento)
                   .WithOne()
                   .HasForeignKey<Doacao>(d => d.idAlimento);
+            
+            entity.Property(doa => doa.status).IsRequired().HasMaxLength(20).HasColumnType("varchar");
         });
     }
 }

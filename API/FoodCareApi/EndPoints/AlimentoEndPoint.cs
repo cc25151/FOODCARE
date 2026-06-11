@@ -76,13 +76,16 @@ public static class AlimentoEndPoint
             return resultados.Any() ? Results.Ok(resultados) : Results.NotFound();
         });
 
-<<<<<<< Updated upstream
-        // 3. GET por Doador - Buscar por nome do doador
-        // Procura o usuário pelo nome e, caso localize seu perfil de doador, retorna todos os seus alimentos cadastrados
-        rotas.MapGet("/doador/{nomeDoador}", async (string nomeDoador, AppDbContext bd) =>
-=======
+        rotas.MapGet("/id/{idAlimento}", async (int idAlimento, AppDbContext bd) =>
+        {
+            var alimento = await bd.Alimento.FindAsync(idAlimento);
+            if (alimento == null)
+                return Results.NotFound("Alimento não encontrado.");
+
+            return Results.Ok(alimento);
+        });
+
         rotas.MapGet("/doador/{idUsuario}", async (int idUsuario, AppDbContext bd) =>
->>>>>>> Stashed changes
         {
             var alimentos = await bd.Alimento
                     .Include(a => a.doador)
@@ -92,33 +95,51 @@ public static class AlimentoEndPoint
 
             return Results.Ok(alimentos.Select(a => new
             {
-                nome = a.nome,
+                a.nome,
+                a.idCategoria,
                 categoria = a.categoria.nome,
-                qntd = a.qntd,
-                descricao = a.descricao,
-                validade = a.validade
+                a.qntd,
+                a.descricao,
+                a.validade
 
             }).ToList()); 
         });
 
-<<<<<<< Updated upstream
-   
-=======
-    
+        // PATCH - Atualizar Parcialmente Dados do Alimento via Objeto
+        // Recebe o idAlimento pela URL e um objeto contendo apenas qntd, validade e descricao no corpo
+        rotas.MapPatch("/alterar/{idAlimento}", async (int idAlimento, Alimento dadosAlterados, AppDbContext bd) =>
+        {
+            var alimento = await bd.Alimento.FindAsync(idAlimento);
 
-        // talvez fazer filtro por distancia
->>>>>>> Stashed changes
+            if (alimento is null) 
+                return Results.NotFound("Alimento não encontrado.");
+
+            // Aplica as alterações recebidas do objeto mapeado diretamente
+            alimento.qntd = dadosAlterados.qntd;
+            alimento.descricao = dadosAlterados.descricao;
+
+            // Tratamento para converter a String do Front-end para o DateOnly? da sua Model
+            if(alimento.validade != null)
+                alimento.validade = dadosAlterados.validade;
+
+            // Salva as alterações no banco de dados
+            await bd.SaveChangesAsync();
+
+            return Results.Ok(new { mensagem = "Alimento atualizado com sucesso!" });
+        });
+
+        
+   
 
         // 4. POST - Cadastrar Alimento para Doação
         // Vincula um novo alimento ao ID do doador logado e o disponibiliza na plataforma
-        rotas.MapPost("/doador/{idDoador}", async (Alimento novoAlimento, int idDoador, AppDbContext bd) => {
+        rotas.MapPost("/doador/{idUsuario}", async (Alimento novoAlimento, int idUsuario, AppDbContext bd) => {
             
-
-            var doador = await bd.Doador.FirstOrDefaultAsync(d => d.idUsuario == usuario.idUsuario);
+            var doador = await bd.Doador.FirstOrDefaultAsync(d => d.idUsuario == idUsuario);
             if (doador == null)         
                 return Results.NotFound($"Doador não encontrado."); // Ou não existe na tabela doador, ou não existe na tabela usuário
 
-            novoAlimento.idDoador = idDoador;
+            novoAlimento.idDoador = doador.idDoador;
             bd.Alimento.Add(novoAlimento);
             await bd.SaveChangesAsync();
 
@@ -151,6 +172,8 @@ public static class AlimentoEndPoint
 
             return Results.Ok(new { mensagem = "Alimento alterado com sucesso!" });
         });
+
+        
 
         // 6. DELETE - Remover Alimento
         // Exclui o registro do alimento da base de dados com base no ID informado

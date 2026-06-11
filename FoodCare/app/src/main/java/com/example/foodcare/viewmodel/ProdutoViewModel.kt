@@ -12,12 +12,17 @@ import kotlinx.coroutines.launch
 
 class ProdutoViewModel : ViewModel() {
     val repository = AlimentoRepository()
-    val produto = Produto()
+    var produto = Produto()
 
 
 
-    fun carregarProduto(){
+    fun carregarProduto(id: Int){
         viewModelScope.launch {
+            try{
+                produto = repository.getProduto(id)
+            }catch(e : Exception){
+                println("Erro ao carregar: ${e.localizedMessage}")
+            }
 
         }
     }

@@ -26,9 +26,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.foodcare.model.FoodCareData
 import com.example.foodcare.ui.theme.*
 import com.example.foodcare.viewmodel.ProdutoViewModel
 import com.google.android.gms.maps.model.CameraPosition
@@ -46,7 +44,7 @@ fun TelaProduto(
 ) {
 
     LaunchedEffect(Unit) {
-        viewModel.carregarProduto()
+        viewModel.carregarProduto(produtoId)
     }
 
     Scaffold(

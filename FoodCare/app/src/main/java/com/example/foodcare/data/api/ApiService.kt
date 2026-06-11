@@ -76,4 +76,19 @@ interface ApiService {
     suspend fun getAlimentos(
         @Path("idUsuario") idUsuario: Int
     ): List<Produto>
+
+    @GET("alimentos/doador/{idUsuario}")
+    suspend fun getAlimentosDoador(
+        @Path("idUsuario") idUsuario: Int
+    ) : List<Alimento>
+
+    @PATCH("alimentos/alterar/{idAlimento}")
+    suspend fun alterarAlimento(
+        @Path("idAlimento") idAlimento: Int
+    ) : Response<Unit>
+
+    @GET("alimentos/id/{idAlimento}")
+    suspend fun getProduto(
+        @Path("idAlimento") idAlimento: Int
+    ) : Produto
 }

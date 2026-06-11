@@ -69,7 +69,6 @@ fun FoodCareNavGraph(
                 onProdutoClick        = { id -> navController.navigate(Routes.produto(id)) },
                 onPerfilClick         = { navController.navigate(Routes.PERFIL_PROPRIO) },
                 onRegistrarNovaDoacao = { navController.navigate(Routes.CADASTRAR_ALIMENTO) },
-                // Novo callback: abre a listagem de alimentos do doador
                 onMeusAlimentosClick  = { navController.navigate(Routes.MEUS_ALIMENTOS) }
             )
         }
