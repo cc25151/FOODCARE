@@ -18,15 +18,7 @@ import kotlinx.coroutines.launch
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        lifecycleScope.launch(Dispatchers.IO) {
-            MapsInitializer.initialize(
-                applicationContext,
-                MapsInitializer.Renderer.LATEST
-            ) { renderer ->
-
-            }
-        }
-
+        enableEdgeToEdge()
         setContent {
             FoodCareTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
