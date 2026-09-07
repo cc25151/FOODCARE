@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.foodcare.data.api.SessaoUsuario
 import com.example.foodcare.data.api.RetrofitClient
 import com.example.foodcare.data.repository.AlimentoRepository
+import com.example.foodcare.data.repository.CategoriaRepository
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import com.example.foodcare.model.*
@@ -33,6 +34,7 @@ class CadastroAlimentoViewModel : ViewModel() {
         private set
 
     private val repository = AlimentoRepository()
+    val repositoryCat = CategoriaRepository()
 
     init {
         buscarCategorias()
@@ -42,7 +44,7 @@ class CadastroAlimentoViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 carregandoCategorias = true
-                listaCategorias = RetrofitClient.api.listarCategorias()
+                listaCategorias = repositoryCat.BuscarCategorias()
             } catch (e: Exception) {
                 mensagemErro = "Não foi possível carregar as categorias."
             } finally {
@@ -65,10 +67,9 @@ class CadastroAlimentoViewModel : ViewModel() {
                 carregando = true
                 mensagemErro = ""
 
-                val nomeDoDoador = SessaoUsuario.nomeUsuario ?: ""
-
                 val resposta = repository.cadastrar(
-                    nomeDoador = nomeDoDoador,
+
+                    idUsuario = SessaoUsuario.idUsuario,
                     nome = nome,
                     descricao = descricao,
                     quantidade = quantidade.toIntOrNull() ?: 0,
@@ -76,7 +77,7 @@ class CadastroAlimentoViewModel : ViewModel() {
                     idCategoria = idCategoria
                 )
 
-                cadastroSucesso = true
+                if(resposta) cadastroSucesso = true
 
             } catch (e: HttpException) {
                 mensagemErro = when (e.code()) {

@@ -32,8 +32,8 @@ import com.example.foodcare.R
 import com.example.foodcare.data.api.SessaoUsuario
 import com.example.foodcare.ui.theme.*
 import com.example.foodcare.viewmodel.FeedReceptorViewModel
-
-
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -298,7 +298,7 @@ fun TelaHomeFeedReceptor(
                                 categoria = viewModel.categorias
                                     .firstOrNull { it.idCategoria == produto.idCategoria }
                                     ?.nome ?: "",
-                                onClick = { onProdutoClick(produto.id) }
+                                onClick = { onProdutoClick(produto.idAlimento) }
                             )
 
                     }
@@ -399,8 +399,10 @@ private fun AlimentoCard(produto: Produto, categoria: String, onClick: () -> Uni
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment     = Alignment.CenterVertically
                 ) {
+                    val dataLocalDate = LocalDate.parse(produto.validade)
+                    val formatadorBr = DateTimeFormatter.ofPattern("dd/MM/yyyy")
                     Text(
-                        text     = "🕐 ${produto.validade}",
+                        text     = "🕐 ${dataLocalDate.format(formatadorBr)}",
                         fontSize = 10.sp,
                         color    = Sub
                     )

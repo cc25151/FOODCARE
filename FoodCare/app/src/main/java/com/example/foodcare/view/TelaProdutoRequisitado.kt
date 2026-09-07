@@ -161,7 +161,7 @@ fun TelaProdutoRequisitado(
 
                 SectionLabel("Localização:")
 
-                MapaSimples()
+                MapaSimples(0.0, 0.0)
 
                 Spacer(modifier = Modifier.height(8.dp))
 

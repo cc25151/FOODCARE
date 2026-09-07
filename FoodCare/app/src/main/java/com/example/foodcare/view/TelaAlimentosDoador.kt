@@ -89,18 +89,25 @@ fun TelaAlimentosDoador(
                         }
                     }
 
-                    items(viewModel.alimentos, key = { it.id }) { alimento ->
+                    items(viewModel.alimentos, key = { it.idAlimento }) { alimento ->
                         CardAlimento(alimento = alimento, onItemClick = { viewModel.alimentoSelecionado = it })
                     }
                 }
             }
 
+
             if (viewModel.alimentoSelecionado != null) {
                 DialogEdicaoAlimento(
                     alimento = viewModel.alimentoSelecionado!!,
-                    onSalvar = {alimentoAlterado ->
-                        viewModel.salvarEdicao(alimentoAlterado)},
-                    onDismiss = { viewModel.alimentoSelecionado = null }
+                    erroMensagem = viewModel.erroEdicao,
+                    onSalvar = { alimentoAlterado ->
+                        viewModel.salvarEdicao(alimentoAlterado)
+                    },
+                    onDismiss = {
+                        viewModel.alimentoSelecionado = null
+                        viewModel.erroEdicao = ""
+
+                    }
                 )
             }
         }
@@ -119,7 +126,7 @@ private fun CardAlimento(alimento: Alimento, onItemClick: (Alimento) -> Unit) {
             .clickable { onItemClick(alimento) }
     ) {
         Row(modifier = Modifier.padding(14.dp), verticalAlignment = Alignment.CenterVertically) {
-            // Estilização com cor fixa e ícone padrão combinando com o tema
+
             Box(
                 modifier = Modifier
                     .size(50.dp)
@@ -135,14 +142,14 @@ private fun CardAlimento(alimento: Alimento, onItemClick: (Alimento) -> Unit) {
                 Text(alimento.categoria, fontSize = 11.sp, color = DHSub, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 Spacer(Modifier.height(8.dp))
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    // Chip de Quantidade explícito
+
                     Row(modifier = Modifier
                         .background(DHBrancoAlt, RoundedCornerShape(8.dp))
                         .padding(horizontal = 7.dp, vertical = 4.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                         Icon(Icons.Default.Inventory2, null, tint = DHSub, modifier = Modifier.size(11.dp))
                         Text("${alimento.qntd} un.", fontSize = 11.sp, color = DHSub, fontWeight = FontWeight.Medium)
                     }
-                    // Chip de Validade explícito
+
                     Row(modifier = Modifier
                         .background(DHBrancoAlt, RoundedCornerShape(8.dp))
                         .padding(horizontal = 7.dp, vertical = 4.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -168,20 +175,30 @@ private fun CardAlimento(alimento: Alimento, onItemClick: (Alimento) -> Unit) {
 @Composable
 fun DialogEdicaoAlimento(
     alimento: Alimento,
+    erroMensagem: String,
     onSalvar: (Alimento) -> Unit,
     onDismiss: () -> Unit
 ) {
     Dialog(onDismissRequest = onDismiss) {
-        Surface(modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 20.dp), shape = RoundedCornerShape(24.dp), color = DHBranco, shadowElevation = 12.dp) {
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp),
+            shape = RoundedCornerShape(24.dp),
+            color = DHBranco,
+            shadowElevation = 12.dp
+        ) {
 
-            var qntd by remember { mutableStateOf(alimento.qntd) }
+            var qntdTexto by remember { mutableStateOf(alimento.qntd.toString()) }
             var validade by remember { mutableStateOf(alimento.validade) }
             var descricao by remember { mutableStateOf(alimento.descricao) }
 
             Column(modifier = Modifier.padding(24.dp)) {
-                Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
                     Column(modifier = Modifier.weight(1f)) {
                         Text("Editar alimento", fontWeight = FontWeight.ExtraBold, fontSize = 18.sp, color = DHTexto)
                         Text(alimento.nome, fontSize = 13.sp, color = DHSub, maxLines = 1, overflow = TextOverflow.Ellipsis)
@@ -197,7 +214,6 @@ fun DialogEdicaoAlimento(
                 Spacer(Modifier.height(16.dp))
 
                 Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-
                     Column(modifier = Modifier.weight(1f)) {
                         Text("Nome", fontSize = 10.sp, color = DHSub, fontWeight = FontWeight.SemiBold)
                         Spacer(Modifier.height(4.dp))
@@ -228,11 +244,14 @@ fun DialogEdicaoAlimento(
                 Spacer(Modifier.height(14.dp))
 
                 Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-
-
                     OutlinedTextField(
-                        value = "$qntd",
-                        onValueChange = { qntd = it.toInt() } ,
+                        value = qntdTexto,
+                        onValueChange = { novoTexto ->
+                            // Só permite digitar se forem números (evita caracteres inválidos)
+                            if (novoTexto.all { it.isDigit() }) {
+                                qntdTexto = novoTexto
+                            }
+                        },
                         label = { Text("Quantidade", fontSize = 11.sp) },
                         leadingIcon = { Icon(Icons.Default.Inventory2, null, tint = DHVermelho, modifier = Modifier.size(17.dp)) },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -252,8 +271,8 @@ fun DialogEdicaoAlimento(
                 Spacer(Modifier.height(10.dp))
 
                 OutlinedTextField(
-                    value = alimento.descricao,
-                    onValueChange = { descricao = it },
+                    value = descricao,
+                    onValueChange = { descricao = it }, //  Agora atualiza e exibe em tempo real
                     label = { Text("Descrição", fontSize = 11.sp) },
                     leadingIcon = { Icon(Icons.Default.Description, null, tint = DHVermelho, modifier = Modifier.size(17.dp)) },
                     minLines = 3,
@@ -261,7 +280,20 @@ fun DialogEdicaoAlimento(
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                Spacer(Modifier.height(18.dp))
+                Spacer(Modifier.height(10.dp))
+
+                if (erroMensagem.isNotBlank()) {
+                    Text(
+                        text = erroMensagem,
+                        color = DHVermelho,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Medium,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp)
+                    )
+                    Spacer(Modifier.height(8.dp))
+                }
 
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                     OutlinedButton(
@@ -276,12 +308,16 @@ fun DialogEdicaoAlimento(
                     }
                     Button(
                         onClick = {
+                            //  Converte de forma segura antes de enviar para o banco
+                            val quantidadeFinal = qntdTexto.toIntOrNull() ?: 0
+
                             val alimentoModificado = alimento.copy(
-                                qntd = qntd,
+                                qntd = quantidadeFinal,
                                 validade = validade,
                                 descricao = descricao
                             )
-                            onSalvar(alimentoModificado) },
+                            onSalvar(alimentoModificado)
+                        },
                         modifier = Modifier
                             .weight(1f)
                             .height(46.dp),

@@ -2,6 +2,7 @@ using FoodCareApi.Data;
 using FoodCareApi.Endpoints;
 using FoodCareApi.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims; 
 
 public static class AlimentoEndPoint
 {
@@ -76,14 +77,73 @@ public static class AlimentoEndPoint
             return resultados.Any() ? Results.Ok(resultados) : Results.NotFound();
         });
 
-        rotas.MapGet("/id/{idAlimento}", async (int idAlimento, AppDbContext bd) =>
+        
+
+        rotas.MapGet("/id/{idAlimento}", async (int idAlimento, ClaimsPrincipal user, AppDbContext bd) =>
         {
-            var alimento = await bd.Alimento.FindAsync(idAlimento);
+            // 1. Extrai o ID do usuário de dentro das Claims do Token JWT de forma segura
+            var idUsuarioToken = user.FindFirst("idUsuario")?.Value;
+            
+            if (string.IsNullOrEmpty(idUsuarioToken))
+                return Results.Unauthorized(); // Se o token for inválido ou não tiver o ID
+
+            if (!int.TryParse(idUsuarioToken, out int idUsuarioLogado))
+                return Results.Unauthorized();
+
+            // 2. Busca o usuário logado para pegar a latitude/longitude dele
+            var usuarioLogado = await bd.Usuario.FindAsync(idUsuarioLogado);
+            if (usuarioLogado is null || usuarioLogado.latitude is null || usuarioLogado.longitude is null)
+                return Results.BadRequest("Usuário logado sem localização cadastrada.");
+
+            // 3. Busca o alimento trazendo JUNTO o doador e o usuário do doador (.Include)
+            var alimento = await bd.Alimento
+                .Include(a => a.doador)
+                .ThenInclude(d => d.usuario)
+                .FirstOrDefaultAsync(a => a.idAlimento == idAlimento);
+
             if (alimento == null)
                 return Results.NotFound("Alimento não encontrado.");
+            
+            var usuarioDoador = alimento.doador?.usuario;
 
-            return Results.Ok(alimento);
-        });
+            // 4. Só realiza o cálculo matemático se o doador também possuir uma localização 
+            if (usuarioDoador?.latitude != null && usuarioDoador?.longitude != null)
+            {
+                var lat1 = (double)usuarioLogado.latitude!;
+                var lon1 = (double)usuarioLogado.longitude!;
+
+                var lat2 = (double)usuarioDoador.latitude!;
+                var lon2 = (double)usuarioDoador.longitude!;
+
+                var R = 6371.0; // Raio da Terra em Quilômetros
+
+                var dLat = (lat2 - lat1) * Math.PI / 180.0;
+                var dLon = (lon2 - lon1) * Math.PI / 180.0;
+
+                var a = Math.Sin(dLat / 2) * Math.Sin(dLat / 2) +
+                        Math.Cos(lat1 * Math.PI / 180.0) *
+                        Math.Cos(lat2 * Math.PI / 180.0) *
+                        Math.Sin(dLon / 2) * Math.Sin(dLon / 2);
+
+                var c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
+
+                alimento.distancia = R * c; // Atribui a distância calculada
+            }
+
+            return Results.Ok(new
+            {
+                alimento.idAlimento,
+                alimento.nome,
+                alimento.idCategoria,
+                alimento.idDoador,
+                alimento.descricao,
+                alimento.distancia,
+                alimento.validade,
+                usuarioDoador?.latitude,
+                usuarioDoador?.longitude
+            });
+        })
+        .RequireAuthorization(); // Bloqueia a rota caso o Android não envie o Token
 
         rotas.MapGet("/doador/{idUsuario}", async (int idUsuario, AppDbContext bd) =>
         {
@@ -95,6 +155,7 @@ public static class AlimentoEndPoint
 
             return Results.Ok(alimentos.Select(a => new
             {
+                a.idAlimento,
                 a.nome,
                 a.idCategoria,
                 categoria = a.categoria.nome,
@@ -109,23 +170,30 @@ public static class AlimentoEndPoint
         // Recebe o idAlimento pela URL e um objeto contendo apenas qntd, validade e descricao no corpo
         rotas.MapPatch("/alterar/{idAlimento}", async (int idAlimento, Alimento dadosAlterados, AppDbContext bd) =>
         {
-            var alimento = await bd.Alimento.FindAsync(idAlimento);
+        // 1. Busca o alimento no banco de dados
+        var alimento = await bd.Alimento.FindAsync(idAlimento);
 
-            if (alimento is null) 
-                return Results.NotFound("Alimento não encontrado.");
+        // Se o ID enviado pelo Android não existir no BD, o EF retorna null
+        if (alimento is null) 
+        {
+            return Results.NotFound(new { erro = "Alimento não encontrado no banco." });
+        }
 
-            // Aplica as alterações recebidas do objeto mapeado diretamente
-            alimento.qntd = dadosAlterados.qntd;
-            alimento.descricao = dadosAlterados.descricao;
+        // 2. Aplica as novas propriedades que vieram do Android
+        alimento.qntd = dadosAlterados.qntd;
+        alimento.descricao = dadosAlterados.descricao;
 
-            // Tratamento para converter a String do Front-end para o DateOnly? da sua Model
-            if(alimento.validade != null)
-                alimento.validade = dadosAlterados.validade;
+        // Correção da data: Se veio uma data do Android, atualiza (mesmo se no BD estiver nulo)
+        if (dadosAlterados.validade != null)
+        {
+            alimento.validade = dadosAlterados.validade;
+        }
 
-            // Salva as alterações no banco de dados
-            await bd.SaveChangesAsync();
+        // 3. Salva de fato no banco de dados (Gera o comando UPDATE)
+        await bd.SaveChangesAsync();
 
-            return Results.Ok(new { mensagem = "Alimento atualizado com sucesso!" });
+        // 4. Retorna 200 OK limpo para o Retrofit saber que foi um sucesso absoluto
+        return Results.Ok(); 
         });
 
         
@@ -143,13 +211,7 @@ public static class AlimentoEndPoint
             bd.Alimento.Add(novoAlimento);
             await bd.SaveChangesAsync();
 
-            return Results.Created($"/alimentos/{novoAlimento.idAlimento}", new 
-            { 
-                id = novoAlimento.idAlimento, 
-                nome = novoAlimento.nome,
-                qntd = novoAlimento.qntd,
-                mensagem = "Alimento cadastrado com sucesso e disponível para doação!" 
-            });
+            return Results.Created();
         });
 
         // 5. PUT - Atualizar Dados do Alimento

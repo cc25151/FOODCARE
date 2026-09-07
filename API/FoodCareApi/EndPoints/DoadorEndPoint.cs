@@ -13,13 +13,24 @@ public static class DoadorEndpoints
 
         // 1. GET por ID - Consulta o doador com aquele Id
         // Retorna as informações do perfil de doador específico localizado pelo ID correspondente
-        grupo.MapGet("/{id}", async (int id, AppDbContext db) =>
+        grupo.MapGet("/{idDoador}", async (int idDoador, AppDbContext db) =>
         {
-            var doador = await db.Doador.FindAsync(id);
+            var doador = await db.Doador
+                        .Include(d => d.usuario) 
+                        .FirstOrDefaultAsync(d => d.idDoador == idDoador);
+
             if (doador is null)
                 return Results.NotFound("Doador não encontrado.");
+            
+            var endereco = doador.usuario.rua + ", " + doador.usuario.numero + " - " + doador.usuario.bairro + ", "+ doador.usuario.cidade;
 
-            return Results.Ok(doador);
+            return Results.Ok(new{
+                doador.idDoador,
+                doador.usuario.nome,
+                doador.idUsuario,
+                doador.pontuacao,
+                endereco
+                });
         });
 
         // 2. POST - Cadastro como Doador

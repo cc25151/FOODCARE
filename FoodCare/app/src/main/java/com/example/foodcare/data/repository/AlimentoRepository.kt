@@ -1,17 +1,18 @@
 package com.example.foodcare.data.repository
 
 import com.example.foodcare.data.api.RetrofitClient
+import com.example.foodcare.data.api.SessaoUsuario
 import com.example.foodcare.model.*
 
 class AlimentoRepository {
     suspend fun cadastrar(
-        nomeDoador: String,
+        idUsuario: Int,
         nome: String,
         descricao: String,
         quantidade: Int,
         validade: String,
         idCategoria: Int
-    ): AlimentoResposta {
+    ): Boolean {
         val request = AlimentoRequest(
             nome = nome,
             descricao = descricao,
@@ -20,7 +21,7 @@ class AlimentoRepository {
             idCategoria = idCategoria
         )
 
-        return RetrofitClient.api.cadastrarAlimento(nomeDoador, request)
+        return RetrofitClient.api.cadastrarAlimento(idUsuario, request).isSuccessful
     }
 
     suspend fun getAlimentos(idUsuario: Int): List<Produto> {
@@ -32,11 +33,15 @@ class AlimentoRepository {
     }
 
     suspend fun atualizarAlimento(idAlimento: Int, novo : Alimento) : Boolean{
-        val resposta = RetrofitClient.api.alterarAlimento(idAlimento)
+        val dadosReduzidos = AlimentoAtualizarRequest(novo.qntd, novo.validade, novo.descricao)
+        val resposta = RetrofitClient.api.alterarAlimento(idAlimento, dadosReduzidos)
         return resposta.isSuccessful
     }
 
     suspend fun getProduto(idAlimento: Int) : Produto{
-        return RetrofitClient.api.getProduto(idAlimento)
+
+        val tokenFormatado = "Bearer ${SessaoUsuario.token}"
+
+        return RetrofitClient.api.getProduto(tokenFormatado, idAlimento)
     }
 }

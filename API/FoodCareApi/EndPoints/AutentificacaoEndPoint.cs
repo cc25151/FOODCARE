@@ -30,7 +30,7 @@
                 var tokenHandler = new JwtSecurityTokenHandler();
                 
                 // Pega a chave secreta do arquivo appsettings.json
-                var chaveSecreta = config["Jwt:ChaveSecreta"]!;
+                var chaveSecreta = config["JwtSettings:ChaveSecreta"]!;
                 var chaveBytes = Encoding.ASCII.GetBytes(chaveSecreta); // Pega o número de bytes da chave secreta
 
                 // Define as informações que vão dentro do Token Reinvidicações
@@ -40,7 +40,7 @@
                     {
                         new Claim(ClaimTypes.Name, usuario.nome), //Nome do usuário dentro do token
                         new Claim(ClaimTypes.Email, usuario.email), //E-mail do usuário dentro do token
-                        new Claim("id", usuario.idUsuario.ToString()), //Claim personalizada para id do usuário
+                        new Claim("idUsuario", usuario.idUsuario.ToString()), //Claim personalizada para id do usuário
                         new Claim("tipo", usuario.tipoPessoa) // Útil para saber se é PF ou PJ no Front-end, Claim personalizada
                     }),
                     Expires = DateTime.UtcNow.AddHours(1), // Token vale por 1 hora

@@ -15,10 +15,10 @@ class AlimentosDoadorViewModel : ViewModel() {
     var alimentos by mutableStateOf<List<Alimento>>(emptyList())
     var alimentoSelecionado by mutableStateOf<Alimento?>(null)
 
-
     var erro by mutableStateOf("")
-    val repository = AlimentoRepository()
+    var erroEdicao by mutableStateOf("")
 
+    val repository = AlimentoRepository()
 
     fun carregarAlimentos() {
         viewModelScope.launch {
@@ -35,15 +35,19 @@ class AlimentosDoadorViewModel : ViewModel() {
         val alimento = alimentoSelecionado ?: return
         viewModelScope.launch {
             try {
+                erroEdicao = "" // Limpa o erro anterior antes de tentar
+                val resposta = repository.atualizarAlimento(alimento.idAlimento, novo)
 
-                val resposta = repository.atualizarAlimento(
-                    alimento.id,
-                    novo)
                 if (resposta) {
-                    alimentoSelecionado = null
-                    carregarAlimentos()
+                    alimentoSelecionado = null // Fecha o dialog se deu certo
+                    carregarAlimentos()       // Recarrega a lista
+                } else {
+
+                    erroEdicao = "Não foi possível atualizar o alimento."
                 }
-            } catch (_: Exception) { }
+            } catch (e: Exception) {
+                erroEdicao = "Erro ao conectar ao servidor. Tente novamente."
+            }
         }
     }
 }

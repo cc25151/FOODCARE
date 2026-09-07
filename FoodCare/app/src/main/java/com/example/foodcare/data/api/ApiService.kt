@@ -4,16 +4,17 @@ import com.example.foodcare.model.*
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
 
 interface ApiService {
-    @GET("doadores/{id}")
-    suspend fun getDoadorPorId(@Path("id") id: Int): Response<Doador>
+    @GET("doadores/{idDoador}")
+    suspend fun getDoadorPorId(@Path("idDoador") idDoador: Int): Doador
 
-    @GET("receptores/{id}")
-    suspend fun getReceptorPorId(@Path("id") id: Int): Response<Receptor>
+    @GET("receptores/{idReceptor}")
+    suspend fun getReceptorPorId(@Path("idReceptor") idReceptor: Int): Receptor
 
     @POST("usuarios/cadastro")
     suspend fun cadastro(
@@ -36,11 +37,11 @@ interface ApiService {
     ): LoginResposta
 
 
-    @POST("alimentos/doador/{nomeDoador}")
+    @POST("alimentos/doador/{idUsuario}")
     suspend fun cadastrarAlimento(
-        @Path("nomeDoador") nomeDoador: String,
+        @Path("idUsuario") idUsuario: Int,
         @Body alimento: AlimentoRequest
-    ): AlimentoResposta
+    ): Response<Unit>
 
     @PATCH("usuarios/completar-perfil/{id}")
     suspend fun completarPerfil(
@@ -84,11 +85,18 @@ interface ApiService {
 
     @PATCH("alimentos/alterar/{idAlimento}")
     suspend fun alterarAlimento(
-        @Path("idAlimento") idAlimento: Int
+        @Path("idAlimento") idAlimento: Int,
+        @Body alimento: AlimentoAtualizarRequest
     ) : Response<Unit>
 
     @GET("alimentos/id/{idAlimento}")
     suspend fun getProduto(
+        @Header("Authorization") token: String,
         @Path("idAlimento") idAlimento: Int
     ) : Produto
+
+    @GET("doadores/{idDoador}")
+    suspend fun getDoador(
+        @Path("idDoador") idDoador: Int
+    ) : Doador
 }

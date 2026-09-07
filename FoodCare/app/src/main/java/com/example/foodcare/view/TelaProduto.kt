@@ -1,10 +1,7 @@
 package com.example.foodcare.view
 
 import android.annotation.SuppressLint
-import android.webkit.WebView
-import android.webkit.WebViewClient
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -13,8 +10,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ExpandLess
-import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -23,15 +18,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.foodcare.R
 import com.example.foodcare.ui.theme.*
 import com.example.foodcare.viewmodel.ProdutoViewModel
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.*
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("SetJavaScriptEnabled")
@@ -87,7 +87,7 @@ fun TelaProduto(
             ) {
                 FoodCareButton(
                     text = "Quero este produto",
-                    onClick = { onQueroEsteProduto(viewModel.produto?.id ?: 0) }
+                    onClick = { onQueroEsteProduto(viewModel.produto?.idAlimento ?: 0) }
                 )
             }
         }
@@ -114,7 +114,19 @@ fun TelaProduto(
                     ),
                 contentAlignment = Alignment.Center
             ) {
-                Text(text = "🛒", fontSize = 72.sp)
+                Image(
+                    painter = painterResource(id = when(viewModel.produto?.idCategoria){
+                        1 -> com.example.foodcare.R.drawable.marmita
+                        2 -> com.example.foodcare.R.drawable.padaria
+                        3 -> com.example.foodcare.R.drawable.frutas
+                        4 -> com.example.foodcare.R.drawable.embalados
+                        5 -> com.example.foodcare.R.drawable.enlatados
+                        else -> R.drawable.imagemcesta
+                    } ),
+                    contentDescription = "Imagem Alimento",
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
             }
 
             Column(modifier = Modifier.padding(20.dp)) {
@@ -129,17 +141,23 @@ fun TelaProduto(
                 Spacer(modifier = Modifier.height(4.dp))
 
 
-                Surface(
-                    shape = RoundedCornerShape(8.dp),
-                    color = Vermelho.copy(alpha = 0.1f)
-                ) {
-                    Text(
-                        text = viewModel.produto?.validade ?: "",
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
-                        fontSize = 12.sp,
-                        color = Vermelho,
-                        fontWeight = FontWeight.Medium
-                    )
+                val produto = viewModel.produto
+
+                if (!produto?.validade.isNullOrBlank()) {
+                    Surface(
+                        shape = RoundedCornerShape(8.dp),
+                        color = Vermelho.copy(alpha = 0.1f)
+                    ) {
+                        val dataLocalDate = LocalDate.parse(produto.validade)
+                        val formatadorBr = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+                        Text(
+                            text = "Validade: ${dataLocalDate.format(formatadorBr)}",
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
+                            fontSize = 12.sp,
+                            color = Vermelho,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(20.dp))
@@ -156,7 +174,7 @@ fun TelaProduto(
                     )
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
-                        text = "Doadores próximos:",
+                        text = "Doador:",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
                         color = textoEscuro
@@ -165,12 +183,23 @@ fun TelaProduto(
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                DoadorCard(nome = "", distancia = "${ viewModel.produto?.distancia ?: 0 }")
+                DoadorCard(nome = viewModel.doador?.nome ?: "", distancia =  viewModel.produto?.distancia ?: 0.0, viewModel.doador?.endereco ?: "")
 
                 Spacer(modifier = Modifier.height(16.dp))
+                val latitude = viewModel.produto?.latitude
+                val longitude = viewModel.produto?.longitude
 
-
-                MapaSimples()
+                if (latitude != null && longitude != null) {
+                    MapaSimples(latitude = latitude, longitude = longitude)
+                } else {
+                    // Opcional: exibe um indicador de que a localização está carregando
+                    Text(
+                        text = "Carregando mapa...",
+                        fontSize = 14.sp,
+                        color = Color.Gray,
+                        modifier = Modifier.padding(vertical = 16.dp)
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(20.dp))
                 SectionDivider()
@@ -200,14 +229,19 @@ fun TelaProduto(
 }
 
 
-
 @Composable
-fun MapaSimples() {
+fun MapaSimples(latitude: Double, longitude: Double) {
 
-    val posicao = LatLng(-22.9099, -47.0626) // Campinas
+    // Cria a posição com os dados reais do produto
+    val posicao = LatLng(latitude, longitude)
 
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(posicao, 15f)
+    }
+
+    // Faz o mapa mover a câmera caso a posição mude após o primeiro carregamento
+    LaunchedEffect(posicao) {
+        cameraPositionState.position = CameraPosition.fromLatLngZoom(posicao, 15f)
     }
 
     GoogleMap(
@@ -217,22 +251,22 @@ fun MapaSimples() {
         cameraPositionState = cameraPositionState,
         uiSettings = MapUiSettings(
             zoomControlsEnabled = true,
-        zoomGesturesEnabled = true,
-        scrollGesturesEnabled = true,
-        rotationGesturesEnabled = true,
-        tiltGesturesEnabled = true
+            zoomGesturesEnabled = true,
+            scrollGesturesEnabled = true,
+            rotationGesturesEnabled = true,
+            tiltGesturesEnabled = true
         )
     ) {
         Marker(
             state = MarkerState(position = posicao),
-            title = "Minha localização"
+            title = "Localização do Produto"
         )
     }
 }
 
 
 @Composable
-fun DoadorCard(nome: String, distancia: String) {
+fun DoadorCard(nome: String, distancia: Double, endereco: String) {
     Card(
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = Branco),
@@ -258,7 +292,7 @@ fun DoadorCard(nome: String, distancia: String) {
 
             Column {
                 Text(text = nome, fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = textoEscuro)
-                Text(text = distancia, fontSize = 13.sp, color = Color(0xFF888888))
+                Text(text = endereco, fontSize = 13.sp, color = Color(0xFF888888))
             }
 
             Spacer(modifier = Modifier.weight(1f))
@@ -269,7 +303,7 @@ fun DoadorCard(nome: String, distancia: String) {
                 color = Vermelho
             ) {
                 Text(
-                    text = distancia,
+                    text = "${Math.round(distancia * 100) / 100.0} Km",
                     modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
                     fontSize = 12.sp,
                     color = Branco,

@@ -56,6 +56,7 @@ public class AppDbContext : DbContext
             entity.Property(d => d.idUsuario).IsRequired();
             entity.Property(d => d.horarioInicial).HasColumnType("time");
             entity.Property(d => d.horarioFinal).HasColumnType("time");
+            entity.Property(d => d.pontuacao).HasColumnType("decimal");
             
             
             // Define que o Doador tem apenas um usuário
